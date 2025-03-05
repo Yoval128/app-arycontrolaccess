@@ -25,9 +25,9 @@ const AdminDashboardScreen = () => {
     }, []);
 
     return (
-        <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}}>
-                <Box safeArea p={5} bg="background.light" flex={1}>
+        <NativeBaseProvider theme={customTheme} >
+            <ScrollView contentContainerStyle={{flexGrow: 1}} >
+                <Box safeArea p={5} bg="background.light" flex={1} >
                     {/* Header */}
                     <HStack justifyContent="space-between" alignItems="center" mb={5} p={3} bg="secondary.500"
                             borderRadius="lg" shadow={2}>

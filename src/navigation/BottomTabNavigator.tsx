@@ -1,44 +1,55 @@
 import React from "react";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {createStackNavigator} from "@react-navigation/stack";
-import {Ionicons} from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { useColorMode, useTheme } from "native-base";
 import AdminDashboardScreen from "../screens/dashboards/AdminDashboardScreen";
-import ListUsersScreen from "../screens/users/ListUsersScreen";
-import customTheme from '../themes/index';
 import UploadsDashboardScreen from "../screens/dashboards/UploadsDashboardScreen";
+import ProfileUser from "../screens/profile/ProfileUserScreen";
+import ProfileUserScreen from "../screens/profile/ProfileUserScreen";
 
 
-// Crear el stack
-const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Ejemplo de pestañas para Administrador
-const AdminTabs = () => (
-    <Tab.Navigator
-        screenOptions={({route}) => ({
-            tabBarIcon: ({color, size}) => {
-                let iconName;
+const AdminTabs = () => {
+    const theme = useTheme(); // Asegurar que tenemos acceso al tema
+    const { colorMode } = useColorMode();
 
-                if (route.name === "Dashboard") {
-                    iconName = "home";
-                } else if (route.name === "Notificaciones") {
-                    iconName = "notifications";
-                } else if (route.name === "Perfil ") {
-                    iconName = "people";
-                }
+    // Definir colores con valores por defecto en caso de que el tema no se cargue
+    const backgroundColor = theme.colors?.background?.[colorMode] || (colorMode === "dark" ? "#1C1E22" : "#F5F7FA");
+    const activeColor = theme.colors?.accent?.[600] || "#0074E8";
+    const inactiveColor = theme.colors?.secondary?.[500] || "#304C69";
 
-                return <Ionicons name={iconName} size={size} color={color}/>;
-            },
-            tabBarActiveTintColor: "#007bff",
-            tabBarInactiveTintColor: "gray",
-        })}
-    >
-        <Tab.Screen name="Dashboard" component={AdminDashboardScreen}/>
-        <Tab.Screen name="Usuarios" component={ListUsersScreen}/>
-        <Tab.Screen name="Uploads" component={UploadsDashboardScreen}/>
-    </Tab.Navigator>
-);
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    let iconName;
+                    if (route.name === "Inicio") iconName = "home";
+                    else if (route.name === "Subidas") iconName = "cloud-upload";
+                    else if (route.name === "Profile") iconName = "person";
 
-// Puedes definir más TabNavigators para empleados e invitados si lo necesitas
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                },
+                tabBarStyle: {
+                    backgroundColor: backgroundColor,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    height: 60,
+                    paddingBottom: 10,
+                },
+                tabBarActiveTintColor: activeColor,
+                tabBarInactiveTintColor: inactiveColor,
+                tabBarLabelStyle: {
+                    fontFamily: "Poppins-Bold",
+                    fontSize: 12,
+                },
+            })}
+        >
+            <Tab.Screen name="Inicio" component={AdminDashboardScreen} options={{headerShown: false}}/>
+            <Tab.Screen name="Subidas" component={UploadsDashboardScreen} options={{headerShown: false}}/>
+            <Tab.Screen name="Profile" component={ProfileUserScreen} options={{headerShown: false}}/>
+        </Tab.Navigator>
+    );
+};
 
 export default AdminTabs;

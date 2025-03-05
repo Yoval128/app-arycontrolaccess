@@ -6,4 +6,6 @@ const EmpleadoDashboardScreen=()=>{
             <Text>DasboradEmpeldo</Text>
         </View>
     )
-}
+};
+
+export default EmpleadoDashboardScreen;
