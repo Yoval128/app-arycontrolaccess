@@ -60,6 +60,15 @@ const AppNavigator = () => {
         checkAuth();
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('usuario');
+            setIsLoggedIn(false);
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    };
     if (loading) {
         return (
             <Center flex={1}>
@@ -70,7 +79,7 @@ const AppNavigator = () => {
 
     return (
         <NavigationContainer>
-            {isLoggedIn ? <MainDrawer user={user}/> : <AuthStack/>}
+            {isLoggedIn ? <MainDrawer user={user} onLogout={handleLogout}/> : <AuthStack/>}
         </NavigationContainer>
     );
 };
@@ -81,12 +90,12 @@ const AuthStack = () => (
     </Stack.Navigator>
 );
 
-const MainDrawer = ({user}) => (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} user={user}/>}>
-        {user?.rol === 'administrador' ? (
+const MainDrawer = ({user, onLogout}) => (
+    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} user={user} onLogout={onLogout} />}>
+    {user?.rol === 'administrador' ? (
             <>
                 {/* Options: Nombres de Header*/}
-                <Drawer.Screen name="AdminDashboard" component={AdminTabs} options={{title: 'Inicio Administradro'}}/>
+                <Drawer.Screen name="AdminDashboard" component={AdminTabs} options={{title: 'Inicio Administrador'}}/>
                 {/* Rutas Usuarios*/}
                 <Drawer.Screen name="ListUsers" component={ListUsersScreen} options={{title: 'Listar Usuarios'}}/>
                 <Drawer.Screen name="AddUser" component={AddUserScreen} options={{title: 'Alta Usuario'}}/>
@@ -109,25 +118,37 @@ const MainDrawer = ({user}) => (
                 <Drawer.Screen name="EditRfidTag" component={EditRfidTagsScreen} options={{title: 'Editar RfidTags'}}/>
 
                 {/* Rutas Acceso*/}
-                <Drawer.Screen name="ListAccessHistory" component={AccessHistoryScreen} options={{title: 'Listar Acceso'}}/>
+                <Drawer.Screen name="ListAccessHistory" component={AccessHistoryScreen}
+                               options={{title: 'Listar Acceso'}}/>
 
                 {/* Rutas Administardores*/}
-                <Drawer.Screen name="ListAdministrator" component={ListAdministratorScreen} options={{title: 'Listar Administrador'}}/>
-                <Drawer.Screen name="AddAdministrator" component={AddAdministratorScreen} options={{title: 'Alta Administrador'}}/>
-                <Drawer.Screen name="DetailAdministrator" component={DetailAdministratorScreen} options={{title: 'Detalle de Administrador'}}/>
-                <Drawer.Screen name="EditAdministrator" component={EditAdministratorScreen} options={{title: 'Editar Administrador'}}/>
+                <Drawer.Screen name="ListAdministrator" component={ListAdministratorScreen}
+                               options={{title: 'Listar Administrador'}}/>
+                <Drawer.Screen name="AddAdministrator" component={AddAdministratorScreen}
+                               options={{title: 'Alta Administrador'}}/>
+                <Drawer.Screen name="DetailAdministrator" component={DetailAdministratorScreen}
+                               options={{title: 'Detalle de Administrador'}}/>
+                <Drawer.Screen name="EditAdministrator" component={EditAdministratorScreen}
+                               options={{title: 'Editar Administrador'}}/>
 
                 {/* RUtas de RfidCards*/}
-                <Drawer.Screen name="ListRfidCards" component={ListRfidCardsScreen} options={{title: 'Listar RfidCards'}}/>
+                <Drawer.Screen name="ListRfidCards" component={ListRfidCardsScreen}
+                               options={{title: 'Listar RfidCards'}}/>
                 <Drawer.Screen name="AddRfidCards" component={AddRfidCardsScreen} options={{title: 'Alta RfidCards'}}/>
-                <Drawer.Screen name="DetailRfidCard" component={DetailRfidCardsScreen} options={{title: 'Detalle RfidCards'}}/>
-                <Drawer.Screen name="EditRfidCard" component={EditRfidCardsScreen} options={{title: 'Editar RfidCards'}}/>
+                <Drawer.Screen name="DetailRfidCard" component={DetailRfidCardsScreen}
+                               options={{title: 'Detalle RfidCards'}}/>
+                <Drawer.Screen name="EditRfidCard" component={EditRfidCardsScreen}
+                               options={{title: 'Editar RfidCards'}}/>
 
                 {/* RUtas de DocumentMovements*/}
-               <Drawer.Screen name="ListDocumentMovements" component={ListDocumentMovementsScreen} options={{title: 'Movimientos Documentos'}}/>
-                <Drawer.Screen name="AddDocumentMovement" component={AddDocumentMovementsScreen} options={{title: 'Alta Movimientos Documentos'}}/>
-                <Drawer.Screen name="DetailDocumentMovement" component={DetailDocumentMovementsScreen} options={{title: 'Detalle Movimientos Documentos'}}/>
-                <Drawer.Screen name="EditDocumentMovement" component={EditDocumentMovementsScreen} options={{title: 'Editar Movimientos Documentos'}}/>
+                <Drawer.Screen name="ListDocumentMovements" component={ListDocumentMovementsScreen}
+                               options={{title: 'Movimientos Documentos'}}/>
+                <Drawer.Screen name="AddDocumentMovement" component={AddDocumentMovementsScreen}
+                               options={{title: 'Alta Movimientos Documentos'}}/>
+                <Drawer.Screen name="DetailDocumentMovement" component={DetailDocumentMovementsScreen}
+                               options={{title: 'Detalle Movimientos Documentos'}}/>
+                <Drawer.Screen name="EditDocumentMovement" component={EditDocumentMovementsScreen}
+                               options={{title: 'Editar Movimientos Documentos'}}/>
 
             </>
         ) : user?.rol === 'empleado' ? (
