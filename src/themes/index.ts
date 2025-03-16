@@ -36,6 +36,11 @@ const customTheme = extendTheme({
             light: "#1C1E22",
             dark: "#FFFFFF",
         },
+        status: {
+            success: "#4CAF50", // Verde
+            warning: "#FFEB3B", // Amarillo
+            error: "#F44336", // Rojo
+        }
     },
     components: {
         Button: {

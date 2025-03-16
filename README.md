@@ -47,7 +47,7 @@ npx expo install react-native-safe-area-context
 npx expo install @react-native-async-storage/async-storage
 npx expo install react-native-dotenv
 npx expo install react-native-element-dropdown
-npm i expo-app-loading
+npx expo install expo-splash-screen
 ```
 * Instalar expo-router
   npx expo install expo-router
@@ -78,6 +78,15 @@ npm i expo-app-loading
 # Fuentes
 * expo install expo-font @expo-google-fonts/inter @expo-google-fonts/poppins
 * expo install expo-font @expo-google-fonts/inter @expo-google-fonts/poppins @expo-google-fonts/roboto
+
+# Exportación de datos PDF
+npm install react-native-pdf-lib
+npx expo install expo-file-system expo-sharing
+
+
+# Graficos
+npm install recharts
+npm install react-native-chart-kit react-native-svg
 
 
 ## Estructura del Proyecto

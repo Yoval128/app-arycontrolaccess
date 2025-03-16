@@ -28,6 +28,7 @@ const ListAdministratorScreen = () => {
     const [error, setError] = useState(null);
     const navigation = useNavigation();
     const route = useRoute();
+    const [usuarios, setUsuarios] = useState([]);
 
     useEffect(() => {
         fetchAdministrators();
@@ -78,6 +79,29 @@ const ListAdministratorScreen = () => {
         }
     };
 
+    // Función para obtener los usuarios
+    const fetchUsuarios = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/users/list-users`);
+            const data = await response.json();
+            // Formateamos los datos de usuarios
+            const usuariosList = data.map((usuario) => ({
+                label: `${usuario.Nombre} ${usuario.Apellido}`, // Mostrar el nombre completo
+                value: usuario.ID_Usuario // El valor será el ID de usuario
+            }));
+            setUsuarios(usuariosList);
+        } catch (error) {
+            toast.show({
+                title: "Error",
+                description: "No se pudo obtener la lista de usuarios.",
+                status: "error"
+            });
+        }
+    };
+
+    useEffect(() => {
+        fetchUsuarios(); // Cargar los usuarios cuando la pantalla se monta
+    }, []);
 
     if (loading) return <ActivityIndicator size="large" color="#007bff"/>;
     if (error) return <Text style={{color: 'red', padding: 10}}>Error: {error}</Text>;
@@ -154,6 +178,17 @@ const ListAdministratorScreen = () => {
                     </AlertDialog.Footer>
                 </AlertDialog.Content>
             </AlertDialog>
+
+            {/* Agregar un registrp */}
+            <IconButton
+                icon={<Ionicons name="add" size={40} color="white"/>}
+                bg="primary.500"
+                borderRadius="full"
+                position="absolute"
+                bottom={4}
+                right={4}
+                onPress={() => navigation.navigate("AddAdministrator")} // Asegúrate de tener esta ruta para agregar usuarios
+            />
         </NativeBaseProvider>
     );
 };

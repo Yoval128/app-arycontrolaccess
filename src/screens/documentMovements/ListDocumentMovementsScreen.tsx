@@ -93,11 +93,11 @@ const ListDocumentMovementsScreen = () => {
                                 <HStack space={2}>
                                     <IconButton
                                         icon={<Ionicons name="eye-outline" size={20} color="blue" />}
-                                        onPress={() => navigation.navigate("DetailDocumentMovement", { movement_id: item.ID_Movimiento })}
+                                        onPress={() => navigation.navigate("DetailDocumentMovements", { movement_id: item.ID_Movimiento })}
                                     />
                                     <IconButton
                                         icon={<Ionicons name="pencil-outline" size={20} color="green" />}
-                                        onPress={() => navigation.navigate("EditDocumentMovement", { movement_id: item.ID_Movimiento })}
+                                        onPress={() => navigation.navigate("EditDocumentMovements", { movement_id: item.ID_Movimiento })}
                                     />
                                     <IconButton
                                         icon={<Ionicons name="trash-outline" size={20} color="red" />}

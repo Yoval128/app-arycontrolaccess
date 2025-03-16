@@ -69,7 +69,7 @@ const EditRfidCardsScreen = () => {
             });
 
             toast.show({description: "Tarjeta RFID actualizada con éxito", status: "success"});
-            navigation.navigate("ListRfidCards", {shouldReload: true});  // Pasar un flag que indique recargar
+            navigation.navigate("ListRfidCard", {shouldReload: true});  // Pasar un flag que indique recargar
         } catch (error) {
             console.error("Error al actualizar la tarjeta RFID:", error);
             toast.show({description: "Error al actualizar", status: "error"});

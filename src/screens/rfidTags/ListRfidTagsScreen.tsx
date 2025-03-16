@@ -94,11 +94,11 @@ const ListRfidTagsScreen = () => {
                                 <HStack space={2}>
                                     <IconButton
                                         icon={<Ionicons name="eye-outline" size={20} color="blue" />}
-                                        onPress={() => navigation.navigate("DetailRfidTag", { tag_id: item.ID_Etiqueta_RFID })}
+                                        onPress={() => navigation.navigate("DetailRfidTags", { tag_id: item.ID_Etiqueta_RFID })}
                                     />
                                     <IconButton
                                         icon={<Ionicons name="pencil-outline" size={20} color="green" />}
-                                        onPress={() => navigation.navigate("EditRfidTag", { tag_id: item.ID_Etiqueta_RFID })}
+                                        onPress={() => navigation.navigate("EditRfidTags", { tag_id: item.ID_Etiqueta_RFID })}
                                     />
                                     <IconButton
                                         icon={<Ionicons name="trash-outline" size={20} color="red" />}

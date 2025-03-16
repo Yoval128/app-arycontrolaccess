@@ -95,7 +95,7 @@ const AddAdministratorScreen = () => {
                     status: "success"
                 });
                 setForm({ID_Usuario: "", nivelPermiso: ""});
-                navigation.navigate('ListAdministrator');  // Redirigir a la lista de administradores
+                navigation.navigate('ListAdministrator');
             } else {
                 toast.show({
                     title: "Error",

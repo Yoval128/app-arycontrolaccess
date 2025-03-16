@@ -65,10 +65,6 @@ const AccessHistoryScreen = () => {
                                         <Text fontSize="sm">{item.Ubicacion}</Text>
                                         <Text fontSize="xs" color="gray.500">{new Date(item.Fecha_Hora).toLocaleString()}</Text>
                                     </VStack>
-                                    <IconButton
-                                        icon={<Ionicons name="eye-outline" size={20} color="blue" />}
-                                        onPress={() => navigation.navigate("AccessDetail", { accessId: item.ID_Acceso })}
-                                    />
                                 </HStack>
                             </View>
                         )}

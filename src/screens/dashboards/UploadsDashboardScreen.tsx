@@ -49,7 +49,7 @@ const UploadsDashboardScreen = () => {
                         Tarjetas RFID
                     </Button>
                     <Button
-                        onPress={() => navigation.navigate('ExcelUpload-User')}
+                        onPress={() => navigation.navigate('ListUsers')}
                         leftIcon={<Ionicons name="person" size={20} color="white" />}
                         _text={{ fontSize: 'md', fontWeight: 'bold' }}
                     >

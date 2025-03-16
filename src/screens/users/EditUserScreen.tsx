@@ -43,7 +43,7 @@ const EditUserScreen = () => {
 
     const fetchTarjetas = async () => {
         try {
-            const response = await fetch(`${API_URL}/api/rfid-cards/rfid-list-disponible`);
+            const response = await fetch(`${API_URL}/api/rfidCards/rfid-list-disponible`);
             const data = await response.json();
             setTarjetas(data.map(item => ({ label: item.Codigo_RFID, value: item.ID_Tarjeta_RFID })));
         } catch (error) {

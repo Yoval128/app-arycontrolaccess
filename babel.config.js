@@ -5,7 +5,7 @@ module.exports = {
             'module:react-native-dotenv',
             {
                 moduleName: '@env',  // El nombre del módulo donde se cargarán las variables
-                path: '.env',         // Ruta al archivo .env
+                path: '.env.production',
             },
         ],
     ],

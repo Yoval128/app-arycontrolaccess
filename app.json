@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.yoval128.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,6 +28,15 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9747a8fd-98c9-4516-a4bf-26b69a07ed92"
+      }
+    },
+    "owner": "yoval128"
   }
 }

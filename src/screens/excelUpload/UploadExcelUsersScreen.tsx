@@ -10,7 +10,7 @@ import axios from 'axios';
 import customTheme from '../../themes';
 import {color} from "native-base/lib/typescript/theme/styled-system";
 
-const UploadExcelScreen = () => {
+const UploadExcelUsersScreen = () => {
     const [file, setFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-export default UploadExcelScreen;
+export default UploadExcelUsersScreen;

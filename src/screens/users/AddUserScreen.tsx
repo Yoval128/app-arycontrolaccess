@@ -30,7 +30,7 @@ const AddUserScreen = () => {
 
     // Obtener la lista de tarjetas RFID
     useEffect(() => {
-        fetch(`${API_URL}/api/rfid-cards/rfid-list-disponible`)
+        fetch(`${API_URL}/api/rfidCards/rfid-list-disponible`)
             .then((response) => response.json())
             .then((data) => {
                 if (data && data.length > 0) {
@@ -90,7 +90,7 @@ const AddUserScreen = () => {
                     setConfirmPassword("");
                     setTelefono("");
                     setID_Tarjeta_RFID("");
-                    navigation.navigate('ListUser', {refresh: true});
+                    navigation.navigate('ListUsers', {refresh: true});
                 } else if (data.error) {
                     setError(data.error);
                 }
