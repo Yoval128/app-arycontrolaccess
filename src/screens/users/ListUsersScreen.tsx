@@ -21,6 +21,7 @@ import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAuth} from "../../context/AuthProvider";
+import {StackActions} from '@react-navigation/native';
 
 const ListUsersScreen = () => {
     const [users, setUsers] = useState([]);
@@ -29,12 +30,12 @@ const ListUsersScreen = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Definir cuántos items por página
+    const [itemsPerPage, setItemsPerPage] = useState(8); // Definir cuántos items por página
     const {user} = useAuth();
 
     const navigation = useNavigation();
     const route = useRoute();
-
+    navigation.dispatch(StackActions.replace('ListUser'));
     console.log(API_URL);
 
     useEffect(() => {
