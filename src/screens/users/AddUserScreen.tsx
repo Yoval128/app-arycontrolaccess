@@ -106,6 +106,8 @@ const AddUserScreen = () => {
                         Agregar un nuevo usuario
                     </Text>
 
+                    <Text color="red">Rellenar todos los campos</Text>
+
                     <VStack space={4} background={"white"} padding={5} borderRadius="md">
                         <FormControl isRequired isInvalid={!!error}>
                             <FormControl.Label>Nombre</FormControl.Label>

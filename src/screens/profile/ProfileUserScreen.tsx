@@ -119,16 +119,20 @@ const ProfileUserScreen = ({ navigation }) => {
                         {/* Avatar or Image */}
                         <Avatar size="xl" bg="teal.500" source={{uri: user?.photoUrl || ''}} />
                         <Text fontSize="2xl" fontWeight="bold">{user?.nombre} {user?.apellido}</Text>
+                        <Text>Email:</Text>
                         <Text fontSize="md" color="gray.500">{user?.email}</Text>
                         <HStack alignItems="center" space={2}>
+                            <Text>Rol:</Text>
                             <Icon as={Ionicons} name="briefcase" size="sm" color="gray.500" />
                             <Text fontSize="lg" fontWeight="bold">{user?.rol}</Text>
                         </HStack>
                         <HStack alignItems="center" space={2}>
+                            <Text>Telefono:</Text>
                             <Icon as={Ionicons} name="call" size="sm" color="gray.500" />
                             <Text fontSize="lg" fontWeight="bold">{user?.telefono}</Text>
                         </HStack>
                         <HStack alignItems="center" space={2}>
+                            <Text>Tarjeta:</Text>
                             <Icon as={Ionicons} name="card" size="sm" color="gray.500" />
                             <Text fontSize="lg" fontWeight="bold">{user?.id_tarjeta_rfid}</Text>
                         </HStack>

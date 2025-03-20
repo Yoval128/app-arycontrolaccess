@@ -34,6 +34,7 @@ import AddRfidTagsScreen from "../screens/rfidTags/AddRfidTagsScreen";
 import UploadExcelUsersScreen from "../screens/excelUpload/UploadExcelUsersScreen";
 import ExportPDFUserScreen from "../screens/excelUpload/ExportPDFUserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
+import GraficosScreen from "../screens/Graficos/GraficosScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -83,6 +84,7 @@ function ManagementStack() {
 
             <Stack.Screen name="Login" component={LoginScreen}/>
 
+            <Stack.Screen name="Graficas" component={GraficosScreen} />
         </Stack.Navigator>
     )
         ;

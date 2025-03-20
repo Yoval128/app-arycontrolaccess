@@ -9,7 +9,7 @@ import {
     ScrollView,
     NativeBaseProvider,
     IconButton,
-    Button
+    Button, Box
 } from "native-base";
 import { API_URL } from "@env";
 import customTheme from "../../themes/index";
@@ -53,6 +53,10 @@ const AccessHistoryScreen = () => {
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 <VStack flex={1} p={5}>
                     <Text fontSize="lg" fontWeight="bold" mb={5}>Historial de Accesos</Text>
+
+                    <Box>
+                        <Text>Visualizacion de los ultimos accesos de los usuarios</Text>
+                    </Box>
 
                     <FlatList
                         data={paginatedData}
