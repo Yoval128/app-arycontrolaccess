@@ -91,3 +91,8 @@ npm install react-native-chart-kit react-native-svg
 
 ## Estructura del Proyecto
 
+## Trabajar con ramas
+* Obtén los últimos cambios de la rama principal
+git pull origin main 
+* 
+

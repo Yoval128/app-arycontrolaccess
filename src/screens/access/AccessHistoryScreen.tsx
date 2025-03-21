@@ -8,34 +8,34 @@ import {
     VStack,
     ScrollView,
     NativeBaseProvider,
-    IconButton,
-    Button, Box
+    Box
 } from "native-base";
 import { API_URL } from "@env";
 import customTheme from "../../themes/index";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
 const AccessHistoryScreen = () => {
-    const [accessData, setAccessData] = useState([]);
+    const [accessHistory, setAccessHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
     const navigation = useNavigation();
 
     useEffect(() => {
-        fetchAccessHistory();
+        fetchAccessHistory(); // Cargar historial de manera inicial
+        const intervalId = setInterval(fetchAccessHistory, 5000); // Actualiza cada 5 segundos
+
+        // Limpiar el intervalo cuando el componente se desmonte
+        return () => clearInterval(intervalId);
     }, []);
 
     const fetchAccessHistory = async () => {
         try {
-            const response = await fetch(`${API_URL}/api/access/list-access`);
+            const response = await fetch(`${API_URL}/api/access/historial-rfid`);
             const data = await response.json();
-            setAccessData(data);
+            setAccessHistory(data); // Actualiza el historial con los datos más recientes
         } catch (error) {
-            console.error("Error fetching access data:", error);
-            setError("Error al cargar los accesos");
+            console.error("Error fetching access history:", error);
+            setError("Error al cargar el historial");
         } finally {
             setLoading(false);
         }
@@ -44,10 +44,6 @@ const AccessHistoryScreen = () => {
     if (loading) return <Spinner size="lg" color="primary.500" />;
     if (error) return <Text color="red">{error}</Text>;
 
-    const totalPages = Math.ceil(accessData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = accessData.slice(startIndex, startIndex + itemsPerPage);
-
     return (
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
@@ -55,30 +51,23 @@ const AccessHistoryScreen = () => {
                     <Text fontSize="lg" fontWeight="bold" mb={5}>Historial de Accesos</Text>
 
                     <Box>
-                        <Text>Visualizacion de los ultimos accesos de los usuarios</Text>
+                        <Text>Visualización de los accesos detectados por la tarjeta RFID:</Text>
                     </Box>
 
                     <FlatList
-                        data={paginatedData}
-                        keyExtractor={(item) => item.ID_Acceso.toString()}
+                        data={accessHistory}
+                        keyExtractor={(item, index) => index.toString()} // Usa el índice como clave
                         renderItem={({ item }) => (
                             <View bg="white" p={4} mb={4} borderRadius="md" shadow={2}>
                                 <HStack alignItems="center" justifyContent="space-between">
                                     <VStack>
-                                        <Text fontWeight="bold">{item.Tipo_Acceso}</Text>
-                                        <Text fontSize="sm">{item.Ubicacion}</Text>
-                                        <Text fontSize="xs" color="gray.500">{new Date(item.Fecha_Hora).toLocaleString()}</Text>
+                                        <Text fontWeight="bold">Tarjeta RFID: {item.rfid}</Text>
+                                        <Text fontSize="sm">Hora: {item.time}</Text>
                                     </VStack>
                                 </HStack>
                             </View>
                         )}
                     />
-
-                    <HStack justifyContent="center" space={3} mt={4}>
-                        <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))} isDisabled={currentPage === 1}>Anterior</Button>
-                        <Text>{currentPage} de {totalPages}</Text>
-                        <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} isDisabled={currentPage === totalPages}>Siguiente</Button>
-                    </HStack>
                 </VStack>
             </ScrollView>
         </NativeBaseProvider>
