@@ -30,7 +30,7 @@ const AccessHistoryScreen = () => {
 
     const fetchAccessHistory = async () => {
         try {
-            const response = await fetch(`${API_URL}/api/access/historial-rfid`);
+            const response = await fetch(`${API_URL}/api/access/list-access`);
             const data = await response.json();
             setAccessHistory(data); // Actualiza el historial con los datos más recientes
         } catch (error) {
@@ -61,8 +61,14 @@ const AccessHistoryScreen = () => {
                             <View bg="white" p={4} mb={4} borderRadius="md" shadow={2}>
                                 <HStack alignItems="center" justifyContent="space-between">
                                     <VStack>
-                                        <Text fontWeight="bold">Tarjeta RFID: {item.rfid}</Text>
-                                        <Text fontSize="sm">Hora: {item.time}</Text>
+                                        <Text fontWeight="bold">Tarjeta RFID: {item.ID_Acceso}</Text>
+                                        <Text fontSize="sm">Fecha y Hora: {item.Fecha_Hora}</Text>
+                                        <Text fontSize="sm">Tipo de Acceso: {item.Tipo_Acceso}</Text>
+                                        <Text fontSize="sm">Ubicación: {item.Ubicacion}</Text>
+
+                                        <Text fontWeight="bold">Usuario: {item.Nombre} {item.Apellido}</Text>
+                                        <Text fontSize="sm">Cargo: {item.Cargo}</Text>
+                                        <Text fontSize="sm">Correo: {item.Correo}</Text>
                                     </VStack>
                                 </HStack>
                             </View>
