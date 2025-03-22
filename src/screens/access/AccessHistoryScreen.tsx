@@ -65,7 +65,7 @@ const AccessHistoryScreen = () => {
                                         <Text fontSize="sm">Fecha y Hora: {item.Fecha_Hora}</Text>
                                         <Text fontSize="sm">Tipo de Acceso: {item.Tipo_Acceso}</Text>
                                         <Text fontSize="sm">Ubicación: {item.Ubicacion}</Text>
-
+npx
                                         <Text fontWeight="bold">Usuario: {item.Nombre} {item.Apellido}</Text>
                                         <Text fontSize="sm">Cargo: {item.Cargo}</Text>
                                         <Text fontSize="sm">Correo: {item.Correo}</Text>
