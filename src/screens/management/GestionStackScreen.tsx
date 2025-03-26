@@ -97,13 +97,11 @@ const GestionStackScreen = () => {
                             </Button>
                             <Text bold mt={2} textAlign="center">Tarjetas RFID</Text>
                         </Box>
-                        <Box flex={1} p={5} bg="white" borderRadius="lg" shadow={1} justifyContent="center"
-                             alignItems="center">
-                            <Button onPress={() => navigation.navigate('Graficas')} size="lg"
-                                    colorScheme="teal">
-                                <Ionicons name="card" size={24} color="white"/>
+                        <Box flex={1} p={5} bg="white" borderRadius="lg" shadow={1} justifyContent="center" alignItems="center">
+                            <Button onPress={() => navigation.navigate('Graficas')} size="lg" colorScheme="teal">
+                                <Ionicons name="stats-chart" size={24} color="white" />
                             </Button>
-                            <Text bold mt={2} textAlign="center">Graficos</Text>
+                            <Text bold mt={2} textAlign="center">Estadisticas</Text>
                         </Box>
                     </HStack>
 

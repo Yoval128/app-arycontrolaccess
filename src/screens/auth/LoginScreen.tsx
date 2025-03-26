@@ -86,7 +86,9 @@ const LoginScreen = () => {
                     ) : (
                         <Text color={isApiConnected ? "green.500" : "red.500"} fontSize="md" textAlign="center">
                             {isApiConnected ? "-API está trabajando correctamente..." : "No se pudo conectar con la API..."}
+                            {API_URL}
                         </Text>
+
                     )}
 
                     <Text color="white" fontSize="2xl" textAlign="center">

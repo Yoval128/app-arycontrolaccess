@@ -133,6 +133,19 @@ const ListRfidCardScreen = () => {
                     </AlertDialog.Footer>
                 </AlertDialog.Content>
             </AlertDialog>
+
+            {/* Botón flotante */}
+
+            <IconButton
+                icon={<Ionicons name="add" size={40} color="white"/>}
+                bg="primary.500"
+                borderRadius="full"
+                position="absolute"
+                bottom={4}
+                right={4}
+                onPress={() => navigation.navigate("AddRfidCard")} // Asegúrate de tener esta ruta para agregar usuarios
+            />
+
         </NativeBaseProvider>
     );
 };

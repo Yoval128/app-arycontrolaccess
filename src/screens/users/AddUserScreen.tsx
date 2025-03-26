@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, NativeBaseProvider, ScrollView, Box, Input, FormControl, Button, Icon, VStack, HStack } from "native-base";
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect} from "react";
+import {
+    View,
+    Text,
+    NativeBaseProvider,
+    ScrollView,
+    Box,
+    Input,
+    FormControl,
+    Button,
+    Icon,
+    VStack,
+    HStack
+} from "native-base";
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+import {Ionicons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
-import { Dropdown } from "react-native-element-dropdown";
-import { API_URL } from '@env';
+import {Dropdown} from "react-native-element-dropdown";
+import {API_URL} from '@env';
 
 const AddUserScreen = () => {
     const navigation = useNavigation();
@@ -18,13 +30,18 @@ const AddUserScreen = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [Telefono, setTelefono] = useState('');
     const [ID_Tarjeta_RFID, setID_Tarjeta_RFID] = useState('');
+    const [Estado, setEstado] = useState('');
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const [tarjetas, setTarjetas] = useState([]); // Aquí almacenaremos las tarjetas RFID
     const cargos = [
-        { label: 'Administrador', value: 'administrador' },
-        { label: 'Empleado', value: 'empleado' },
-        { label: 'Invitado', value: 'invitado' },
+        {label: 'Administrador', value: 'administrador'},
+        {label: 'Empleado', value: 'empleado'},
+        {label: 'Invitado', value: 'invitado'},
+    ];
+    const estados = [
+        {label: 'Activo', value: 'activo'},
+        {label: 'Inactivo', value: 'inactivo'},
     ];
 
     // Obtener la lista de tarjetas RFID
@@ -52,7 +69,7 @@ const AddUserScreen = () => {
             return;
         }
 
-        if (!Correo || !Nombre || !Apellido || !Cargo || !Contraseña || !Telefono || !ID_Tarjeta_RFID) {
+        if (!Correo || !Nombre || !Apellido || !Cargo || !Contraseña || !Telefono || !ID_Tarjeta_RFID || !Estado) {
             setError("Todos los campos son obligatorios.");
             return;
         }
@@ -68,11 +85,12 @@ const AddUserScreen = () => {
             Contraseña,
             Telefono,
             ID_Tarjeta_RFID,
+            Estado,
         };
 
         fetch(`${API_URL}/api/users/register-user`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(userData),
         })
             .then((response) => response.json())
@@ -87,6 +105,7 @@ const AddUserScreen = () => {
                     setConfirmPassword("");
                     setTelefono("");
                     setID_Tarjeta_RFID("");
+                    setEstado("");
                     navigation.replace('ListUsers');
                 } else if (data.error) {
                     setError(data.error);
@@ -100,9 +119,10 @@ const AddUserScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
                 <Box safeArea p={5} bg="primary.50">
-                    <Text fontSize="2xl" fontWeight="bold" mb={5} textAlign={"center"} bg={"primary.500"} borderRadius={5} color={"white"}>
+                    <Text fontSize="2xl" fontWeight="bold" mb={5} textAlign={"center"} bg={"primary.500"}
+                          borderRadius={5} color={"white"}>
                         Agregar un nuevo usuario
                     </Text>
 
@@ -116,7 +136,7 @@ const AddUserScreen = () => {
                                 onChangeText={setNombre}
                                 placeholder="Ingresa el nombre"
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
                             />
                         </FormControl>
 
@@ -127,7 +147,7 @@ const AddUserScreen = () => {
                                 onChangeText={setApellido}
                                 placeholder="Ingresa el apellido"
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
                             />
                         </FormControl>
 
@@ -141,10 +161,10 @@ const AddUserScreen = () => {
                                     borderRadius: 8,
                                     padding: 2
                                 }}
-                                placeholderStyle={{ color: "grey" }}
-                                selectedTextStyle={{ color: "black" }}
-                                inputSearchStyle={{ height: 40 }}
-                                iconStyle={{ width: 20, height: 20 }}
+                                placeholderStyle={{color: "grey"}}
+                                selectedTextStyle={{color: "black"}}
+                                inputSearchStyle={{height: 40}}
+                                iconStyle={{width: 20, height: 20}}
                                 data={cargos}
                                 labelField="label"
                                 valueField="value"
@@ -162,7 +182,7 @@ const AddUserScreen = () => {
                                 onChangeText={setCorreo}
                                 placeholder="Ingresa el correo"
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
                             />
                         </FormControl>
 
@@ -174,7 +194,7 @@ const AddUserScreen = () => {
                                 placeholder="Ingresa la contraseña"
                                 secureTextEntry
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
                             />
                         </FormControl>
 
@@ -186,7 +206,7 @@ const AddUserScreen = () => {
                                 placeholder="Confirma la contraseña"
                                 secureTextEntry
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
                             />
                         </FormControl>
 
@@ -198,7 +218,33 @@ const AddUserScreen = () => {
                                 placeholder="Ingresa el teléfono"
                                 keyboardType="phone-pad"
                                 borderColor="primary.400"
-                                _focus={{ borderColor: "primary.500", bg: "primary.50" }}
+                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
+                            />
+                        </FormControl>
+
+
+
+                        <FormControl isRequired isInvalid={!!error}>
+                            <FormControl.Label>Estado</FormControl.Label>
+                            <Dropdown
+                                style={{
+                                    height: 50,
+                                    borderColor: "primary.400",
+                                    borderWidth: 1,
+                                    borderRadius: 8,
+                                    padding: 2
+                                }}
+                                placeholderStyle={{color: "grey"}}
+                                selectedTextStyle={{color: "black"}}
+                                inputSearchStyle={{height: 40}}
+                                iconStyle={{width: 20, height: 20}}
+                                data={estados}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="Estado del usuario"
+                                searchPlaceholder="Buscar..."
+                                value={Estado}
+                                onChange={item => setEstado(item.value)}
                             />
                         </FormControl>
 
@@ -212,8 +258,8 @@ const AddUserScreen = () => {
                                     borderRadius: 8,
                                     padding: 2
                                 }}
-                                placeholderStyle={{ color: "grey" }}
-                                selectedTextStyle={{ color: "black" }}
+                                placeholderStyle={{color: "grey"}}
+                                selectedTextStyle={{color: "black"}}
                                 data={tarjetas}  // Utilizamos las tarjetas obtenidas
                                 labelField="label"
                                 valueField="value"
@@ -223,10 +269,12 @@ const AddUserScreen = () => {
                             />
                         </FormControl>
 
-                        <Button mt={1} onPress={handleSubmit} rightIcon={<Icon as={Ionicons} name="person-add" size="sm" />}>
+                        <Button mt={1} onPress={handleSubmit}
+                                rightIcon={<Icon as={Ionicons} name="person-add" size="sm"/>}>
                             Agregar Usuario
                         </Button>
-                        <Button mt={1} onPress={() => navigation.goBack()} variant="outline" colorScheme="danger" leftIcon={<Icon as={Ionicons} name="close" size="sm" />}>
+                        <Button mt={1} onPress={() => navigation.goBack()} variant="outline" colorScheme="danger"
+                                leftIcon={<Icon as={Ionicons} name="close" size="sm"/>}>
                             Cancelar
                         </Button>
                     </VStack>
