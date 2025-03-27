@@ -43,7 +43,7 @@ const Stack = createStackNavigator();
 // Gestión Stack Navigator
 function ManagementStack() {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{ headerShown: true }}>
             <Stack.Screen name="GestiónStack " component={GestionStackScreen}/>
             <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
 

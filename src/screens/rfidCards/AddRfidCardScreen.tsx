@@ -16,6 +16,10 @@ import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import customTheme from "../../themes";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from '@react-navigation/native';
+import io from 'socket.io-client';
+
+let socket;
 
 const AddRfidCardsScreen = () => {
     const [codigoRFID, setCodigoRFID] = useState("");
@@ -24,26 +28,33 @@ const AddRfidCardsScreen = () => {
     const toast = useToast();
     const navigation = useNavigation();
 
+    // Configurar Socket.io cuando el componente se monta
     useEffect(() => {
-        const fetchLastRfid = async () => {
-            try {
-                const response = await fetch(`${API_URL}/api/rfidCards/last-rfid`);
-                const data = await response.json();
-                if (data.rfid && data.rfid !== codigoRFID) {
-                    setCodigoRFID(data.rfid);
-                }
-            } catch (error) {
-                console.error("Error fetching last RFID:", error);
-            }
-        };
+        socket = io(API_URL);
 
-        const interval = setInterval(fetchLastRfid, 1000);
-        return () => clearInterval(interval);
-    }, [codigoRFID]);
+        socket.on('newRFID', (data) => {
+            setCodigoRFID(data.Codigo_RFID);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+    // Limpiar el código cuando el componente recibe foco
+    useFocusEffect(
+        React.useCallback(() => {
+            setCodigoRFID("");
+            return () => {};
+        }, [])
+    );
 
     const handleRegister = async () => {
         if (!codigoRFID.trim()) {
-            toast.show({ description: "El código RFID es obligatorio." });
+            toast.show({
+                description: "El código RFID es obligatorio.",
+                placement: "top"
+            });
             return;
         }
 
@@ -56,20 +67,33 @@ const AddRfidCardsScreen = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ Codigo_RFID: codigoRFID, Estado: estado }),
+                body: JSON.stringify({
+                    Codigo_RFID: codigoRFID,
+                    Estado: estado
+                }),
             });
 
             const data = await response.json();
             if (response.ok) {
-                toast.show({ description: "Tarjeta RFID registrada con éxito." });
+                toast.show({
+                    description: "Tarjeta RFID registrada con éxito.",
+                    placement: "top"
+                });
                 setCodigoRFID("");
                 setEstado("Activo");
-                navigation.navigate('ListRfidCard'); // Navegar a la lista de tarjetas RFID
+                navigation.navigate('ListRfidCard');
             } else {
-                toast.show({ description: data.error || "Error al registrar." });
+                toast.show({
+                    description: data.error || "Error al registrar.",
+                    placement: "top"
+                });
             }
         } catch (error) {
-            toast.show({ description: "Error de conexión." });
+            console.error("Error:", error);
+            toast.show({
+                description: "Error de conexión.",
+                placement: "top"
+            });
         } finally {
             setIsLoading(false);
         }
@@ -86,20 +110,38 @@ const AddRfidCardsScreen = () => {
                         </VStack>
                     </HStack>
                 </HStack>
-                <VStack flex={1} p={5}>
-                    <Input
-                        placeholder="Código RFID"
-                        value={codigoRFID}
-                        isReadOnly
-                        InputLeftElement={<FontAwesome name="id-card" size={20} />}
-                    />
-                    <Text></Text>
-                    <Select selectedValue={estado} onValueChange={setEstado} mb={4}>
-                        <Select.Item label="Activo" value="Activo" />
-                        <Select.Item label="Inactivo" value="Inactivo" />
-                    </Select>
-                    <Button onPress={handleRegister} isLoading={isLoading}>
-                        {isLoading ? "Registrando..." : "Registrar"}
+                <VStack flex={1} p={5} space={4}>
+                    <VStack>
+                        <Text fontSize="md" mb={2}>Código RFID:</Text>
+                        <Input
+                            placeholder="Pase la tarjeta por el lector"
+                            value={codigoRFID}
+                            isReadOnly
+                            fontSize="md"
+                            InputLeftElement={<FontAwesome name="id-card" size={20} style={{marginLeft: 10}} />}
+                        />
+                    </VStack>
+
+                    <VStack>
+                        <Text fontSize="md" mb={2}>Estado:</Text>
+                        <Select
+                            selectedValue={estado}
+                            onValueChange={setEstado}
+                            fontSize="md"
+                        >
+                            <Select.Item label="Activo" value="Activo" />
+                            <Select.Item label="Inactivo" value="Inactivo" />
+                        </Select>
+                    </VStack>
+
+                    <Button
+                        onPress={handleRegister}
+                        isLoading={isLoading}
+                        mt={4}
+                        bg="secondary.500"
+                        _pressed={{ bg: "secondary.600" }}
+                    >
+                        {isLoading ? "Registrando..." : "Registrar Tarjeta"}
                     </Button>
                 </VStack>
             </Box>
