@@ -34,6 +34,15 @@ const DetailDocumentMovementsScreen = () => {
         }
     };
 
+    // Función para formatear fecha y hora por separado
+    const formatDate = (dateTime) => {
+        return dateTime ? new Date(dateTime).toLocaleDateString("es-ES") : "N/A";
+    };
+
+    const formatTime = (dateTime) => {
+        return dateTime ? new Date(dateTime).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }) : "N/A";
+    };
+
     // Si está cargando, mostramos un Spinner
     if (loading) return <Spinner size="lg" color="primary.500" />;
     // Si hay un error, mostramos un mensaje de error
@@ -63,12 +72,12 @@ const DetailDocumentMovementsScreen = () => {
 
                         <HStack space={2} alignItems="center">
                             <Ionicons name="calendar-outline" size={20} color="#0074E8" />
-                            <Text fontSize="md">Fecha: {movement?.Fecha_Hora_Salida}</Text>
+                            <Text fontSize="md">Fecha de Entrada: {formatDate(movement?.Fecha_Hora_Entrada)}</Text>
                         </HStack>
 
                         <HStack space={2} alignItems="center">
                             <Ionicons name="time-outline" size={20} color="#0074E8" />
-                            <Text fontSize="md">Hora: {movement?.Fecha_Hora_Entrada}</Text>
+                            <Text fontSize="md">Hora de Entrada: {formatTime(movement?.Fecha_Hora_Entrada)}</Text>
                         </HStack>
 
                         <HStack space={2} alignItems="center">
