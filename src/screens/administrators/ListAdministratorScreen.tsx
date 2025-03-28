@@ -110,15 +110,16 @@ const ListAdministratorScreen = () => {
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{flexGrow: 1}}>
                 <Box safeArea p={5} bg="background.light" flex={1}>
-                    <HStack alignItems="center" mb={4}>
+                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
+                            justifyContent="center">
                         <Ionicons name="person-circle-outline" size={28} color="#003469"/>
-                        <Text fontSize="xl" fontWeight="bold" ml={2} color="primary.500">
+                        <Text fontSize="xl" fontWeight="bold" ml={2} color="white">
                             Lista de Administradores
                         </Text>
                     </HStack>
 
                     {loading ? (
-                        <Spinner size="lg" color="primary.500"/>
+                        <Spinner size="lg" color="white"/>
                     ) : (
                         <FlatList
                             data={administrators}
@@ -127,17 +128,17 @@ const ListAdministratorScreen = () => {
                                 <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
                                     <HStack space={3} alignItems="center">
                                         <Avatar bg="primary.400" size="md">
-                                            {item.ID_Admin[0]}
+                                            {item.Nombre.charAt(0)}{item.Apellido.charAt(0)}
                                         </Avatar>
                                         <VStack flex={1}>
                                             <Text fontSize="md" fontWeight="bold">
-                                                {item.Nombre}
+                                                {item.Nombre} {item.Apellido}
                                             </Text>
                                             <Text fontSize="sm" color="gray.500">
-                                                {item.ID_Usuario}
+                                                {item.Cargo}
                                             </Text>
                                             <Text fontSize="xs" color="gray.400">
-                                                {item.Nivel_Permiso}
+                                                Permisos: {item.Nivel_Permiso}
                                             </Text>
                                         </VStack>
                                         <HStack space={2}>

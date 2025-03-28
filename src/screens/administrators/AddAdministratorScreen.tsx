@@ -95,7 +95,7 @@ const AddAdministratorScreen = () => {
                     status: "success"
                 });
                 setForm({ID_Usuario: "", nivelPermiso: ""});
-                navigation.navigate('ListAdministrator');
+                navigation.replace('ListAdministrator');
             } else {
                 toast.show({
                     title: "Error",

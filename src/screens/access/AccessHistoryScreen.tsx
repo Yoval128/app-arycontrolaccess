@@ -17,7 +17,7 @@ import {
 import { API_URL } from "@env";
 import customTheme from "../../themes/index";
 import { useFocusEffect } from '@react-navigation/native';
-import { MaterialIcons } from "@expo/vector-icons";
+import {Ionicons, MaterialIcons} from "@expo/vector-icons";
 
 const AccessHistoryScreen = () => {
     const [accessHistory, setAccessHistory] = useState([]);
@@ -123,9 +123,10 @@ const AccessHistoryScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <Box flex={1} bg="gray.50" safeArea>
-                <VStack px={4} pt={4} space={4}>
-                    <Heading size="lg">Historial de Accesos</Heading>
+            <Box flex={1} bg="gray.50" safeArea >
+                <VStack px={4} pt={4} space={4}  >
+                    <Heading size="lg" color="white" padding="2" bg="primary.500" p={4} borderRadius="md" shadow={3}
+                             justifyContent="center" textAlign="center" >Historial de Accesos</Heading>
                     <Text color="gray.600">
                         Registros de accesos detectados mediante tarjetas RFID
                     </Text>
