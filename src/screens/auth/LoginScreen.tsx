@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import {NativeBaseProvider, Box, Text, Input, FormControl, Button, Spinner, VStack, Icon} from 'native-base';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { NativeBaseProvider, Box, Text, Input, FormControl, Button, Spinner, VStack, Icon } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import customTheme from '../../themes/index';
-import {useAuth} from '../../context/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
 
 const LoginScreen = () => {
 
     console.log(API_URL);
 
     const navigation = useNavigation();
-    const {login} = useAuth(); // Usar el contexto de autenticación
+    const { login } = useAuth(); // Usar el contexto de autenticación
     const [correo, setCorreo] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [loading, setLoading] = useState(false);
@@ -51,7 +51,7 @@ const LoginScreen = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({correo, contrasena}),
+                body: JSON.stringify({ correo, contrasena }),
             });
 
             // Parsear el cuerpo de la respuesta solo una vez
@@ -86,6 +86,7 @@ const LoginScreen = () => {
                     ) : (
                         <Text color={isApiConnected ? "green.500" : "red.500"} fontSize="md" textAlign="center">
                             {isApiConnected ? "-API está trabajando correctamente..." : "No se pudo conectar con la API..."}
+                            {API_URL}
                         </Text>
                     )}
 
@@ -96,20 +97,26 @@ const LoginScreen = () => {
                     {error ? <Text color="red.500" textAlign="center">{error}</Text> : null}
 
                     <FormControl>
-                        <FormControl.Label _text={{color: 'white'}}>Correo</FormControl.Label>
+                        <FormControl.Label _text={{ color: 'white' }}>Correo</FormControl.Label>
                         <Input
                             value={correo}
                             onChangeText={setCorreo}
                             placeholder="Ingresa tu correo"
                             bg="white"
                             borderRadius="md"
-                            InputLeftElement={<Icon as={<Ionicons name="mail-outline"/>} size={5} ml={2}
-                                                    color="gray.400"/>}
+                            InputLeftElement={<Icon as={<Ionicons name="mail-outline" />} size={5} ml={2} color="gray.400" />}
+                            _focus={{
+                                borderColor: 'transparent', // Elimina el borde azul del foco
+                                backgroundColor: 'white', // Mantén el fondo blanco al enfocar
+                            }}
+                            _hover={{
+                                backgroundColor: 'white', // Mantén el fondo blanco al pasar el cursor por encima
+                            }}
                         />
                     </FormControl>
 
                     <FormControl>
-                        <FormControl.Label _text={{color: 'white'}}>Contraseña</FormControl.Label>
+                        <FormControl.Label _text={{ color: 'white' }}>Contraseña</FormControl.Label>
                         <Input
                             value={contrasena}
                             onChangeText={setContrasena}
@@ -117,8 +124,14 @@ const LoginScreen = () => {
                             type="password"
                             bg="white"
                             borderRadius="md"
-                            InputLeftElement={<Icon as={<Ionicons name="lock-closed-outline"/>} size={5} ml={2}
-                                                    color="gray.400"/>}
+                            InputLeftElement={<Icon as={<Ionicons name="lock-closed-outline" />} size={5} ml={2} color="gray.400" />}
+                            _focus={{
+                                borderColor: 'transparent', // Elimina el borde azul del foco
+                                backgroundColor: 'white', // Mantén el fondo blanco al enfocar
+                            }}
+                            _hover={{
+                                backgroundColor: 'white', // Mantén el fondo blanco al pasar el cursor por encima
+                            }}
                         />
                     </FormControl>
 
@@ -128,7 +141,17 @@ const LoginScreen = () => {
                         borderRadius="md"
                         isLoading={loading}
                         isDisabled={!isApiConnected}
-                        _text={{fontSize: 'md'}}
+                        _text={{ fontSize: 'md' }}
+                        _pressed={{
+                            backgroundColor: 'transparent', // Evita cualquier cambio de color de fondo al presionar
+                            opacity: 1, // No cambiar la opacidad al presionar
+                        }}
+                        _focus={{
+                            backgroundColor: 'transparent', // Evita el cambio de color de fondo al estar enfocado
+                        }}
+                        _hover={{
+                            backgroundColor: 'transparent', // Evita el cambio de color al pasar el cursor por encima
+                        }}
                     >
                         Iniciar sesión
                     </Button>
