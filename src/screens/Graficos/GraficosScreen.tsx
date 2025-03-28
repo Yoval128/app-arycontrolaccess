@@ -1,100 +1,146 @@
 import React, { useEffect, useState } from 'react';
-import { NativeBaseProvider, Box, Text, VStack, HStack, Heading, Spinner, ScrollView } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { BarChart, PieChart } from 'react-native-chart-kit';
-import customTheme from "../../themes/index";
-import { API_URL } from "@env";
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeBaseProvider, Box, Text, VStack, HStack, Spinner, ScrollView } from 'native-base';
+import { MaterialIcons } from '@expo/vector-icons';
+import { API_URL } from '@env'; // Asegúrate de tener correctamente la URL de la API en el archivo .env
 
 const GraficosScreen = () => {
     const [lastUser, setLastUser] = useState(null);
     const [lastMovement, setLastMovement] = useState(null);
-    const [totalDocuments, setTotalDocuments] = useState(0);
-    const [lastRFID, setLastRFID] = useState(null);
+    const [totalDocuments, setTotalDocuments] = useState(null);
+    const [lastRfidCards, setLastRfidCards] = useState(null);
     const [loading, setLoading] = useState(true);
 
-
-    const fetchData = async () => {
-        try {
-            // Obtener token de AsyncStorage si es necesario
-            const token = await AsyncStorage.getItem('userToken');
-
-            // Hacer todas las peticiones necesarias
-            const [userResponse] = await Promise.all([
-                fetch(`${API_URL}/api/users/last-user`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                // Aquí deberías agregar las otras llamadas para lastMovement, totalDocuments y lastRFID
-                // fetch(...),
-                // fetch(...),
-                // fetch(...)
-            ]);
-
-            // Procesar respuesta del último usuario
-            if (userResponse.ok) {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userResponse = await fetch(`${API_URL}/api/users/last-user`);
                 const userData = await userResponse.json();
-                setLastUser(userData);
-            } else {
-                console.error('Error al obtener último usuario:', userResponse.status);
+                if (userResponse.ok) {
+                    setLastUser(userData);
+                } else {
+                    console.error('Error al obtener el último usuario:', userData.error);
+                }
+
+                const movementResponse = await fetch(`${API_URL}/api/documentMovements/last-movement`);
+                const movementData = await movementResponse.json();
+                if (movementResponse.ok) {
+                    setLastMovement(movementData);
+                } else {
+                    console.error('Error al obtener el último movimiento:', movementData.error);
+                }
+
+                const documentsResponse = await fetch(`${API_URL}/api/documents/total-documents`);
+                const documentsData = await documentsResponse.json();
+                if (documentsData.totalDocuments !== undefined) {
+                    setTotalDocuments(documentsData.totalDocuments);
+                } else {
+                    console.error("Error al obtener el total de documentos");
+                }
+
+            } catch (error) {
+                console.error('Error al hacer la solicitud:', error);
+            } finally {
+                setLoading(false);
             }
+        };
 
-            // Aquí procesarías las otras respuestas...
-
-            setLoading(false);
-        } catch (error) {
-            console.error('Error al obtener datos:', error);
-            setLoading(false);
-        }
-    };
+        fetchData();
+    }, []);
 
     if (loading) {
         return (
-            <NativeBaseProvider theme={customTheme}>
-                <Box safeArea p={5} bg="background.light" flex={1} justifyContent="center" alignItems="center">
-                    <Spinner size="lg" />
+            <NativeBaseProvider>
+                <Box safeArea p={5} flex={1} justifyContent="center" alignItems="center" bg="coolGray.100">
+                    <Spinner size="lg" color="primary.500" />
                 </Box>
             </NativeBaseProvider>
         );
     }
 
     return (
-        <NativeBaseProvider theme={customTheme}>
+        <NativeBaseProvider>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <Box safeArea p={5} bg="background.light" flex={1}>
-                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
-                        <Ionicons name="stats-chart" size={25} color="white" />
-                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
-                            Estadisticas
+                <VStack space={4} px={5} py={4}>
+                    {/* Información del último usuario */}
+                    <Box
+                        bg="white"
+                        p={5}
+                        borderRadius="lg"
+                        shadow={3}
+                        borderColor="gray.300"
+                        borderWidth={1}
+                    >
+                        <Text fontSize="2xl" fontWeight="bold" color="primary.600">
+                            Último usuario registrado:
                         </Text>
-                    </HStack>
+                        <Text fontSize="lg" color="gray.700">
+                            {lastUser ? `${lastUser.Nombre} ${lastUser.Apellido}` : 'No hay usuarios registrados'}
+                        </Text>
 
-                    <VStack space={4}>
-                        <Box bg="white" p={4} borderRadius="md" shadow={2}>
-                            <Text fontSize="lg" fontWeight="bold">Último usuario registrado:</Text>
-                            <Text>{lastUser ? `${lastUser.Nombre} ${lastUser.Apellido}` : 'No hay usuarios registrados'}</Text>
-                        </Box>
+                        {lastUser && (
+                            <>
+                                <HStack alignItems="center" mt={3}>
+                                    <MaterialIcons name="email" size={18} color="gray" />
+                                    <Text fontSize="md" color="gray.600" ml={2}>
+                                        Correo: {lastUser.Correo}
+                                    </Text>
+                                </HStack>
+                                <HStack alignItems="center" mt={2}>
+                                    <MaterialIcons name="work" size={18} color="gray" />
+                                    <Text fontSize="md" color="gray.600" ml={2}>
+                                        Cargo: {lastUser.Cargo}
+                                    </Text>
+                                </HStack>
+                            </>
+                        )}
+                    </Box>
 
-                        <Box bg="white" p={4} borderRadius="md" shadow={2}>
-                            <Text fontSize="lg" fontWeight="bold">Último movimiento registrado:</Text>
-                            <Text>{lastMovement ? `Movimiento: ${lastMovement.tipo_movimiento} - Documento: ${lastMovement.documento_id}` : 'No hay movimientos registrados'}</Text>
+                    {/* Información del último movimiento */}
+                    {lastMovement && (
+                        <Box
+                            bg="white"
+                            p={5}
+                            borderRadius="lg"
+                            shadow={3}
+                            borderColor="gray.300"
+                            borderWidth={1}
+                        >
+                            <Text fontSize="2xl" fontWeight="bold" color="primary.600">
+                                Último movimiento:
+                            </Text>
+                            <Text fontSize="lg" color="gray.700" mt={2}>
+                                Usuario: {lastMovement.Nombre_Usuario} {lastMovement.Apellido_Usuario}
+                            </Text>
+                            <Text fontSize="md" color="gray.600" mt={2}>
+                                Documento: {lastMovement.Nombre_Documento}
+                            </Text>
+                            <Text fontSize="md" color="gray.600" mt={2}>
+                                Fecha y hora de salida: {new Date(lastMovement.Fecha_Hora_Salida).toLocaleString()}
+                            </Text>
+                            <Text fontSize="md" color="gray.600" mt={2}>
+                                Estado: {lastMovement.Estado}
+                            </Text>
                         </Box>
+                    )}
 
-                        <Box bg="white" p={4} borderRadius="md" shadow={2}>
-                            <Text fontSize="lg" fontWeight="bold">Total de documentos:</Text>
-                            <Text>{totalDocuments}</Text>
+                    {totalDocuments && (
+                        <Box
+                            bg="white"
+                            p={5}
+                            borderRadius="lg"
+                            shadow={3}
+                            borderColor="gray.300"
+                            borderWidth={1}
+                        >
+                            <Text fontSize="2xl" fontWeight="bold" color="primary.600">
+                                Total de Documentos:
+                            </Text>
+                            <Text fontSize="lg" color="gray.700" mt={2}>
+                                Total de Documentos: {totalDocuments}
+                            </Text>
                         </Box>
-
-                        <Box bg="white" p={4} borderRadius="md" shadow={2}>
-                            <Text fontSize="lg" fontWeight="bold">Último registro de tarjeta RFID:</Text>
-                            <Text>{lastRFID ? `Tarjeta: ${lastRFID.numero_tarjeta} - Asignada a: ${lastRFID.usuario_id}` : 'No hay tarjetas registradas'}</Text>
-                        </Box>
-                    </VStack>
-                </Box>
+                    )}
+                </VStack>
             </ScrollView>
         </NativeBaseProvider>
     );
