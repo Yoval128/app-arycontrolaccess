@@ -86,7 +86,13 @@ const ListRfidCardScreen = () => {
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
                 <VStack flex={1} p={5}>
-                    <Text fontSize="xl" fontFamily="Poppins-Bold" mb={4}>Lista de Tarjetas RFID</Text>
+                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
+                        <Ionicons name="card-outline" size={25} color="white"/>
+                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
+                            Lista de Tarjetas RFID
+                        </Text>
+                    </HStack>
+
                     <FlatList
                         data={paginatedData} // Datos filtrados para la página actual
                         keyExtractor={(item) => item.ID_Tarjeta_RFID.toString()}

@@ -48,6 +48,8 @@ npx expo install @react-native-async-storage/async-storage
 npx expo install react-native-dotenv
 npx expo install react-native-element-dropdown
 npx expo install expo-splash-screen
+expo install react-native-paper react-native-pdf
+
 ```
 * Instalar expo-router
   npx expo install expo-router
@@ -88,7 +90,7 @@ npx expo install expo-file-system expo-sharing
 npm install recharts
 npm install react-native-chart-kit react-native-svg
 
-
+npm install react-pdf @react-pdf/renderer
 ## Estructura del Proyecto
 
 ## Trabajar con ramas

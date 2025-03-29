@@ -35,6 +35,7 @@ import UploadExcelUsersScreen from "../screens/excelUpload/UploadExcelUsersScree
 import ExportPDFUserScreen from "../screens/excelUpload/ExportPDFUserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import GraficosScreen from "../screens/Graficos/GraficosScreen";
+import PreviewDocumentScreen from "../screens/PreviewDocument/PreviewDocumentScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -43,8 +44,8 @@ const Stack = createStackNavigator();
 // Gestión Stack Navigator
 function ManagementStack() {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: true }}>
-            <Stack.Screen name="GestiónStack " component={GestionStackScreen} />
+        <Stack.Navigator screenOptions={{headerShown: true}}>
+            <Stack.Screen name="GestiónStack " component={GestionStackScreen}/>
             <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
 
             <Stack.Screen name="ListUsers" component={ListUsersScreen}/>
@@ -84,8 +85,9 @@ function ManagementStack() {
 
             <Stack.Screen name="Login" component={LoginScreen}/>
 
-            <Stack.Screen name="Graficas" component={GraficosScreen} />
-        </Stack.Navigator>
+            <Stack.Screen name="Graficas" component={GraficosScreen}/>
+
+           </Stack.Navigator>
     )
         ;
 }
