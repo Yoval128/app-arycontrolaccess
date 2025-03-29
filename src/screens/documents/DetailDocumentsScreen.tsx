@@ -20,6 +20,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import customTheme from "../../themes/index";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DetailDocumentsScreen = () => {
     const [document, setDocument] = useState(null);
@@ -29,14 +30,37 @@ const DetailDocumentsScreen = () => {
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [password, setPassword] = useState("");
     const [userPassword] = useState("1234"); // Aquí deberías obtener la contraseña real del usuario desde la API o contexto
-
     const route = useRoute();
     const navigation = useNavigation();
     const { documento_id } = route.params;
+    const [user, setUser] = useState(null);
+
+    const getUserData = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('usuario');
+
+            if (userData) {
+                const parsedUser = JSON.parse(userData);
+                setUser(parsedUser);
+                console.log('Correo del usuario:', parsedUser.email);  // Aquí mostramos el correo
+            }
+        } catch (err) {
+            setError('Error al cargar los datos del usuario');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
+        getUserData();
+    }, []);
 
     useEffect(() => {
         fetchDocumentDetails();
     }, []);
+
+
 
     const fetchDocumentDetails = async () => {
         try {
@@ -83,16 +107,48 @@ const DetailDocumentsScreen = () => {
         }
     };
 
-    const handlePasswordSubmit = () => {
-        if (password === userPassword) {
-            setIsPasswordDialogOpen(false);
-            setPassword("");
-            handleDownloadAndOpen();
-        } else {
-            alert("Contraseña incorrecta");
-            setPassword("");
+    const handlePasswordSubmit = async () => {
+        try {
+            // Obtener el correo almacenado en AsyncStorage
+            const userData = await AsyncStorage.getItem('usuario');
+            if (!userData) {
+                alert("No se encontró información del usuario.");
+                return;
+            }
+
+            const { email } = JSON.parse(userData);
+
+            // Verificar que la contraseña no esté vacía
+            if (!password.trim()) {
+                alert("Por favor, ingresa una contraseña.");
+                return;
+            }
+
+            // Enviar solicitud a la API para validar la contraseña
+            const response = await fetch(`${API_URL}/api/auth/verify-user-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.isValid) {
+                setIsPasswordDialogOpen(false);
+                setPassword("");
+                handleDownloadAndOpen();  // Llamar a la función de descarga
+            } else {
+                alert("Contraseña incorrecta.");
+                setPassword("");
+            }
+        } catch (error) {
+            console.error("Error al verificar la contraseña:", error);
+            alert("Error al verificar la contraseña. Inténtalo nuevamente.");
         }
     };
+
 
     if (loading) return <Spinner size="lg" color="primary.500" />;
     if (error) return <Text color="red.500">Error: {error}</Text>;
