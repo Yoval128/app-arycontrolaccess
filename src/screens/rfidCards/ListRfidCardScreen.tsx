@@ -18,6 +18,7 @@ import { API_URL } from "@env";
 import customTheme from "../../themes/index";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import {useAuth} from "../../context/AuthProvider";
 
 const ListRfidCardScreen = () => {
     const [tarjetas, setTarjetas] = useState([]);
@@ -29,6 +30,7 @@ const ListRfidCardScreen = () => {
     const toast = useToast();
     const navigation = useNavigation();
     const route = useRoute();
+    const {user} = useAuth();
 
     // Obtener tarjetas RFID
     const fetchTarjetas = async () => {
@@ -135,7 +137,7 @@ const ListRfidCardScreen = () => {
             </AlertDialog>
 
             {/* Botón flotante */}
-
+            {user.role === 'administrador' && (
             <IconButton
                 icon={<Ionicons name="add" size={40} color="white"/>}
                 bg="primary.500"
@@ -145,7 +147,7 @@ const ListRfidCardScreen = () => {
                 right={4}
                 onPress={() => navigation.navigate("AddRfidCard")} // Asegúrate de tener esta ruta para agregar usuarios
             />
-
+            )}
         </NativeBaseProvider>
     );
 };

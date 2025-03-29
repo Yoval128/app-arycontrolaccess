@@ -171,8 +171,8 @@ const ListUsersScreen = () => {
                         <Menu
                             trigger={triggerProps => (
                                 <IconButton{...triggerProps}
-                                    icon={<Ionicons name="ellipsis-vertical" size={22} color="primary.500"/>}
-                                    variant="ghost"/>
+                                           icon={<Ionicons name="ellipsis-vertical" size={22} color="primary.500"/>}
+                                           variant="ghost"/>
                             )}>
                             <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir archivo</Menu.Item>
                             <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
@@ -188,7 +188,9 @@ const ListUsersScreen = () => {
                             renderItem={({item}) => (
                                 <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
                                     <HStack space={3} alignItems="center">
-                                        <Avatar bg="primary.400" size="md" borderColor={item?.Estado === 'activo' ? 'green.400' : 'red.400'} borderWidth={3}>
+                                        <Avatar bg="primary.400" size="md"
+                                                borderColor={item?.Estado === 'activo' ? 'green.400' : 'red.400'}
+                                                borderWidth={3}>
                                             {item.Nombre[0]}
                                         </Avatar>
 

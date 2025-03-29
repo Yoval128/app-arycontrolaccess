@@ -17,15 +17,14 @@ import {Ionicons} from "@expo/vector-icons";
 import React, {useEffect, useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAuth } from "../../context/AuthProvider";
+import {useAuth} from "../../context/AuthProvider";
 
-const ProfileUserScreen = ({ navigation }) => {
+const ProfileUserScreen = ({navigation}) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const toast = useToast();
-    const { logout } = useAuth(); // Utiliza la función logout del contexto
-
+    const {logout} = useAuth(); // Utiliza la función logout del contexto
 
     const getUserData = async () => {
         try {
@@ -117,23 +116,23 @@ const ProfileUserScreen = ({ navigation }) => {
                     {/* User Info */}
                     <VStack space={4} alignItems="center">
                         {/* Avatar or Image */}
-                        <Avatar size="xl" bg="teal.500" source={{uri: user?.photoUrl || ''}} />
+                        <Avatar size="xl" bg="teal.500" source={{uri: user?.photoUrl || ''}}/>
                         <Text fontSize="2xl" fontWeight="bold">{user?.nombre} {user?.apellido}</Text>
                         <Text>Email:</Text>
                         <Text fontSize="md" color="gray.500">{user?.email}</Text>
                         <HStack alignItems="center" space={2}>
                             <Text>Rol:</Text>
-                            <Icon as={Ionicons} name="briefcase" size="sm" color="gray.500" />
+                            <Icon as={Ionicons} name="briefcase" size="sm" color="gray.500"/>
                             <Text fontSize="lg" fontWeight="bold">{user?.rol}</Text>
                         </HStack>
                         <HStack alignItems="center" space={2}>
                             <Text>Telefono:</Text>
-                            <Icon as={Ionicons} name="call" size="sm" color="gray.500" />
+                            <Icon as={Ionicons} name="call" size="sm" color="gray.500"/>
                             <Text fontSize="lg" fontWeight="bold">{user?.telefono}</Text>
                         </HStack>
                         <HStack alignItems="center" space={2}>
                             <Text>Tarjeta:</Text>
-                            <Icon as={Ionicons} name="card" size="sm" color="gray.500" />
+                            <Icon as={Ionicons} name="card" size="sm" color="gray.500"/>
                             <Text fontSize="lg" fontWeight="bold">{user?.id_tarjeta_rfid}</Text>
                         </HStack>
                     </VStack>

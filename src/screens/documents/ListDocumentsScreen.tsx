@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -14,11 +14,12 @@ import {
     AlertDialog,
     Button
 } from "native-base";
-import { Ionicons } from '@expo/vector-icons';
+import {Ionicons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
-import { API_URL } from "@env";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { ActivityIndicator } from "react-native";
+import {API_URL} from "@env";
+import {useNavigation, useRoute} from "@react-navigation/native";
+import {ActivityIndicator} from "react-native";
+import {useAuth} from "../../context/AuthProvider";
 
 const ListDocumentsScreen = () => {
     const [documents, setDocuments] = useState([]);
@@ -28,7 +29,7 @@ const ListDocumentsScreen = () => {
     const [error, setError] = useState(null);
     const navigation = useNavigation();
     const route = useRoute(); // Usar useRoute para acceder a los parámetros
-
+    const {user} = useAuth();
     useEffect(() => {
         fetchDocuments();
     }, []);
@@ -72,11 +73,11 @@ const ListDocumentsScreen = () => {
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{flexGrow: 1}}>
                 <Box safeArea p={5} bg="background.light" flex={1}>
-                    <HStack alignItems="center" mb={4}>
+                    <HStack alignItems="center" mb={4} bg="primary.500" p={4} borderRadius="md" shadow={3}
+                            justifyContent="center">>
                         <Ionicons name="document-text-outline" size={28} color="#003469"/>
-                        <Text fontSize="xl" fontWeight="bold" ml={2} color="primary.500">
-                            Lista de Documentos
-                        </Text>
+                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
+                            Lista de Documentos</Text>
                     </HStack>
 
                     {loading ? (
@@ -138,6 +139,19 @@ const ListDocumentsScreen = () => {
                     </AlertDialog.Footer>
                 </AlertDialog.Content>
             </AlertDialog>
+
+            {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddDocument")}
+                />
+            )}
+
         </NativeBaseProvider>
     );
 };

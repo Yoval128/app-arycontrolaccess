@@ -19,6 +19,7 @@ import customTheme from "../../themes/index";
 import {API_URL} from "@env";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
+import {useAuth} from "../../context/AuthProvider";
 
 const ListAdministratorScreen = () => {
     const [administrators, setAdministrators] = useState([]);
@@ -29,6 +30,7 @@ const ListAdministratorScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const [usuarios, setUsuarios] = useState([]);
+    const {user} = useAuth();
 
     useEffect(() => {
         fetchAdministrators();
@@ -181,6 +183,7 @@ const ListAdministratorScreen = () => {
             </AlertDialog>
 
             {/* Agregar un registrp */}
+            {user.role === 'administrador' && (
             <IconButton
                 icon={<Ionicons name="add" size={40} color="white"/>}
                 bg="primary.500"
@@ -188,8 +191,8 @@ const ListAdministratorScreen = () => {
                 position="absolute"
                 bottom={4}
                 right={4}
-                onPress={() => navigation.navigate("AddAdministrator")} // Asegúrate de tener esta ruta para agregar usuarios
-            />
+                onPress={() => navigation.navigate("AddAdministrator")}
+            />)}
         </NativeBaseProvider>
     );
 };

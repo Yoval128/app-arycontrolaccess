@@ -15,6 +15,7 @@ import {API_URL} from '@env';
 import customTheme from "../../themes/index";
 import {useNavigation} from "@react-navigation/native";
 import {Dropdown} from "react-native-element-dropdown";
+import {useAuth} from "../../context/AuthProvider";
 
 const nivelesPermiso = [
     {label: "Básico", value: "Básico"},
@@ -27,12 +28,13 @@ const AddAdministratorScreen = () => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
     const [usuarios, setUsuarios] = useState([]);
+    const navigation = useNavigation();
+    const {user} = useAuth();
     const [form, setForm] = useState({
         ID_Usuario: "",  // Inicialmente vacío
         nivelPermiso: ""
     });
 
-    const navigation = useNavigation();
 
     // Función para obtener los usuarios
     const fetchUsuarios = async () => {

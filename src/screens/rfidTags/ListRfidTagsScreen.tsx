@@ -12,29 +12,34 @@ import {
     IconButton,
     useToast,
     AlertDialog,
-    Button
+    Button, Icon
 } from "native-base";
 import { API_URL } from "@env";
 import customTheme from "../../themes/index";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import {useAuth} from "../../context/AuthProvider";
 
 const ListRfidTagsScreen = () => {
     const [tags, setTags] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isOpen, setIsOpen] = useState(false); // State for AlertDialog
-    const [selectedTag, setSelectedTag] = useState(null); // Track the selected tag to delete
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedTag, setSelectedTag] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const pageSize = 8;
     const toast = useToast();
     const navigation = useNavigation();
     const route = useRoute();
+    const {user} = useAuth();
 
-    // Función para obtener las etiquetas RFID
     const fetchTags = async () => {
         setLoading(true);
         try {
             const response = await fetch(`${API_URL}/api/rfidTags/tags-list`);
             const data = await response.json();
             setTags(data);
+            setTotalPages(Math.ceil(data.length / pageSize));
         } catch (error) {
             console.error("Error al obtener etiquetas:", error);
         } finally {
@@ -44,29 +49,26 @@ const ListRfidTagsScreen = () => {
 
     useEffect(() => {
         fetchTags();
-
-        // Recargar las etiquetas si el parámetro shouldReload está presente
         if (route.params?.shouldReload) {
-            fetchTags();  // Recargar la lista de etiquetas
+            fetchTags();
         }
-    }, [route.params?.shouldReload]);  // Dependemos de shouldReload
+    }, [route.params?.shouldReload]);
 
     const handleDelete = async () => {
         try {
             const response = await fetch(`${API_URL}/api/rfidTags/delete-tag/${selectedTag.ID_Etiqueta_RFID}`, {
                 method: "DELETE",
             });
-
             if (response.ok) {
                 toast.show({ description: "Etiqueta eliminada con éxito." });
-                fetchTags(); // Vuelve a cargar las etiquetas después de eliminar
+                fetchTags();
             } else {
                 toast.show({ description: "Error al eliminar la etiqueta." });
             }
         } catch (error) {
             toast.show({ description: "Error al eliminar." });
         } finally {
-            setIsOpen(false); // Cierra el dialogo
+            setIsOpen(false);
         }
     };
 
@@ -74,23 +76,32 @@ const ListRfidTagsScreen = () => {
         return <Spinner color={customTheme.colors.primary[500]} size="lg" />;
     }
 
+    const paginatedData = tags.slice((page - 1) * pageSize, page * pageSize);
+
     return (
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
                 <VStack flex={1} p={5}>
-                    <Text fontSize="xl" fontFamily="Poppins-Bold" mb={4}>Lista de Etiquetas RFID</Text>
+                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
+                        <Ionicons name="barcode-outline" size={25} color="white"/>
+                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
+                            Lista de Etiquetas RFID
+                        </Text>
+                    </HStack>
+
                     <FlatList
-                        data={tags}
+                        data={paginatedData}
                         keyExtractor={(item) => item.ID_Etiqueta_RFID.toString()}
                         renderItem={({ item }) => (
                             <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white"
                                     borderRadius="md" shadow={2}>
                                 <VStack>
-                                    <Text fontSize="md" fontFamily="Poppins-Bold">{item.Codigo_RFID}</Text>
-                                    <Badge
-                                        colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
+                                    <HStack alignItems="center">
+                                        <Icon as={Ionicons} name="pricetag-outline" size={5} color="gray.500" mr={2} />
+                                        <Text fontSize="md" fontFamily="Poppins-Bold">{item.Codigo_RFID}</Text>
+                                    </HStack>
+                                    <Badge colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
                                 </VStack>
-
                                 <HStack space={2}>
                                     <IconButton
                                         icon={<Ionicons name="eye-outline" size={20} color="blue" />}
@@ -104,13 +115,19 @@ const ListRfidTagsScreen = () => {
                                         icon={<Ionicons name="trash-outline" size={20} color="red" />}
                                         onPress={() => {
                                             setSelectedTag(item);
-                                            setIsOpen(true); // Open the confirmation dialog
+                                            setIsOpen(true);
                                         }}
                                     />
                                 </HStack>
                             </HStack>
+
                         )}
                     />
+                    <HStack justifyContent="center" space={3} mt={4}>
+                        <Button isDisabled={page === 1} onPress={() => setPage(page - 1)}>Anterior</Button>
+                        <Text fontSize="md">{page} de {totalPages}</Text>
+                        <Button isDisabled={page === totalPages} onPress={() => setPage(page + 1)}>Siguiente</Button>
+                    </HStack>
                 </VStack>
             </ScrollView>
 
@@ -124,6 +141,18 @@ const ListRfidTagsScreen = () => {
                     </AlertDialog.Footer>
                 </AlertDialog.Content>
             </AlertDialog>
+
+            {/* Agregar un registrp */}
+            {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddAdministrator")}
+                />)}
         </NativeBaseProvider>
     );
 };
