@@ -3,7 +3,9 @@ import React, {createContext, useState, useContext, ReactNode} from "react";
 interface User {
     role: "administrador" | "empleado" | "invitado" | null;
     token: string | null;
+    email: string | null;
 }
+
 
 interface AuthContextType {
     user: User;
@@ -17,9 +19,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({children}: { children: ReactNode }) => {
     const [user, setUser] = useState<User>({role: null, token: null});
 
-    const login = (role: User["role"], token: string) => {
-        setUser({role, token});
+    const login = (role: User["role"], token: string, email: string) => {
+        setUser({role, token, email});
     };
+
 
     const logout = () => {
         setUser({role: null, token: null});

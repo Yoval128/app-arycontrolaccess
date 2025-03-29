@@ -12,6 +12,7 @@ export default function AppNavigator() {
     const { user } = useAuth();
     console.log("# AppNavigator #");
     console.log("Datos de usuarios en AppNavigator: "+ user.role);
+    console.log("Datos de usuarios en AppNavigator: "+ user.email);
     console.log("-----------------------------------------------");
     return (
         <NavigationContainer>
