@@ -17,7 +17,7 @@ import {
 import { API_URL } from "@env";
 import customTheme from "../../themes/index";
 import { useFocusEffect } from '@react-navigation/native';
-import {Ionicons, MaterialIcons} from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 const AccessHistoryScreen = () => {
     const [accessHistory, setAccessHistory] = useState([]);
@@ -53,7 +53,7 @@ const AccessHistoryScreen = () => {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [toast]);
 
     // Cargar datos cuando el componente recibe foco
     useFocusEffect(
@@ -61,6 +61,16 @@ const AccessHistoryScreen = () => {
             fetchAccessHistory();
         }, [fetchAccessHistory])
     );
+
+    // Establecer intervalo para refrescar cada 5 segundos
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchAccessHistory();
+        }, 5000); // Refrescar cada 5 segundos
+
+        // Limpiar el intervalo cuando el componente se desmonte
+        return () => clearInterval(interval);
+    }, [fetchAccessHistory]);
 
     // Función para formatear la fecha
     const formatDateTime = (dateTimeString) => {

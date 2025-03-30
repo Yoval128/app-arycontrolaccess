@@ -37,8 +37,7 @@ const GestionStackScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} bg="gray.50">
-                <Box safeArea p={4} flex={1}>
+             <Box safeArea p={4} flex={1}>
                     {/* Header */}
                     <VStack space={2} mb={6}>
                         <HStack justifyContent="space-between" alignItems="center">
@@ -79,7 +78,6 @@ const GestionStackScreen = () => {
                         </SimpleGrid>
                     </Box>
                 </Box>
-            </ScrollView>
         </NativeBaseProvider>
     );
 };
