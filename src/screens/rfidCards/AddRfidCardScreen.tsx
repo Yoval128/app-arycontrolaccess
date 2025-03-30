@@ -32,12 +32,17 @@ const AddRfidCardsScreen = () => {
     useEffect(() => {
         socket = io(API_URL);
 
+        socket.on('connect', () => {
+            console.log('Conectado a Socket.io');
+        });
+
         socket.on('newRFID', (data) => {
             setCodigoRFID(data.Codigo_RFID);
         });
 
         return () => {
             socket.disconnect();
+            console.log('Desconectado de Socket.io');
         };
     }, []);
 
@@ -98,6 +103,24 @@ const AddRfidCardsScreen = () => {
             setIsLoading(false);
         }
     };
+
+    const fetchLastRFID = async () => {
+        try {
+            const response = await fetch("http://192.168.1.9/lastRFID"); // Nuevo endpoint en el ESP32
+            const text = await response.text();
+            if (text && text !== codigoRFID) {
+                setCodigoRFID(text);
+            }
+        } catch (error) {
+            console.error("Error al obtener RFID:", error);
+        }
+    };
+
+    // Polling cada 2 segundos
+    useEffect(() => {
+        const interval = setInterval(fetchLastRFID, 2000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <NativeBaseProvider theme={customTheme}>

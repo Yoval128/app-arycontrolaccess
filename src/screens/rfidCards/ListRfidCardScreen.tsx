@@ -14,23 +14,31 @@ import {
     AlertDialog,
     Button
 } from "native-base";
-import { API_URL } from "@env";
+import { API_URL, SOCKET_IO } from "@env";
 import customTheme from "../../themes/index";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {useAuth} from "../../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
+import io from 'socket.io-client';  // Asegúrate de tener Socket.IO instalado
 
 const ListRfidCardScreen = () => {
     const [tarjetas, setTarjetas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTarjeta, setSelectedTarjeta] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1); // Página actual
-    const [itemsPerPage] = useState(10); // Elementos por página
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
     const toast = useToast();
     const navigation = useNavigation();
     const route = useRoute();
-    const {user} = useAuth();
+    const { user } = useAuth();
+
+    // Crear la conexión al servidor ESP32 mediante Socket.IO
+    const socket = io(SOCKET_IO);
+
+    socket.on('connect', () => {
+        console.log('Conectado al servidor de socket en:', SOCKET_IO);
+    });
 
     // Obtener tarjetas RFID
     const fetchTarjetas = async () => {
@@ -51,6 +59,11 @@ const ListRfidCardScreen = () => {
         if (route.params?.shouldReload) {
             fetchTarjetas();
         }
+
+        // Limpiar la conexión cuando el componente se desmonte
+        return () => {
+            socket.disconnect();
+        };
     }, [route.params?.shouldReload]);
 
     const handleDelete = async () => {
@@ -82,19 +95,38 @@ const ListRfidCardScreen = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = tarjetas.slice(startIndex, startIndex + itemsPerPage);
 
+    // Función para cambiar el modo en el ESP32
+    // Función para cambiar el modo en el ESP32 (usando HTTP)
+    const handleSetMode = async (mode) => {
+        try {
+            const response = await fetch(`http://192.168.1.9/setMode?mode=${mode}`);
+            const text = await response.text();
+            toast.show({
+                description: `Modo cambiado a: ${mode}`,
+                status: "success",
+            });
+            console.log("Respuesta del ESP32:", text);
+        } catch (error) {
+            toast.show({
+                description: "Error al cambiar el modo",
+                status: "error",
+            });
+            console.error("Error:", error);
+        }
+    };
     return (
         <NativeBaseProvider theme={customTheme}>
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
                 <VStack flex={1} p={5}>
                     <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
-                        <Ionicons name="card-outline" size={25} color="white"/>
+                        <Ionicons name="card-outline" size={25} color="white" />
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
                             Lista de Tarjetas RFID
                         </Text>
                     </HStack>
 
                     <FlatList
-                        data={paginatedData} // Datos filtrados para la página actual
+                        data={paginatedData}
                         keyExtractor={(item) => item.ID_Tarjeta_RFID.toString()}
                         renderItem={({ item }) => (
                             <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white" borderRadius="md" shadow={2}>
@@ -144,15 +176,18 @@ const ListRfidCardScreen = () => {
 
             {/* Botón flotante */}
             {user.role === 'administrador' && (
-            <IconButton
-                icon={<Ionicons name="add" size={40} color="white"/>}
-                bg="primary.500"
-                borderRadius="full"
-                position="absolute"
-                bottom={4}
-                right={4}
-                onPress={() => navigation.navigate("AddRfidCard")} // Asegúrate de tener esta ruta para agregar usuarios
-            />
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white" />}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={async () => {
+                        await handleSetMode("newCard"); // Cambia el modo antes de navegar
+                        navigation.navigate("AddRfidCard");
+                    }}
+                />
             )}
         </NativeBaseProvider>
     );

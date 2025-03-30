@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "SmartAryRFID",
-    "slug": "smartary-rfid",
-    "version": "1.0.0",
+    "slug": "app",
+    "version": "1.1.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

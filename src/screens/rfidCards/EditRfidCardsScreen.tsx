@@ -20,7 +20,7 @@ import {Dropdown} from "react-native-element-dropdown";
 const EditRfidCardsScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const {tarjeta_id} = route.params; // ID de la tarjeta RFID para editar
+    const {tarjeta_id} = route.params;
 
     const [rfidCard, setRfidCard] = useState(null);
     const [loading, setLoading] = useState(true);
