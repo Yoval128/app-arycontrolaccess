@@ -12,14 +12,10 @@ import {
     Box,
     Heading
 } from "native-base";
-import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import customTheme from "../../themes";
 import { useNavigation } from "@react-navigation/native";
-import { useFocusEffect } from '@react-navigation/native';
-import io from 'socket.io-client';
-
-let socket;
+import { useFocusEffect } from "@react-navigation/native";
 
 const AddRfidCardsScreen = () => {
     const [codigoRFID, setCodigoRFID] = useState("");
@@ -28,25 +24,25 @@ const AddRfidCardsScreen = () => {
     const toast = useToast();
     const navigation = useNavigation();
 
-    // Configurar Socket.io cuando el componente se monta
+    // Obtener el último RFID desde la API cada 3 segundos
+    const fetchLastRfid = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/rfidCards/read-rfid`);
+            const data = await response.json();
+            if (data.length > 0) {
+                const last = data[data.length - 1].rfid;
+                setCodigoRFID(last); // Actualiza el código RFID con la última lectura
+            }
+        } catch (error) {
+            console.error("Error obteniendo RFID:", error);
+        }
+    };
+
     useEffect(() => {
-        socket = io(API_URL);
-
-        socket.on('connect', () => {
-            console.log('Conectado a Socket.io');
-        });
-
-        socket.on('newRFID', (data) => {
-            setCodigoRFID(data.Codigo_RFID);
-        });
-
-        return () => {
-            socket.disconnect();
-            console.log('Desconectado de Socket.io');
-        };
+        const interval = setInterval(fetchLastRfid, 3000); // Consultar cada 3 segundos
+        return () => clearInterval(interval);
     }, []);
 
-    // Limpiar el código cuando el componente recibe foco
     useFocusEffect(
         React.useCallback(() => {
             setCodigoRFID("");
@@ -58,7 +54,7 @@ const AddRfidCardsScreen = () => {
         if (!codigoRFID.trim()) {
             toast.show({
                 description: "El código RFID es obligatorio.",
-                placement: "top"
+                placement: "top",
             });
             return;
         }
@@ -74,7 +70,7 @@ const AddRfidCardsScreen = () => {
                 },
                 body: JSON.stringify({
                     Codigo_RFID: codigoRFID,
-                    Estado: estado
+                    Estado: estado,
                 }),
             });
 
@@ -82,45 +78,27 @@ const AddRfidCardsScreen = () => {
             if (response.ok) {
                 toast.show({
                     description: "Tarjeta RFID registrada con éxito.",
-                    placement: "top"
+                    placement: "top",
                 });
                 setCodigoRFID("");
                 setEstado("Activo");
-                navigation.navigate('ListRfidCard');
+                navigation.navigate("ListRfidCard");
             } else {
                 toast.show({
                     description: data.error || "Error al registrar.",
-                    placement: "top"
+                    placement: "top",
                 });
             }
         } catch (error) {
             console.error("Error:", error);
             toast.show({
                 description: "Error de conexión.",
-                placement: "top"
+                placement: "top",
             });
         } finally {
             setIsLoading(false);
         }
     };
-
-    const fetchLastRFID = async () => {
-        try {
-            const response = await fetch("http://192.168.1.9/lastRFID"); // Nuevo endpoint en el ESP32
-            const text = await response.text();
-            if (text && text !== codigoRFID) {
-                setCodigoRFID(text);
-            }
-        } catch (error) {
-            console.error("Error al obtener RFID:", error);
-        }
-    };
-
-    // Polling cada 2 segundos
-    useEffect(() => {
-        const interval = setInterval(fetchLastRFID, 2000);
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <NativeBaseProvider theme={customTheme}>
@@ -138,10 +116,9 @@ const AddRfidCardsScreen = () => {
                         <Text fontSize="md" mb={2}>Código RFID:</Text>
                         <Input
                             placeholder="Pase la tarjeta por el lector"
-                            value={codigoRFID}
+                            value={codigoRFID || "Esperando lectura..."}
                             isReadOnly
                             fontSize="md"
-                            InputLeftElement={<FontAwesome name="id-card" size={20} style={{marginLeft: 10}} />}
                         />
                     </VStack>
 

@@ -35,9 +35,6 @@ import UploadExcelUsersScreen from "../screens/excelUpload/UploadExcelUsersScree
 import ExportPDFUserScreen from "../screens/excelUpload/ExportPDFUserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import GraficosScreen from "../screens/Graficos/GraficosScreen";
-import PreviewDocumentScreen from "../screens/PreviewDocument/PreviewDocumentScreen";
-import ReadRFIDScreen from "../screens/test/RfidTestScreen";
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -86,9 +83,8 @@ function ManagementStack() {
 
             <Stack.Screen name="Login" component={LoginScreen}/>
 
-            <Stack.Screen name="Graficas" component={ReadRFIDScreen}/>
+            <Stack.Screen name="Graficas" component={GraficosScreen}/>
 
-            <Stack.Screen name="testRfid" component={ReadRFIDScreen}/>
            </Stack.Navigator>
     )
         ;

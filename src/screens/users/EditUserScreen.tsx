@@ -58,14 +58,18 @@ const EditUserScreen = () => {
     };
 
     const fetchTarjetas = async () => {
+        setLoading(true); // Activar el estado de carga
         try {
             const response = await fetch(`${API_URL}/api/rfidCards/rfid-list-disponible`);
             const data = await response.json();
-            setTarjetas(data.map(item => ({label: item.Codigo_RFID, value: item.ID_Tarjeta_RFID})));
+            setTarjetas(data.map(item => ({ label: item.Codigo_RFID, value: item.ID_Tarjeta_RFID })));
         } catch (error) {
             console.error("Error al obtener las tarjetas RFID:", error);
+        } finally {
+            setLoading(false); // Desactivar el estado de carga cuando la respuesta llega o si ocurre un error
         }
     };
+
 
     const handleSave = async () => {
         if (!user.Nombre || !user.Apellido || !user.Correo || !user.Cargo || !user.Telefono || !user.Estado) {
@@ -121,18 +125,26 @@ const EditUserScreen = () => {
                                 <Input value={user.Telefono} keyboardType="phone-pad"
                                        onChangeText={(text) => setUser({...user, Telefono: text})}/>
                             </FormControl>
-                            <FormControl><FormControl.Label>Contraseña (dejar en blanco si no se
+                            <FormControl><FormControl.Label >Contraseña (dejar en blanco si no se
                                 cambia)</FormControl.Label>
-                                <Input value={password} secureTextEntry onChangeText={setPassword}/>
+                                <Input value={password} secureTextEntry onChangeText={setPassword} placeholder={"*********"}/>
                             </FormControl>
                             <FormControl><FormControl.Label>Cargo</FormControl.Label>
                                 <Dropdown data={cargos} labelField="label" valueField="value" value={user.Cargo}
                                           onChange={(item) => setUser({...user, Cargo: item.value})}/>
                             </FormControl>
                             <FormControl><FormControl.Label>ID Tarjeta RFID</FormControl.Label>
-                                <Dropdown data={tarjetas} labelField="label" valueField="value"
-                                          value={user.ID_Tarjeta_RFID}
-                                          onChange={(item) => setUser({...user, ID_Tarjeta_RFID: item.value})}/>
+                                {loading ? (
+                                    <ActivityIndicator size="large" color="#0000ff" />  // Indicador de carga mientras se obtienen los datos
+                                ) : (
+                                    <Dropdown
+                                        data={tarjetas}
+                                        labelField="label"
+                                        valueField="value"
+                                        value={user.ID_Tarjeta_RFID}
+                                        onChange={(item) => setUser({ ...user, ID_Tarjeta_RFID: item.value })}
+                                    />
+                                )}
                             </FormControl>
                             <FormControl>
                                 <FormControl.Label>Estado</FormControl.Label>

@@ -33,6 +33,7 @@
     "expo-sharing": "~13.0.1",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
+    "expo-system-ui": "~4.0.8",
     "native-base": "^3.4.28",
     "nativewind": "^4.1.23",
     "normalize-css-color": "^1.0.2",
@@ -45,7 +46,6 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-mime-types": "^2.5.0",
-    "react-native-nfc-manager": "^3.16.1",
     "react-native-paper": "^5.13.1",
     "react-native-pdf": "^6.7.7",
     "react-native-prompt-android": "^1.1.0",
@@ -60,8 +60,7 @@
     "recharts": "^2.15.1",
     "socket.io-client": "^4.8.1",
     "tailwind-rn": "^4.2.0",
-    "tailwindcss": "^3.4.17",
-    "expo-system-ui": "~4.0.8"
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
