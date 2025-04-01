@@ -1,7 +1,5 @@
 import React, {useState, useEffect} from "react";
 import {
-    View,
-    Text,
     NativeBaseProvider,
     ScrollView,
     Box,
@@ -10,286 +8,409 @@ import {
     Button,
     Icon,
     VStack,
-    HStack
+    HStack,
+    Text,
+    Heading,
+    Select,
+    CheckIcon,
+    Divider,
+    useToast,
+    Alert,
+    Spinner, IconButton
 } from "native-base";
 import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Ionicons} from '@expo/vector-icons';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
-import {Dropdown} from "react-native-element-dropdown";
 import {API_URL} from '@env';
 
 const AddUserScreen = () => {
     const navigation = useNavigation();
+    const toast = useToast();
 
-    const [Nombre, setNombre] = useState('');
-    const [Apellido, setApellido] = useState('');
-    const [Cargo, setCargo] = useState('');
-    const [Correo, setCorreo] = useState('');
-    const [Contraseña, setContraseña] = useState('');
+    // Estado del formulario
+    const [formData, setFormData] = useState({
+        Nombre: '',
+        Apellido: '',
+        Cargo: '',
+        Correo: '',
+        Contraseña: '',
+        Telefono: '',
+        ID_Tarjeta_RFID: '',
+        Estado: 'activo'
+    });
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [Telefono, setTelefono] = useState('');
-    const [ID_Tarjeta_RFID, setID_Tarjeta_RFID] = useState('');
-    const [Estado, setEstado] = useState('');
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
-    const [tarjetas, setTarjetas] = useState([]); // Aquí almacenaremos las tarjetas RFID
+    const [loading, setLoading] = useState(false);
+    const [tarjetas, setTarjetas] = useState([]);
+    const [fetchingTarjetas, setFetchingTarjetas] = useState(true);
+
+    // Opciones para los selects
     const cargos = [
         {label: 'Administrador', value: 'administrador'},
         {label: 'Empleado', value: 'empleado'},
         {label: 'Invitado', value: 'invitado'},
     ];
+
     const estados = [
         {label: 'Activo', value: 'activo'},
         {label: 'Inactivo', value: 'inactivo'},
     ];
 
-    // Obtener la lista de tarjetas RFID
+    // Obtener tarjetas RFID disponibles
     useEffect(() => {
-        fetch(`${API_URL}/api/rfidCards/rfid-list-disponible`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data && data.length > 0) {
-                    setTarjetas(data.filter((item) => {
-                        return !item.ID_Usuario;
-                    }).map((item) => ({
+        const fetchTarjetas = async () => {
+            try {
+                setFetchingTarjetas(true);
+                const response = await fetch(`${API_URL}/api/rfidCards/rfid-list-disponible`);
+                const data = await response.json();
+
+                const tarjetasDisponibles = data
+                    .filter(item => !item.ID_Usuario)
+                    .map(item => ({
                         label: item.Codigo_RFID,
-                        value: item.ID_Tarjeta_RFID,
-                    })));
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching tarjetas RFID", error);
-            });
-    }, []);
+                        value: item.ID_Tarjeta_RFID
+                    }));
 
-    const handleSubmit = () => {
-        if (Contraseña !== confirmPassword) {
-            setError("Las contraseñas no coinciden.");
-            return;
-        }
-
-        if (!Correo || !Nombre || !Apellido || !Cargo || !Contraseña || !Telefono || !ID_Tarjeta_RFID || !Estado) {
-            setError("Todos los campos son obligatorios.");
-            return;
-        }
-
-        setError("");
-        setMessage("");
-
-        const userData = {
-            Nombre,
-            Apellido,
-            Cargo,
-            Correo,
-            Contraseña,
-            Telefono,
-            ID_Tarjeta_RFID,
-            Estado,
+                setTarjetas(tarjetasDisponibles);
+            } catch (error) {
+                console.error("Error fetching tarjetas RFID:", error);
+                toast.show({
+                    title: "Error",
+                    description: "No se pudieron cargar las tarjetas RFID",
+                    status: "error"
+                });
+            } finally {
+                setFetchingTarjetas(false);
+            }
         };
 
-        fetch(`${API_URL}/api/users/register-user`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(userData),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.message) {
-                    setMessage(data.message);
-                    setNombre("");
-                    setApellido("");
-                    setCargo("");
-                    setCorreo("");
-                    setContraseña("");
-                    setConfirmPassword("");
-                    setTelefono("");
-                    setID_Tarjeta_RFID("");
-                    setEstado("");
-                    navigation.replace('ListUsers');
-                } else if (data.error) {
-                    setError(data.error);
-                }
-            })
-            .catch((error) => {
-                setError("Error al registrarse. Inténtalo de nuevo.");
-                console.error(error);
+        fetchTarjetas();
+    }, []);
+
+    // Manejar cambios en el formulario
+    const handleChange = (field, value) => {
+        setFormData({
+            ...formData,
+            [field]: value
+        });
+    };
+
+    // Validar el formulario
+    const validateForm = () => {
+        const requiredFields = ['Nombre', 'Apellido', 'Cargo', 'Correo', 'Contraseña', 'Telefono', 'Estado'];
+        const missingFields = requiredFields.filter(field => !formData[field]);
+
+        if (missingFields.length > 0) {
+            toast.show({
+                title: "Campos requeridos",
+                description: `Los siguientes campos son obligatorios: ${missingFields.join(', ')}`,
+                status: "error",
+                placement: "top"
             });
+            return false;
+        }
+
+        if (formData.Contraseña !== confirmPassword) {
+            toast.show({
+                title: "Error",
+                description: "Las contraseñas no coinciden",
+                status: "error",
+                placement: "top"
+            });
+            return false;
+        }
+
+        if (formData.Contraseña.length < 6) {
+            toast.show({
+                title: "Error",
+                description: "La contraseña debe tener al menos 6 caracteres",
+                status: "error",
+                placement: "top"
+            });
+            return false;
+        }
+
+        return true;
+    };
+
+    // Enviar el formulario
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/api/users/register-user`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Error al registrar el usuario");
+            }
+
+            toast.show({
+                title: "Éxito",
+                description: "Usuario registrado correctamente",
+                status: "success",
+                placement: "top"
+            });
+
+            // Limpiar formulario
+            setFormData({
+                Nombre: '',
+                Apellido: '',
+                Cargo: '',
+                Correo: '',
+                Contraseña: '',
+                Telefono: '',
+                ID_Tarjeta_RFID: '',
+                Estado: 'activo'
+            });
+            setConfirmPassword("");
+
+            // Redirigir después de 1.5 segundos
+            setTimeout(() => navigation.goBack(), 1500);
+        } catch (error) {
+            console.error("Registration error:", error);
+            toast.show({
+                title: "Error",
+                description: error.message,
+                status: "error",
+                placement: "top"
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
-                <Box safeArea p={5} bg="primary.50">
-                    <Text fontSize="2xl" fontWeight="bold" mb={5} textAlign={"center"} bg={"primary.500"}
-                          borderRadius={5} color={"white"}>
-                        Agregar un nuevo usuario
-                    </Text>
-
-                    <Text color="red">Rellenar todos los campos</Text>
-
-                    <VStack space={4} background={"white"} padding={5} borderRadius="md">
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Nombre</FormControl.Label>
-                            <Input
-                                value={Nombre}
-                                onChangeText={setNombre}
-                                placeholder="Ingresa el nombre"
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
+            <ScrollView contentContainerStyle={{flexGrow: 1}} bg="gray.50">
+                <Box safeArea flex={1} p={4}>
+                    {/* Header */}
+                    <Box bg="primary.600" p={4} borderBottomRadius="xl" shadow={4}>
+                        <HStack justifyContent="space-between" alignItems="center">
+                            <HStack alignItems="center" space={3}>
+                                <Icon as={Ionicons} name="person-add" size={6} color="white" />
+                                <Heading color="white" size="lg">Nuevo Usuario</Heading>
+                            </HStack>
+                            <IconButton
+                                icon={<Icon as={Ionicons} name="arrow-back" size={6} color="white" />}
+                                onPress={() => navigation.goBack()}
                             />
-                        </FormControl>
+                        </HStack>
+                    </Box>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Apellido</FormControl.Label>
-                            <Input
-                                value={Apellido}
-                                onChangeText={setApellido}
-                                placeholder="Ingresa el apellido"
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
-                            />
-                        </FormControl>
+                    {/* Form Section */}
+                    <Box mt={4} bg="white" p={5} borderRadius="xl" shadow={2}>
+                        <VStack space={4}>
+                            {/* Personal Info */}
+                            <Heading size="md" color="primary.600">Información Personal</Heading>
+                            <Divider mb={2} />
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Cargo</FormControl.Label>
-                            <Dropdown
-                                style={{
-                                    height: 50,
-                                    borderColor: "primary.400",
-                                    borderWidth: 1,
-                                    borderRadius: 8,
-                                    padding: 2
-                                }}
-                                placeholderStyle={{color: "grey"}}
-                                selectedTextStyle={{color: "black"}}
-                                inputSearchStyle={{height: 40}}
-                                iconStyle={{width: 20, height: 20}}
-                                data={cargos}
-                                labelField="label"
-                                valueField="value"
-                                placeholder="Selecciona un cargo"
-                                searchPlaceholder="Buscar..."
-                                value={Cargo}
-                                onChange={item => setCargo(item.value)}
-                            />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormControl.Label>Nombre</FormControl.Label>
+                                <Input
+                                    value={formData.Nombre}
+                                    onChangeText={(text) => handleChange('Nombre', text)}
+                                    placeholder="Ingrese el nombre"
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="person" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Correo</FormControl.Label>
-                            <Input
-                                value={Correo}
-                                onChangeText={setCorreo}
-                                placeholder="Ingresa el correo"
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
-                            />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormControl.Label>Apellido</FormControl.Label>
+                                <Input
+                                    value={formData.Apellido}
+                                    onChangeText={(text) => handleChange('Apellido', text)}
+                                    placeholder="Ingrese el apellido"
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="people" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Contraseña</FormControl.Label>
-                            <Input
-                                value={Contraseña}
-                                onChangeText={setContraseña}
-                                placeholder="Ingresa la contraseña"
-                                secureTextEntry
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
-                            />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormControl.Label>Correo Electrónico</FormControl.Label>
+                                <Input
+                                    value={formData.Correo}
+                                    onChangeText={(text) => handleChange('Correo', text)}
+                                    placeholder="Ingrese el correo"
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="mail" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Confirmar Contraseña</FormControl.Label>
-                            <Input
-                                value={confirmPassword}
-                                onChangeText={setConfirmPassword}
-                                placeholder="Confirma la contraseña"
-                                secureTextEntry
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
-                            />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormControl.Label>Teléfono</FormControl.Label>
+                                <Input
+                                    value={formData.Telefono}
+                                    onChangeText={(text) => handleChange('Telefono', text)}
+                                    placeholder="Ingrese el teléfono"
+                                    keyboardType="phone-pad"
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="call" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Teléfono</FormControl.Label>
-                            <Input
-                                value={Telefono}
-                                onChangeText={setTelefono}
-                                placeholder="Ingresa el teléfono"
-                                keyboardType="phone-pad"
-                                borderColor="primary.400"
-                                _focus={{borderColor: "primary.500", bg: "primary.50"}}
-                            />
-                        </FormControl>
+                            {/* Security Info */}
+                            <Heading size="md" color="primary.600" mt={4}>Seguridad</Heading>
+                            <Divider mb={2} />
 
+                            <FormControl isRequired>
+                                <FormControl.Label>Contraseña</FormControl.Label>
+                                <Input
+                                    value={formData.Contraseña}
+                                    onChangeText={(text) => handleChange('Contraseña', text)}
+                                    placeholder="Ingrese la contraseña"
+                                    secureTextEntry
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="lock-closed" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
+                            <FormControl isRequired>
+                                <FormControl.Label>Confirmar Contraseña</FormControl.Label>
+                                <Input
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    placeholder="Confirme la contraseña"
+                                    secureTextEntry
+                                    InputLeftElement={
+                                        <Icon as={Ionicons} name="lock-closed" size={5} ml={2} color="gray.400" />
+                                    }
+                                />
+                            </FormControl>
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>Estado</FormControl.Label>
-                            <Dropdown
-                                style={{
-                                    height: 50,
-                                    borderColor: "primary.400",
-                                    borderWidth: 1,
-                                    borderRadius: 8,
-                                    padding: 2
-                                }}
-                                placeholderStyle={{color: "grey"}}
-                                selectedTextStyle={{color: "black"}}
-                                inputSearchStyle={{height: 40}}
-                                iconStyle={{width: 20, height: 20}}
-                                data={estados}
-                                labelField="label"
-                                valueField="value"
-                                placeholder="Estado del usuario"
-                                searchPlaceholder="Buscar..."
-                                value={Estado}
-                                onChange={item => setEstado(item.value)}
-                            />
-                        </FormControl>
+                            {/* Configuration */}
+                            <Heading size="md" color="primary.600" mt={4}>Configuración</Heading>
+                            <Divider mb={2} />
 
-                        <FormControl isRequired isInvalid={!!error}>
-                            <FormControl.Label>ID Tarjeta RFID</FormControl.Label>
-                            <Dropdown
-                                style={{
-                                    height: 50,
-                                    borderColor: "primary.400",
-                                    borderWidth: 1,
-                                    borderRadius: 8,
-                                    padding: 2
-                                }}
-                                placeholderStyle={{color: "grey"}}
-                                selectedTextStyle={{color: "black"}}
-                                data={tarjetas}  // Utilizamos las tarjetas obtenidas
-                                labelField="label"
-                                valueField="value"
-                                placeholder="Selecciona una tarjeta RFID"
-                                value={ID_Tarjeta_RFID}
-                                onChange={item => setID_Tarjeta_RFID(item.value)}
-                            />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormControl.Label>Cargo</FormControl.Label>
+                                <Select
+                                    selectedValue={formData.Cargo}
+                                    minWidth="200"
+                                    accessibilityLabel="Seleccione un cargo"
+                                    placeholder="Seleccione un cargo"
+                                    _selectedItem={{
+                                        bg: "primary.500",
+                                        endIcon: <CheckIcon size="5" />
+                                    }}
+                                    onValueChange={(value) => handleChange('Cargo', value)}
+                                    leftIcon={
+                                        <Icon as={Ionicons} name="briefcase" size={5} ml={2} color="gray.400" />
+                                    }
+                                >
+                                    {cargos.map((cargo, index) => (
+                                        <Select.Item
+                                            key={index}
+                                            label={cargo.label}
+                                            value={cargo.value}
+                                        />
+                                    ))}
+                                </Select>
+                            </FormControl>
 
-                        <Button mt={1} onPress={handleSubmit}
-                                rightIcon={<Icon as={Ionicons} name="person-add" size="sm"/>}>
-                            Agregar Usuario
-                        </Button>
-                        <Button mt={1} onPress={() => navigation.goBack()} variant="outline" colorScheme="danger"
-                                leftIcon={<Icon as={Ionicons} name="close" size="sm"/>}>
-                            Cancelar
-                        </Button>
-                    </VStack>
+                            <FormControl isRequired>
+                                <FormControl.Label>Estado</FormControl.Label>
+                                <Select
+                                    selectedValue={formData.Estado}
+                                    minWidth="200"
+                                    accessibilityLabel="Seleccione un estado"
+                                    placeholder="Seleccione un estado"
+                                    _selectedItem={{
+                                        bg: "primary.500",
+                                        endIcon: <CheckIcon size="5" />
+                                    }}
+                                    onValueChange={(value) => handleChange('Estado', value)}
+                                    leftIcon={
+                                        <Icon as={MaterialCommunityIcons} name="account-check" size={5} ml={2} color="gray.400" />
+                                    }
+                                >
+                                    {estados.map((estado, index) => (
+                                        <Select.Item
+                                            key={index}
+                                            label={estado.label}
+                                            value={estado.value}
+                                        />
+                                    ))}
+                                </Select>
+                            </FormControl>
 
-                    {error ? (
-                        <Box bg="red.100" p={3} mb={4} borderRadius="md">
-                            <Text color="red.600">{error}</Text>
-                        </Box>
-                    ) : null}
+                            <FormControl>
+                                <FormControl.Label>Tarjeta RFID</FormControl.Label>
+                                {fetchingTarjetas ? (
+                                    <HStack space={2} alignItems="center">
+                                        <Spinner size="sm" />
+                                        <Text>Cargando tarjetas disponibles...</Text>
+                                    </HStack>
+                                ) : (
+                                    <Select
+                                        selectedValue={formData.ID_Tarjeta_RFID}
+                                        minWidth="200"
+                                        accessibilityLabel="Seleccione una tarjeta"
+                                        placeholder={tarjetas.length ? "Seleccione una tarjeta" : "No hay tarjetas disponibles"}
+                                        _selectedItem={{
+                                            bg: "primary.500",
+                                            endIcon: <CheckIcon size="5" />
+                                        }}
+                                        onValueChange={(value) => handleChange('ID_Tarjeta_RFID', value)}
+                                        isDisabled={tarjetas.length === 0}
+                                        leftIcon={
+                                            <Icon as={MaterialCommunityIcons} name="card-account-details" size={5} ml={2} color="gray.400" />
+                                        }
+                                    >
+                                        {tarjetas.map((tarjeta, index) => (
+                                            <Select.Item
+                                                key={index}
+                                                label={tarjeta.label}
+                                                value={tarjeta.value}
+                                            />
+                                        ))}
+                                    </Select>
+                                )}
+                                {tarjetas.length === 0 && !fetchingTarjetas && (
+                                    <Text fontSize="xs" color="gray.500" mt={1}>
+                                        No hay tarjetas RFID disponibles
+                                    </Text>
+                                )}
+                            </FormControl>
 
-                    {message ? (
-                        <Box bg="green.100" p={3} mb={4} borderRadius="md">
-                            <Text color="green.600">{message}</Text>
-                        </Box>
-                    ) : null}
+                            {/* Action Buttons */}
+                            <Button.Group space={2} mt={6}>
+                                <Button
+                                    flex={1}
+                                    variant="outline"
+                                    colorScheme="danger"
+                                    onPress={() => navigation.goBack()}
+                                    leftIcon={<Icon as={Ionicons} name="close" size={5} />}
+                                    isDisabled={loading}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    flex={1}
+                                    colorScheme="primary"
+                                    onPress={handleSubmit}
+                                    leftIcon={<Icon as={Ionicons} name="save" size={5} />}
+                                    isLoading={loading}
+                                    isLoadingText="Registrando..."
+                                >
+                                    Registrar
+                                </Button>
+                            </Button.Group>
+                        </VStack>
+                    </Box>
                 </Box>
             </ScrollView>
         </NativeBaseProvider>

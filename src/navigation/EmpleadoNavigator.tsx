@@ -35,6 +35,7 @@ import UploadExcelUsersScreen from "../screens/excelUpload/UploadExcelUsersScree
 import ExportPDFUserScreen from "../screens/excelUpload/ExportPDFUserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import EmpleadoDashboardScreen from "../screens/dashboards/EmpleadoDashboardScreen";
+import GraficosScreen from "../screens/Graficos/GraficosScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -43,7 +44,7 @@ function EmpleadoStack() {
    console.log("Rutas de Empleado");
     return (
         <Stack.Navigator>
-            <Stack.Screen name="EmpleadoStack " component={EmpleadoStackScreen}/>
+            <Stack.Screen name="EmpleadoStack " component={EmpleadoStackScreen} options={{headerShown: false}} />
             <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
 
             <Stack.Screen name="ListUsers" component={ListUsersScreen}/>
@@ -83,9 +84,10 @@ function EmpleadoStack() {
 
             <Stack.Screen name="Login" component={LoginScreen}/>
 
+            <Stack.Screen name="Graficas" component={GraficosScreen}/>
+
         </Stack.Navigator>
-    )
-        ;
+    );
 }
 
 // Navegación principal para Empleado

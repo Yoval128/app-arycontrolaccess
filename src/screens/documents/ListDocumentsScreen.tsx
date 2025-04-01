@@ -104,21 +104,45 @@ const ListDocumentsScreen = () => {
                                             </Text>
                                         </VStack>
                                         <HStack space={2}>
-                                            <IconButton
-                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
-                                            />
-                                            <IconButton
-                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
-                                                onPress={() => navigation.navigate("EditDocuments", {documento_id: item.ID_Documento})}
-                                            />
-                                            <IconButton
-                                                icon={<Ionicons name="trash-outline" size={20} color="red"/>}
-                                                onPress={() => {
-                                                    setSelectedDocument(item.ID_Documento);
-                                                    setIsOpen(true);
-                                                }}
-                                            />
+                                            {user.role === 'administrador' && (
+                                                <>
+                                                    <IconButton
+                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                        onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
+                                                    />
+                                                    <IconButton
+                                                        icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                        onPress={() => navigation.navigate("EditDocuments", {documento_id: item.ID_Documento})}
+                                                    />
+                                                    <IconButton
+                                                        icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                        onPress={() => {
+                                                            setSelectedDocument(item.ID_Documento);
+                                                            setIsOpen(true);
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
+                                            {user.role === 'empleado' && (
+                                                <>
+                                                    <IconButton
+                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                        onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
+                                                    />
+                                                    <IconButton
+                                                        icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                        onPress={() => navigation.navigate("EditDocuments", {documento_id: item.ID_Documento})}
+                                                    />
+                                                </>
+                                            )}
+                                            {user.role === 'invitado' && (
+                                                <>
+                                                    <IconButton
+                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                        onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
+                                                    />
+                                                </>
+                                            )}
                                         </HStack>
                                     </HStack>
                                 </Box>
@@ -141,6 +165,17 @@ const ListDocumentsScreen = () => {
             </AlertDialog>
 
             {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddDocument")}
+                />
+            )}
+            {user.role === 'empleado' && (
                 <IconButton
                     icon={<Ionicons name="add" size={40} color="white"/>}
                     bg="primary.500"

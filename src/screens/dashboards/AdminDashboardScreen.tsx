@@ -1,11 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { NativeBaseProvider, Box, Text, VStack, HStack, Heading, Spinner, ScrollView, Icon, Badge, Divider , Button} from 'native-base';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { BarChart, PieChart } from 'react-native-chart-kit';
+import React, {useEffect, useState} from 'react';
+import {
+    NativeBaseProvider,
+    Box,
+    Text,
+    VStack,
+    HStack,
+    Heading,
+    Spinner,
+    ScrollView,
+    Icon,
+    Badge,
+    Divider,
+    Button
+} from 'native-base';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import {useFocusEffect} from '@react-navigation/native';
+import {BarChart, PieChart} from 'react-native-chart-kit';
 import customTheme from "../../themes/index";
-import { API_URL } from "@env";
-import { useNavigation } from '@react-navigation/native';
+import {API_URL} from "@env";
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AdminDashboardScreen = () => {
@@ -83,7 +96,7 @@ const AdminDashboardScreen = () => {
             const cargosResponse = await fetch(`${API_URL}/api/users/cargos`);
             const cargosData = await cargosResponse.json();
 
-            const cargos = { Admin: 0, Invitado: 0, Empleado: 0 };
+            const cargos = {Admin: 0, Invitado: 0, Empleado: 0};
             cargosData.forEach(item => {
                 if (item.Cargo.toLowerCase() === 'administrador') cargos.Admin = item.cantidad;
                 if (item.Cargo.toLowerCase() === 'invitado') cargos.Invitado = item.cantidad;
@@ -130,7 +143,7 @@ const AdminDashboardScreen = () => {
     };
 
     // Card de estadísticas
-    const StatCard = ({ icon, title, value, color, iconName }) => (
+    const StatCard = ({icon, title, value, color, iconName}) => (
         <Box
             flex={1}
             p={3}
@@ -156,7 +169,7 @@ const AdminDashboardScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} bg="gray.50">
+            <ScrollView contentContainerStyle={{flexGrow: 1}} bg="gray.50">
                 <Box safeArea p={4} flex={1}>
                     {/* Header */}
                     <HStack justifyContent="space-between" alignItems="center" mb={4}>
@@ -222,7 +235,7 @@ const AdminDashboardScreen = () => {
                     {error && (
                         <Box bg="red.100" p={3} borderRadius="md" mb={4}>
                             <HStack space={2} alignItems="center">
-                                <Icon as={Ionicons} name="warning" color="red.500" />
+                                <Icon as={Ionicons} name="warning" color="red.500"/>
                                 <Text color="red.600">{error}</Text>
                             </HStack>
                         </Box>
@@ -234,12 +247,13 @@ const AdminDashboardScreen = () => {
                             <HStack justifyContent="space-between" alignItems="center" mb={2}>
                                 <Text bold>Distribución de Usuarios</Text>
                                 <Badge colorScheme="primary" borderRadius="full" px={2}>
-                                    <Text fontSize="xs">Total: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
+                                    <Text
+                                        fontSize="xs">Total: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
                                 </Badge>
                             </HStack>
                             {loading ? (
                                 <Box height={220} justifyContent="center" alignItems="center">
-                                    <Spinner size="lg" color="primary.500" />
+                                    <Spinner size="lg" color="primary.500"/>
                                 </Box>
                             ) : (
                                 <PieChart
@@ -273,12 +287,13 @@ const AdminDashboardScreen = () => {
                             <HStack justifyContent="space-between" alignItems="center" mb={2}>
                                 <Text bold>Estado de Tarjetas RFID</Text>
                                 <Badge colorScheme="info" borderRadius="full" px={2}>
-                                    <Text fontSize="xs">Total: {(activeRfidCards || 0) + (inactiveRfidCards || 0)}</Text>
+                                    <Text
+                                        fontSize="xs">Total: {(activeRfidCards || 0) + (inactiveRfidCards || 0)}</Text>
                                 </Badge>
                             </HStack>
                             {loading ? (
                                 <Box height={220} justifyContent="center" alignItems="center">
-                                    <Spinner size="lg" color="primary.500" />
+                                    <Spinner size="lg" color="primary.500"/>
                                 </Box>
                             ) : (
                                 <BarChart

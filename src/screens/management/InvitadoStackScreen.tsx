@@ -17,7 +17,7 @@ import {useNavigation} from '@react-navigation/native';  // Asegúrate de import
 import {Ionicons} from '@expo/vector-icons';
 import {useAuth} from "../../context/AuthProvider"; // Usamos expo-icons correctamente
 
-const EmpleadoStackScreen = () => {
+const InvitadoStackScreen =()=>{
     const navigation = useNavigation();
     const cardBg = useColorModeValue("white", "gray.800");
     const textColor = useColorModeValue("gray.800", "white");
@@ -76,7 +76,7 @@ const EmpleadoStackScreen = () => {
                     <HStack justifyContent="space-between" alignItems="center">
                         <Heading size="xl" color={textColor}>Panel de Gestión</Heading>
                         <Badge colorScheme="primary" borderRadius="full" px={3} py={1}>
-                            <Text color="white" fontSize="xs">Empleado</Text>
+                            <Text color="white" fontSize="xs">Invitado</Text>
                         </Badge>
                     </HStack>
                     <Text color="gray.500">Gestión completa del sistema</Text>
@@ -116,4 +116,4 @@ const EmpleadoStackScreen = () => {
     );
 };
 
-export default EmpleadoStackScreen;
+export default InvitadoStackScreen;

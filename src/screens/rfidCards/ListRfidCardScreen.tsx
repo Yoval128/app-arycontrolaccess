@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
     View,
     Text,
@@ -14,11 +14,11 @@ import {
     AlertDialog,
     Button
 } from "native-base";
-import { API_URL, SOCKET_IO } from "@env";
+import {API_URL, SOCKET_IO} from "@env";
 import customTheme from "../../themes/index";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useAuth } from "../../context/AuthProvider";
+import {Ionicons} from "@expo/vector-icons";
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useAuth} from "../../context/AuthProvider";
 import io from 'socket.io-client';  // Asegúrate de tener Socket.IO instalado
 
 const ListRfidCardScreen = () => {
@@ -31,7 +31,7 @@ const ListRfidCardScreen = () => {
     const toast = useToast();
     const navigation = useNavigation();
     const route = useRoute();
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     // Crear la conexión al servidor ESP32 mediante Socket.IO
     const socket = io(SOCKET_IO);
@@ -72,20 +72,20 @@ const ListRfidCardScreen = () => {
                 method: "DELETE",
             });
             if (response.ok) {
-                toast.show({ description: "Tarjeta eliminada con éxito." });
+                toast.show({description: "Tarjeta eliminada con éxito."});
                 fetchTarjetas();
             } else {
-                toast.show({ description: "Error al eliminar la tarjeta." });
+                toast.show({description: "Error al eliminar la tarjeta."});
             }
         } catch (error) {
-            toast.show({ description: "Error al eliminar." });
+            toast.show({description: "Error al eliminar."});
         } finally {
             setIsOpen(false);
         }
     };
 
     if (loading) {
-        return <Spinner color={customTheme.colors.primary[500]} size="lg" />;
+        return <Spinner color={customTheme.colors.primary[500]} size="lg"/>;
     }
 
     // Total de páginas
@@ -116,10 +116,11 @@ const ListRfidCardScreen = () => {
     };
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
                 <VStack flex={1} p={5}>
-                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
-                        <Ionicons name="card-outline" size={25} color="white" />
+                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
+                            justifyContent="center">
+                        <Ionicons name="card-outline" size={25} color="white"/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
                             Lista de Tarjetas RFID
                         </Text>
@@ -128,37 +129,68 @@ const ListRfidCardScreen = () => {
                     <FlatList
                         data={paginatedData}
                         keyExtractor={(item) => item.ID_Tarjeta_RFID.toString()}
-                        renderItem={({ item }) => (
-                            <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white" borderRadius="md" shadow={2}>
+                        renderItem={({item}) => (
+                            <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white"
+                                    borderRadius="md" shadow={2}>
                                 <VStack>
                                     <Text fontSize="md" fontFamily="Poppins-Bold">{item.Codigo_RFID}</Text>
-                                    <Badge colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
+                                    <Badge
+                                        colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
                                 </VStack>
                                 <HStack space={2}>
-                                    <IconButton
-                                        icon={<Ionicons name="eye-outline" size={20} color="blue" />}
-                                        onPress={() => navigation.navigate("DetailRfidCards", { tarjeta_id: item.ID_Tarjeta_RFID })}
-                                    />
-                                    <IconButton
-                                        icon={<Ionicons name="pencil-outline" size={20} color="green" />}
-                                        onPress={() => navigation.navigate("EditRfidCards", { tarjeta_id: item.ID_Tarjeta_RFID })}
-                                    />
-                                    <IconButton
-                                        icon={<Ionicons name="trash-outline" size={20} color="red" />}
-                                        onPress={() => {
-                                            setSelectedTarjeta(item);
-                                            setIsOpen(true);
-                                        }}
-                                    />
+                                    {user.role === 'administrador' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                onPress={() => navigation.navigate("EditRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                onPress={() => {
+                                                    setSelectedTarjeta(item);
+                                                    setIsOpen(true);
+                                                }}
+                                            />
+                                        </>
+                                    )}
+                                    {user.role === 'empleado' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                onPress={() => navigation.navigate("EditRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                            />
+                                        </>
+                                    )}
+                                    {user.role === 'invitado' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                            />
+                                        </>
+                                    )}
                                 </HStack>
                             </HStack>
                         )}
                     />
 
                     <HStack justifyContent="center" space={3} mt={4}>
-                        <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))} isDisabled={currentPage === 1}>Anterior</Button>
+                        <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                isDisabled={currentPage === 1}>Anterior</Button>
                         <Text>{currentPage} de {totalPages}</Text>
-                        <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} isDisabled={currentPage === totalPages}>Siguiente</Button>
+                        <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                isDisabled={currentPage === totalPages}>Siguiente</Button>
                     </HStack>
                 </VStack>
             </ScrollView>
@@ -177,7 +209,21 @@ const ListRfidCardScreen = () => {
             {/* Botón flotante */}
             {user.role === 'administrador' && (
                 <IconButton
-                    icon={<Ionicons name="add" size={40} color="white" />}
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={async () => {
+                        await handleSetMode("newCard"); // Cambia el modo antes de navegar
+                        navigation.navigate("AddRfidCard");
+                    }}
+                />
+            )}
+            {user.role === 'empleado' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
                     bg="primary.500"
                     borderRadius="full"
                     position="absolute"

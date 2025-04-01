@@ -16,12 +16,12 @@ import {
     Menu,
     Input,
     FormControl,
-    Icon
+    Icon, Heading, Badge
 } from "native-base";
 import {Ionicons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
 import {API_URL} from "@env";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
 import {StackActions} from '@react-navigation/native';
@@ -40,11 +40,16 @@ const ListUsersScreen = () => {
 
     const navigation = useNavigation();
     const route = useRoute();
-    navigation.dispatch(StackActions.replace('ListUser'));
 
     useEffect(() => {
         fetchUsers();
     }, [currentPage]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchUsers(); // Esta función se ejecutará cada vez que la pantalla reciba el foco
+        }, [])
+    );
 
     useEffect(() => {
         if (route.params?.refresh) {
@@ -128,119 +133,155 @@ const ListUsersScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}}>
-                <Box safeArea p={5} bg="background.light" flex={1}>
-                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
-                            justifyContent="center">
-                        <Ionicons name="person-outline" size={25} color="white"/>
-                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
-                            Lista de Usuarios
-                        </Text>
-                    </HStack>
-
-                    {/* Filtro y opciones de búsqueda */}
-                    <HStack mb={2} space={4} alignItems="center" backgroundColor={"white"}>
-                        {/* Campo de texto para ingresar el filtro */}
-                        <FormControl flex={1}>
-                            <Input
-                                placeholder="Buscar por nombre, correo o estado"
-                                value={filter}
-                                onChangeText={setFilter}
-                            />
-                        </FormControl>
-
-                        {/* Botón de búsqueda */}
-                        <Button
-                            onPress={filterUsers}
-                            leftIcon={<Ionicons name="search" size={12} color="white"/>}
-                            bg="primary.500"
-                            _pressed={{bg: "primary.600"}}
-                        >
-                        </Button>
-
-                        {/* Botón de limpiar filtro */}
-                        <Button
-                            onPress={clearFilter}
-                            leftIcon={<Ionicons name="close" size={12} color="white"/>}
-                            bg="secondary.500"
-                            _pressed={{bg: "secondary.600"}}
-                        >
-                        </Button>
-
-                        {/* Menú desplegable para subir archivo y exportar */}
-                        <Menu
-                            trigger={triggerProps => (
-                                <IconButton{...triggerProps}
-                                           icon={<Ionicons name="ellipsis-vertical" size={22} color="primary.500"/>}
-                                           variant="ghost"/>
-                            )}>
-                            <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir archivo</Menu.Item>
-                            <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
-                        </Menu>
-                    </HStack>
-
-                    {loading ? (
-                        <Spinner size="lg" color="primary.500"/>
-                    ) : (
-                        <FlatList
-                            data={paginatedData}
-                            keyExtractor={(item) => item.ID_Usuario.toString()}
-                            renderItem={({item}) => (
-                                <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
-                                    <HStack space={3} alignItems="center">
-                                        <Avatar bg="primary.400" size="md"
-                                                borderColor={item?.Estado === 'activo' ? 'green.400' : 'red.400'}
-                                                borderWidth={3}>
-                                            {item.Nombre[0]}
-                                        </Avatar>
-
-                                        <VStack flex={1}>
-                                            <Text fontSize="md" fontWeight="bold">
-                                                {item.Nombre} {item.Apellido}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.500">
-                                                {item.Cargo}
-                                            </Text>
-                                            <Text fontSize="xs" color="gray.400">
-                                                {item.Correo}
-                                            </Text>
-                                        </VStack>
-                                        <HStack space={2}>
-                                            {user.role === 'administrador' && (
-                                                <>
-                                                    <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                        onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
-                                                    />
-                                                    <IconButton
-                                                        icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
-                                                        onPress={() => navigation.navigate("EditUser", {usuario_id: item.ID_Usuario})}
-                                                    />
-                                                    <IconButton
-                                                        icon={<Ionicons name="trash-outline" size={20} color="red"/>}
-                                                        onPress={() => {
-                                                            setSelectedUser(item.ID_Usuario);
-                                                            setIsOpen(true);
-                                                        }}
-                                                    />
-                                                </>
-                                            )}
-                                        </HStack>
-                                    </HStack>
-                                </Box>
-                            )}
-                        />
-                    )}
-
-                    <HStack justifyContent="center" space={3} mt={4}>
-                        <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                isDisabled={currentPage === 1}>Anterior</Button>
-                        <Text>{currentPage} de {totalPages}</Text>
-                        <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                isDisabled={currentPage === totalPages}>Siguiente</Button>
+            <Box safeArea p={5} bg="background.light" flex={1}>
+                {/* Header */}
+                <Box bg="primary.600" p={4} borderBottomRadius="xl" shadow={4} marginBottom={2}>
+                    <HStack justifyContent="space-between" alignItems="center">
+                        <HStack alignItems="center" space={3} textAlign="center">
+                            <Icon as={Ionicons} name="people" size={6} color="white"/>
+                            <Heading color="white" size="lg" textAlign={"center"}>Gestión de Usuarios</Heading>
+                        </HStack>
                     </HStack>
                 </Box>
-            </ScrollView>
+                {/* Filtro y opciones de búsqueda */}
+                <HStack mb={2} space={4} alignItems="center" backgroundColor={"white"}>
+                    {/* Campo de texto para ingresar el filtro */}
+                    <FormControl flex={1}>
+                        <Input
+                            placeholder="Buscar por nombre, correo o estado"
+                            value={filter}
+                            onChangeText={setFilter}
+                        />
+                    </FormControl>
+
+                    {/* Botón de búsqueda */}
+                    <Button
+                        onPress={filterUsers}
+                        leftIcon={<Ionicons name="search" size={12} color="white"/>}
+                        bg="primary.500"
+                        _pressed={{bg: "primary.600"}}
+                    >
+                    </Button>
+
+                    {/* Botón de limpiar filtro */}
+                    <Button
+                        onPress={clearFilter}
+                        leftIcon={<Ionicons name="close" size={12} color="white"/>}
+                        bg="secondary.500"
+                        _pressed={{bg: "secondary.600"}}
+                    >
+                    </Button>
+
+                    {/* Menú desplegable para subir archivo y exportar */}
+                    <Menu
+                        trigger={triggerProps => (
+                            <IconButton{...triggerProps}
+                                       icon={<Ionicons name="ellipsis-vertical" size={22} color="primary.500"/>}
+                                       variant="ghost"/>
+                        )}>
+                        {user.role === 'administrador' && (
+                            <>
+                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir
+                                    archivo</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                            </>
+                        )}
+                        {user.role === 'empleado' && (
+                            <>
+                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir
+                                    archivo</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                            </>
+                        )}
+                        {user.role === 'invitado' && (
+                            <>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                            </>
+                        )}
+                    </Menu>
+                </HStack>
+
+                {loading ? (
+                    <Spinner size="lg" color="primary.500"/>
+                ) : (
+                    <FlatList
+                        data={paginatedData}
+                        keyExtractor={(item) => item.ID_Usuario.toString()}
+                        renderItem={({item}) => (
+                            <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
+                                <HStack space={3} alignItems="center">
+                                    <Avatar bg="primary.400" size="md"
+                                            borderColor={item?.Estado === 'activo' ? 'green.400' : 'red.400'}
+                                            borderWidth={3}>
+                                        {item.Nombre[0]}
+                                    </Avatar>
+
+                                    <VStack flex={1}>
+                                        <Text fontSize="md" fontWeight="bold">
+                                            {item.Nombre} {item.Apellido}
+                                        </Text>
+                                        <Text fontSize="sm" color="gray.500">
+                                            {item.Cargo}
+                                        </Text>
+                                        <Text fontSize="xs" color="gray.400">
+                                            {item.Correo}
+                                        </Text>
+                                    </VStack>
+                                    <HStack space={2}>
+                                        {user.role === 'administrador' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                    onPress={() => navigation.navigate("EditUser", {usuario_id: item.ID_Usuario})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                    onPress={() => {
+                                                        setSelectedUser(item.ID_Usuario);
+                                                        setIsOpen(true);
+                                                    }}
+                                                />
+                                            </>
+                                        )}
+                                        {user.role === 'empleado' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                    onPress={() => navigation.navigate("EditUser", {usuario_id: item.ID_Usuario})}
+                                                />
+                                            </>
+                                        )}
+                                        {user.role === 'invitado' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
+                                                />
+                                            </>
+                                        )}
+                                    </HStack>
+                                </HStack>
+                            </Box>
+                        )}
+                    />
+                )}
+
+                <HStack justifyContent="center" space={3} mt={4}>
+                    <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            isDisabled={currentPage === 1}>Anterior</Button>
+                    <Text>{currentPage} de {totalPages}</Text>
+                    <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            isDisabled={currentPage === totalPages}>Siguiente</Button>
+                </HStack>
+            </Box>
 
             <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <AlertDialog.Content>
@@ -254,6 +295,17 @@ const ListUsersScreen = () => {
             </AlertDialog>
 
             {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddUser")}
+                />
+            )}
+            {user.role === 'empleado' && (
                 <IconButton
                     icon={<Ionicons name="add" size={40} color="white"/>}
                     bg="primary.500"

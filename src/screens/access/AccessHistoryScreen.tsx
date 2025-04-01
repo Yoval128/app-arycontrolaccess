@@ -18,12 +18,17 @@ import { API_URL } from "@env";
 import customTheme from "../../themes/index";
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { DatePickerModal } from "react-native-paper-dates";
+import { format } from "date-fns";
 
 const AccessHistoryScreen = () => {
     const [accessHistory, setAccessHistory] = useState([]);
+    const [filteredHistory, setFilteredHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [datePickerVisible, setDatePickerVisible] = useState(false);
     const toast = useToast();
 
     // Función para cargar el historial
@@ -68,85 +73,64 @@ const AccessHistoryScreen = () => {
             fetchAccessHistory();
         }, 5000); // Refrescar cada 5 segundos
 
-        // Limpiar el intervalo cuando el componente se desmonte
         return () => clearInterval(interval);
     }, [fetchAccessHistory]);
 
     // Función para formatear la fecha
     const formatDateTime = (dateTimeString) => {
-        const options = {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        return new Date(dateTimeString).toLocaleDateString('es-ES', options);
+        return format(new Date(dateTimeString), "dd/MM/yyyy HH:mm");
     };
 
-    // Componente de lista vacía
-    const EmptyListComponent = () => (
-        <Center flex={1} py={10}>
-            <Icon as={MaterialIcons} name="history" size={12} color="gray.400" mb={2} />
-            <Text color="gray.500" fontSize="lg">No hay registros de acceso</Text>
-            <Button
-                mt={4}
-                onPress={fetchAccessHistory}
-                leftIcon={<Icon as={MaterialIcons} name="refresh" />}
-                isLoading={refreshing}
-            >
-                Recargar
-            </Button>
-        </Center>
-    );
-
-    // Componente de carga
-    if (loading) {
-        return (
-            <NativeBaseProvider theme={customTheme}>
-                <Center flex={1}>
-                    <Spinner size="lg" color="primary.500" />
-                    <Text mt={2}>Cargando historial...</Text>
-                </Center>
-            </NativeBaseProvider>
-        );
-    }
-
-    // Componente de error
-    if (error) {
-        return (
-            <NativeBaseProvider theme={customTheme}>
-                <Center flex={1} px={5}>
-                    <Icon as={MaterialIcons} name="error" size={12} color="red.500" mb={2} />
-                    <Text color="red.500" fontSize="lg" textAlign="center">{error}</Text>
-                    <Button
-                        mt={4}
-                        onPress={fetchAccessHistory}
-                        leftIcon={<Icon as={MaterialIcons} name="refresh" />}
-                    >
-                        Reintentar
-                    </Button>
-                </Center>
-            </NativeBaseProvider>
-        );
-    }
+    // Filtrar accesos por la fecha seleccionada
+    useEffect(() => {
+        if (selectedDate) {
+            const filteredData = accessHistory.filter((item) => {
+                const itemDate = format(new Date(item.Fecha_Hora), "yyyy-MM-dd");
+                return itemDate === format(new Date(selectedDate), "yyyy-MM-dd");
+            });
+            setFilteredHistory(filteredData);
+        } else {
+            setFilteredHistory(accessHistory);
+        }
+    }, [selectedDate, accessHistory]);
 
     return (
         <NativeBaseProvider theme={customTheme}>
             <Box flex={1} bg="gray.50" safeArea >
-                <VStack px={4} pt={4} space={4}  >
+                <VStack px={4} pt={4} space={4} >
                     <Heading size="lg" color="white" padding="2" bg="primary.500" p={4} borderRadius="md" shadow={3}
-                             justifyContent="center" textAlign="center" >Historial de Accesos</Heading>
-                    <Text color="gray.600">
-                        Registros de accesos detectados mediante tarjetas RFID
-                    </Text>
+                             justifyContent="center" textAlign="center">
+                        Historial de Accesos
+                    </Heading>
+                    <Text color="gray.600">Registros de accesos detectados mediante tarjetas RFID</Text>
+
+                    {/* Botón para seleccionar la fecha */}
+                    <Button
+                        onPress={() => setDatePickerVisible(true)}
+                        leftIcon={<Icon as={Ionicons} name="calendar-outline" />}
+                    >
+                        {selectedDate ? format(new Date(selectedDate), "dd/MM/yyyy") : "Seleccionar fecha"}
+                    </Button>
+
+                    {/* Modal para seleccionar la fecha */}
+                    <DatePickerModal
+                        locale="es"
+                        mode="single"
+                        visible={datePickerVisible}
+                        onDismiss={() => setDatePickerVisible(false)}
+                        date={selectedDate ? new Date(selectedDate) : undefined}
+                        onConfirm={(params) => {
+                            setDatePickerVisible(false);
+                            setSelectedDate(params.date);
+                        }}
+                    />
                 </VStack>
 
+                {/* Lista filtrada */}
                 <FlatList
-                    data={accessHistory}
+                    data={filteredHistory}
                     keyExtractor={(item) => item.ID_Acceso.toString()}
                     contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 4 }}
-                    ListEmptyComponent={<EmptyListComponent />}
                     refreshing={refreshing}
                     onRefresh={fetchAccessHistory}
                     renderItem={({ item }) => (

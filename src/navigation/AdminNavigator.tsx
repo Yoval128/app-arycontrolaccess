@@ -86,8 +86,7 @@ function ManagementStack() {
             <Stack.Screen name="Graficas" component={GraficosScreen}/>
 
            </Stack.Navigator>
-    )
-        ;
+    );
 }
 
 // Navegación principal para Administrador

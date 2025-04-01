@@ -97,21 +97,45 @@ const ListDocumentMovementsScreen = () => {
                                   </VStack>
 
                                   <HStack space={2}>
-                                      <IconButton
-                                          icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                          onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                      />
-                                      <IconButton
-                                          icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
-                                          onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                      />
-                                      <IconButton
-                                          icon={<Ionicons name="trash-outline" size={20} color="red"/>}
-                                          onPress={() => {
-                                              setSelectedMovement(item);
-                                              setIsOpen(true); // Open the confirmation dialog
-                                          }}
-                                      />
+                                      {user.role === 'administrador' && (
+                                          <>
+                                              <IconButton
+                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                              />
+                                              <IconButton
+                                                  icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                  onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                              />
+                                              <IconButton
+                                                  icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                  onPress={() => {
+                                                      setSelectedMovement(item);
+                                                      setIsOpen(true); // Open the confirmation dialog
+                                                  }}
+                                              />
+                                          </>
+                                      )}
+                                      {user.role === 'empleado' && (
+                                          <>
+                                              <IconButton
+                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                              />
+                                              <IconButton
+                                                  icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                  onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                              />
+                                          </>
+                                      )}
+                                      {user.role === 'invitado' && (
+                                          <>
+                                              <IconButton
+                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                              />
+                                          </>
+                                      )}
                                   </HStack>
                               </HStack>
                           )}
@@ -131,6 +155,16 @@ const ListDocumentMovementsScreen = () => {
 
             {/* Agregar un registrp */}
             {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddDocumentMovements")}
+                />)}
+            {user.role === 'empleado' && (
                 <IconButton
                     icon={<Ionicons name="add" size={40} color="white"/>}
                     bg="primary.500"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     Box,
     Button,
@@ -19,6 +19,7 @@ import mime from "react-native-mime-types";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import {Linking} from "react-native";
+import {useNavigation, useRoute} from "@react-navigation/native";
 
 const UploadExcelUsersScreen = () => {
     const [file, setFile] = useState(null);
@@ -27,6 +28,9 @@ const UploadExcelUsersScreen = () => {
     const toast = useToast();
     const templateUrl = `${API_URL}/api/downloads/excelTemplates/Usuarios.xlsx`;
     const localUri = FileSystem.documentDirectory + "usuarios.xls";
+    const navigation = useNavigation();
+    const route = useRoute();
+    const [toastId, setToastId] = useState(null);
 
     const pickDocument = async () => {
         try {
@@ -40,7 +44,17 @@ const UploadExcelUsersScreen = () => {
             }
 
             setFile(result.assets[0]);
-            showToast("Archivo seleccionado", "success");
+            const toastId = toast.show({
+                description: "Archivo seleccionado",
+                status: "success",
+                duration: 5000, // Duración del toast en milisegundos
+            });
+
+            // Ocultar el toast después de 6 segundos
+            setTimeout(() => {
+                toast.close(toastId);
+            }, 6000);
+
         } catch (error) {
             console.error("Error al seleccionar el archivo:", error);
             showToast("Error al seleccionar archivo", "error");
@@ -75,6 +89,8 @@ const UploadExcelUsersScreen = () => {
             try {
                 const jsonResponse = JSON.parse(textResponse);
                 showToast("Archivo procesado correctamente", "success", jsonResponse.message);
+                console.log("Success", jsonResponse.message);
+                navigation.goBack();
             } catch (jsonError) {
                 showToast("Respuesta del servidor", "info", textResponse);
             }
@@ -86,6 +102,14 @@ const UploadExcelUsersScreen = () => {
         }
     };
 
+    useEffect(() => {
+        return () => {
+            if (toastId) {
+                toast.close(toastId);
+            }
+        };
+    }, [toastId]);
+
     const downloadTemplate = async () => {
         setIsDownloading(true);
         try {
@@ -93,6 +117,7 @@ const UploadExcelUsersScreen = () => {
             const localUri = FileSystem.documentDirectory + "usuarios.xlsx";
             const { uri } = await FileSystem.downloadAsync(templateUrl, localUri);
             toast.show({ title: "Plantilla descargada", status: "success", description: `Guardado en: ${uri}` });
+
         } catch (error) {
             toast.show({ title: "Error al descargar plantilla", status: "error" });
             console.error("Error al descargar el archivo:", error);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -14,12 +14,12 @@ import {
     Input,
     AlertDialog
 } from "native-base";
-import { Ionicons } from '@expo/vector-icons';
-import { useRoute, useNavigation } from "@react-navigation/native";
+import {Ionicons} from '@expo/vector-icons';
+import {useRoute, useNavigation} from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import customTheme from "../../themes/index";
-import { API_URL } from "@env";
+import {API_URL} from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DetailDocumentsScreen = () => {
@@ -32,7 +32,7 @@ const DetailDocumentsScreen = () => {
     const [userPassword] = useState("1234"); // Aquí deberías obtener la contraseña real del usuario desde la API o contexto
     const route = useRoute();
     const navigation = useNavigation();
-    const { documento_id } = route.params;
+    const {documento_id} = route.params;
     const [user, setUser] = useState(null);
 
     const getUserData = async () => {
@@ -59,7 +59,6 @@ const DetailDocumentsScreen = () => {
     useEffect(() => {
         fetchDocumentDetails();
     }, []);
-
 
 
     const fetchDocumentDetails = async () => {
@@ -92,7 +91,7 @@ const DetailDocumentsScreen = () => {
                 {}
             );
 
-            const { uri } = await downloadResumable.downloadAsync();
+            const {uri} = await downloadResumable.downloadAsync();
 
             if (await Sharing.isAvailableAsync()) {
                 await Sharing.shareAsync(uri);
@@ -116,7 +115,7 @@ const DetailDocumentsScreen = () => {
                 return;
             }
 
-            const { email } = JSON.parse(userData);
+            const {email} = JSON.parse(userData);
 
             // Verificar que la contraseña no esté vacía
             if (!password.trim()) {
@@ -130,7 +129,7 @@ const DetailDocumentsScreen = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({email, password}),
             });
 
             const data = await response.json();
@@ -150,15 +149,16 @@ const DetailDocumentsScreen = () => {
     };
 
 
-    if (loading) return <Spinner size="lg" color="primary.500" />;
+    if (loading) return <Spinner size="lg" color="primary.500"/>;
     if (error) return <Text color="red.500">Error: {error}</Text>;
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
                 <Box flex={1} p={5} bg="background.light">
-                    <HStack alignItems="center" mb={4} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
-                        <Ionicons name="document-text-outline" size={28} color="#003469" />
+                    <HStack alignItems="center" mb={4} bg="primary.500" p={4} borderRadius="md" shadow={3}
+                            justifyContent="center">
+                        <Ionicons name="document-text-outline" size={28} color="#003469"/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
                             Detalles del Documento
                         </Text>
@@ -167,32 +167,33 @@ const DetailDocumentsScreen = () => {
                     <Box bg="white" p={5} borderRadius="lg" shadow={2}>
                         <VStack space={4}>
                             <HStack space={4} alignItems="center">
-                                <IconButton icon={<Ionicons name="file-tray" size={20} color="#0074E8" />} />
+                                <IconButton icon={<Ionicons name="file-tray" size={20} color="#0074E8"/>}/>
                                 <VStack>
                                     <Text fontSize="lg" fontWeight="bold">{document?.Nombre_Documento}</Text>
                                     <Text fontSize="md" color="gray.500">{document?.Ubicacion}</Text>
-                                    <Text fontSize="sm" color="gray.400">{document?.Tipo_Documento || "No disponible"}</Text>
+                                    <Text fontSize="sm"
+                                          color="gray.400">{document?.Tipo_Documento || "No disponible"}</Text>
                                 </VStack>
                             </HStack>
-                            <Divider my={3} />
+                            <Divider my={3}/>
                             <VStack space={3}>
                                 <HStack space={2} alignItems="center">
-                                    <Ionicons name="card-outline" size={20} color="#0074E8" />
+                                    <Ionicons name="card-outline" size={20} color="#0074E8"/>
                                     <Text fontSize="md">ID Documento: {document?.ID_Documento}</Text>
                                 </HStack>
                                 <HStack space={2} alignItems="center">
-                                    <Ionicons name="cloud-upload-outline" size={20} color="#0074E8" />
+                                    <Ionicons name="cloud-upload-outline" size={20} color="#0074E8"/>
                                     <Text fontSize="md">{document?.Estado || "Estado no disponible"}</Text>
                                 </HStack>
                             </VStack>
 
                             {document?.filePath && (
                                 <>
-                                    <Divider my={3} />
+                                    <Divider my={3}/>
                                     <VStack space={3}>
                                         <Text fontSize="md" fontWeight="bold">Archivo adjunto:</Text>
                                         <HStack space={2} alignItems="center">
-                                            <Ionicons name="document-attach-outline" size={20} color="#0074E8" />
+                                            <Ionicons name="document-attach-outline" size={20} color="#0074E8"/>
                                             <Text fontSize="md" flex={1} numberOfLines={1} ellipsizeMode="tail">
                                                 {document.filePath.split('/').pop()}
                                             </Text>
@@ -200,7 +201,7 @@ const DetailDocumentsScreen = () => {
                                         <Button
                                             onPress={() => setIsPasswordDialogOpen(true)}
                                             isLoading={downloading}
-                                            leftIcon={<Ionicons name="download-outline" size={20} color="white" />}
+                                            leftIcon={<Ionicons name="download-outline" size={20} color="white"/>}
                                             colorScheme="primary"
                                             mt={2}
                                         >

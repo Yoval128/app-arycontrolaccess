@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
     View,
     Text,
@@ -14,10 +14,10 @@ import {
     AlertDialog,
     Button, Icon
 } from "native-base";
-import { API_URL } from "@env";
+import {API_URL} from "@env";
 import customTheme from "../../themes/index";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {Ionicons} from "@expo/vector-icons";
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useAuth} from "../../context/AuthProvider";
 
 const ListRfidTagsScreen = () => {
@@ -60,29 +60,30 @@ const ListRfidTagsScreen = () => {
                 method: "DELETE",
             });
             if (response.ok) {
-                toast.show({ description: "Etiqueta eliminada con éxito." });
+                toast.show({description: "Etiqueta eliminada con éxito."});
                 fetchTags();
             } else {
-                toast.show({ description: "Error al eliminar la etiqueta." });
+                toast.show({description: "Error al eliminar la etiqueta."});
             }
         } catch (error) {
-            toast.show({ description: "Error al eliminar." });
+            toast.show({description: "Error al eliminar."});
         } finally {
             setIsOpen(false);
         }
     };
 
     if (loading) {
-        return <Spinner color={customTheme.colors.primary[500]} size="lg" />;
+        return <Spinner color={customTheme.colors.primary[500]} size="lg"/>;
     }
 
     const paginatedData = tags.slice((page - 1) * pageSize, page * pageSize);
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
                 <VStack flex={1} p={5}>
-                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3} justifyContent="center">
+                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
+                            justifyContent="center">
                         <Ionicons name="barcode-outline" size={25} color="white"/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
                             Lista de Etiquetas RFID
@@ -92,32 +93,60 @@ const ListRfidTagsScreen = () => {
                     <FlatList
                         data={paginatedData}
                         keyExtractor={(item) => item.ID_Etiqueta_RFID.toString()}
-                        renderItem={({ item }) => (
+                        renderItem={({item}) => (
                             <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white"
                                     borderRadius="md" shadow={2}>
                                 <VStack>
                                     <HStack alignItems="center">
-                                        <Icon as={Ionicons} name="pricetag-outline" size={5} color="gray.500" mr={2} />
+                                        <Icon as={Ionicons} name="pricetag-outline" size={5} color="gray.500" mr={2}/>
                                         <Text fontSize="md" fontFamily="Poppins-Bold">{item.Codigo_RFID}</Text>
                                     </HStack>
-                                    <Badge colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
+                                    <Badge
+                                        colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
                                 </VStack>
                                 <HStack space={2}>
-                                    <IconButton
-                                        icon={<Ionicons name="eye-outline" size={20} color="blue" />}
-                                        onPress={() => navigation.navigate("DetailRfidTags", { tag_id: item.ID_Etiqueta_RFID })}
-                                    />
-                                    <IconButton
-                                        icon={<Ionicons name="pencil-outline" size={20} color="green" />}
-                                        onPress={() => navigation.navigate("EditRfidTags", { tag_id: item.ID_Etiqueta_RFID })}
-                                    />
-                                    <IconButton
-                                        icon={<Ionicons name="trash-outline" size={20} color="red" />}
-                                        onPress={() => {
-                                            setSelectedTag(item);
-                                            setIsOpen(true);
-                                        }}
-                                    />
+                                    {user.role === 'administrador' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidTags", {tag_id: item.ID_Etiqueta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                onPress={() => navigation.navigate("EditRfidTags", {tag_id: item.ID_Etiqueta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                onPress={() => {
+                                                    setSelectedTag(item);
+                                                    setIsOpen(true);
+                                                }}
+                                            />
+                                        </>
+                                    )}
+                                    {user.role === 'empleado' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidTags", {tag_id: item.ID_Etiqueta_RFID})}
+                                            />
+                                            <IconButton
+                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                onPress={() => navigation.navigate("EditRfidTags", {tag_id: item.ID_Etiqueta_RFID})}
+                                            />
+                                        </>
+                                    )}
+                                    {user.role === 'invitado' && (
+                                        <>
+
+                                            <IconButton
+                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                onPress={() => navigation.navigate("DetailRfidTags", {tag_id: item.ID_Etiqueta_RFID})}
+                                            />
+                                        </>
+                                    )}
                                 </HStack>
                             </HStack>
 
@@ -144,6 +173,16 @@ const ListRfidTagsScreen = () => {
 
             {/* Agregar un registrp */}
             {user.role === 'administrador' && (
+                <IconButton
+                    icon={<Ionicons name="add" size={40} color="white"/>}
+                    bg="primary.500"
+                    borderRadius="full"
+                    position="absolute"
+                    bottom={4}
+                    right={4}
+                    onPress={() => navigation.navigate("AddAdministrator")}
+                />)}
+            {user.role === 'empleado' && (
                 <IconButton
                     icon={<Ionicons name="add" size={40} color="white"/>}
                     bg="primary.500"

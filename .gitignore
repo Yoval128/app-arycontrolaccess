@@ -30,8 +30,6 @@ yarn-error.*
 *.pem
 
 # local env files
-.env.production
-.env.production
 
 # typescript
 *.tsbuildinfo
