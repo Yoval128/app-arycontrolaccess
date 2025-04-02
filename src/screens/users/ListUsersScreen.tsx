@@ -16,7 +16,8 @@ import {
     Menu,
     Input,
     FormControl,
-    Icon, Heading, Badge
+    Icon, Heading, Badge,
+    useColorModeValue,
 } from "native-base";
 import {Ionicons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
@@ -24,7 +25,6 @@ import {API_URL} from "@env";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
-import {StackActions} from '@react-navigation/native';
 
 const ListUsersScreen = () => {
     const [users, setUsers] = useState([]);
@@ -41,6 +41,15 @@ const ListUsersScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
 
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const headerBg = useColorModeValue("primary.500", "primary.700");
+    const iconColor = useColorModeValue("gray.600", "gray.300");
+    const fabBg = useColorModeValue("primary.500", "primary.600");
+    const buttonBg = useColorModeValue("white", "red");
     useEffect(() => {
         fetchUsers();
     }, [currentPage]);
@@ -133,52 +142,61 @@ const ListUsersScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <Box safeArea p={5} bg="background.light" flex={1}>
+            <Box safeArea p={5} flex={1}>
                 {/* Header */}
-                <Box bg="primary.600" p={4} borderBottomRadius="xl" shadow={4} marginBottom={2}>
-                    <HStack justifyContent="space-between" alignItems="center">
-                        <HStack alignItems="center" space={3} textAlign="center">
-                            <Icon as={Ionicons} name="people" size={6} color="white"/>
-                            <Heading color="white" size="lg" textAlign={"center"}>Gestión de Usuarios</Heading>
-                        </HStack>
+                <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
+                        justifyContent="center">
+                    <HStack alignItems="center" space={3} textAlign="center">
+                        <Icon as={Ionicons} name="people" size={6} color="white"/>
+                        <Heading color="white" size="lg" textAlign={"center"}>Gestión de Usuarios</Heading>
                     </HStack>
-                </Box>
+                </HStack>
+
                 {/* Filtro y opciones de búsqueda */}
-                <HStack mb={2} space={4} alignItems="center" backgroundColor={"white"}>
+                <HStack mb={2} space={4} alignItems="center" bg={cardBg} p={3} borderRadius="md">
                     {/* Campo de texto para ingresar el filtro */}
                     <FormControl flex={1}>
                         <Input
                             placeholder="Buscar por nombre, correo o estado"
                             value={filter}
                             onChangeText={setFilter}
+                            bg={useColorModeValue("gray.100", "gray.700")} // Fondo adaptable
+                            color={useColorModeValue("gray.800", "white")} // Texto adaptable
+                            placeholderTextColor={useColorModeValue("gray.500", "gray.300")} // Placeholder adaptable
+                            borderColor={useColorModeValue("primary.500", "primary.300")}
+                            _focus={{
+                                borderColor: useColorModeValue("primary.600", "primary.400"),
+                                bg: useColorModeValue("gray.200", "gray.600"),
+                            }}
                         />
                     </FormControl>
 
                     {/* Botón de búsqueda */}
                     <Button
                         onPress={filterUsers}
-                        leftIcon={<Ionicons name="search" size={12} color="white"/>}
-                        bg="primary.500"
-                        _pressed={{bg: "primary.600"}}
-                    >
-                    </Button>
+                        leftIcon={<Icon as={Ionicons} name="search" size="sm" color="white"/>}
+                        bg={useColorModeValue("primary.500", "primary.600")}
+                        _pressed={{bg: useColorModeValue("primary.600", "primary.400")}}
+                    />
 
                     {/* Botón de limpiar filtro */}
                     <Button
                         onPress={clearFilter}
-                        leftIcon={<Ionicons name="close" size={12} color="white"/>}
-                        bg="secondary.500"
-                        _pressed={{bg: "secondary.600"}}
-                    >
-                    </Button>
+                        leftIcon={<Icon as={Ionicons} name="close" size="sm" color="white"/>}
+                        bg={useColorModeValue("secondary.500", "secondary.600")}
+                        _pressed={{bg: useColorModeValue("secondary.600", "secondary.400")}}
+                    />
 
-                    {/* Menú desplegable para subir archivo y exportar */}
+                    {/* Menú desplegable */}
                     <Menu
                         trigger={triggerProps => (
-                            <IconButton{...triggerProps}
-                                       icon={<Ionicons name="ellipsis-vertical" size={22} color="primary.500"/>}
-                                       variant="ghost"/>
-                        )}>
+                            <IconButton
+                                {...triggerProps}
+                                icon={<Icon as={Ionicons} name="ellipsis-vertical" size="sm" color={iconColor}/>}
+                                variant="ghost"
+                            />
+                        )}
+                    >
                         {user.role === 'administrador' && (
                             <>
                                 <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir
@@ -208,7 +226,7 @@ const ListUsersScreen = () => {
                         data={paginatedData}
                         keyExtractor={(item) => item.ID_Usuario.toString()}
                         renderItem={({item}) => (
-                            <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
+                            <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2}>
                                 <HStack space={3} alignItems="center">
                                     <Avatar bg="primary.400" size="md"
                                             borderColor={item?.Estado === 'activo' ? 'green.400' : 'red.400'}
@@ -217,13 +235,13 @@ const ListUsersScreen = () => {
                                     </Avatar>
 
                                     <VStack flex={1}>
-                                        <Text fontSize="md" fontWeight="bold">
+                                        <Text fontSize="md" fontWeight="bold" color={textColor}>
                                             {item.Nombre} {item.Apellido}
                                         </Text>
-                                        <Text fontSize="sm" color="gray.500">
+                                        <Text fontSize="sm" color={secondaryTextColor}>
                                             {item.Cargo}
                                         </Text>
-                                        <Text fontSize="xs" color="gray.400">
+                                        <Text fontSize="xs" color={secondaryTextColor}>
                                             {item.Correo}
                                         </Text>
                                     </VStack>
@@ -231,15 +249,15 @@ const ListUsersScreen = () => {
                                         {user.role === 'administrador' && (
                                             <>
                                                 <IconButton
-                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    icon={<Ionicons name="eye-outline" size={20} color="#3182CE"/>}
                                                     onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
                                                 />
                                                 <IconButton
-                                                    icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                    icon={<Ionicons name="pencil-outline" size={20} color="#38A169"/>}
                                                     onPress={() => navigation.navigate("EditUser", {usuario_id: item.ID_Usuario})}
                                                 />
                                                 <IconButton
-                                                    icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                    icon={<Ionicons name="trash-outline" size={20} color="#E53E3E"/>}
                                                     onPress={() => {
                                                         setSelectedUser(item.ID_Usuario);
                                                         setIsOpen(true);
@@ -250,11 +268,11 @@ const ListUsersScreen = () => {
                                         {user.role === 'empleado' && (
                                             <>
                                                 <IconButton
-                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    icon={<Ionicons name="eye-outline" size={20} color="#3182CE"/>}
                                                     onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
                                                 />
                                                 <IconButton
-                                                    icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                    icon={<Ionicons name="pencil-outline" size={20} color="#38A169"/>}
                                                     onPress={() => navigation.navigate("EditUser", {usuario_id: item.ID_Usuario})}
                                                 />
                                             </>
@@ -262,7 +280,7 @@ const ListUsersScreen = () => {
                                         {user.role === 'invitado' && (
                                             <>
                                                 <IconButton
-                                                    icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                    icon={<Ionicons name="eye-outline" size={20} color="#3182CE"/>}
                                                     onPress={() => navigation.navigate("DetailUser", {usuario_id: item.ID_Usuario})}
                                                 />
                                             </>

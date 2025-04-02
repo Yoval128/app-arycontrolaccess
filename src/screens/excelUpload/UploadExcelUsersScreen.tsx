@@ -12,6 +12,7 @@ import {
     useToast,
     Badge,
     Heading,
+    useColorModeValue
 } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
@@ -32,6 +33,15 @@ const UploadExcelUsersScreen = () => {
     const route = useRoute();
     const [toastId, setToastId] = useState(null);
 
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.600", "gray.400");
+    const fileInfoBg = useColorModeValue("blue.50", "blue.900");
+    const fileInfoBorder = useColorModeValue("blue.200", "blue.700");
+    const instructionsBg = useColorModeValue("gray.100", "gray.700");
+    const dividerColor = useColorModeValue("gray.200", "gray.600");
+
     const pickDocument = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
@@ -47,10 +57,9 @@ const UploadExcelUsersScreen = () => {
             const toastId = toast.show({
                 description: "Archivo seleccionado",
                 status: "success",
-                duration: 5000, // Duración del toast en milisegundos
+                duration: 5000,
             });
 
-            // Ocultar el toast después de 6 segundos
             setTimeout(() => {
                 toast.close(toastId);
             }, 6000);
@@ -113,7 +122,6 @@ const UploadExcelUsersScreen = () => {
     const downloadTemplate = async () => {
         setIsDownloading(true);
         try {
-            // Usando una ruta local para descargar el archivo en el dispositivo
             const localUri = FileSystem.documentDirectory + "usuarios.xlsx";
             const { uri } = await FileSystem.downloadAsync(templateUrl, localUri);
             toast.show({ title: "Plantilla descargada", status: "success", description: `Guardado en: ${uri}` });
@@ -125,6 +133,7 @@ const UploadExcelUsersScreen = () => {
             setIsDownloading(false);
         }
     };
+
     const showToast = (title, status, description = "") => {
         toast.show({
             title,
@@ -136,27 +145,27 @@ const UploadExcelUsersScreen = () => {
     };
 
     const downloadTemplateP10 = () => {
-        const url = `${API_URL}/api/downloads/excelTemplates/Usuarios.xlsx`; // Usando backticks para interpolación de la variable
+        const url = `${API_URL}/api/downloads/excelTemplates/Usuarios.xlsx`;
         Linking.openURL(url).catch((err) => console.error('Error al abrir la URL:', err));
     };
 
     return (
-        <Box flex={1} p={4} bg="gray.50">
+        <Box flex={1} p={4} bg={bgColor}>
             <VStack space={4} flex={1}>
-                <Heading size="lg" mb={2}>Carga Masiva de Usuarios</Heading>
-                <Text color="gray.600">
+                <Heading size="lg" mb={2} color={textColor}>Carga Masiva de Usuarios</Heading>
+                <Text color={secondaryTextColor}>
                     Sube un archivo Excel con la información de los usuarios para registrarlos en el sistema.
                 </Text>
-                <Divider my={2} />
+                <Divider my={2} bg={dividerColor} />
 
                 {/* Sección de archivo seleccionado */}
                 {file && (
-                    <Box bg="blue.50" p={3} borderRadius="md" borderWidth={1} borderColor="blue.200">
+                    <Box bg={fileInfoBg} p={3} borderRadius="md" borderWidth={1} borderColor={fileInfoBorder}>
                         <HStack space={2} alignItems="center">
                             <Icon as={Ionicons} name="document" color="blue.500" size={5} />
                             <VStack flex={1}>
-                                <Text bold>{file.name}</Text>
-                                <Text fontSize="xs" color="gray.500">
+                                <Text bold color={textColor}>{file.name}</Text>
+                                <Text fontSize="xs" color={secondaryTextColor}>
                                     {(file.size / 1024).toFixed(2)} KB
                                 </Text>
                             </VStack>
@@ -187,9 +196,9 @@ const UploadExcelUsersScreen = () => {
                         Subir Archivo
                     </Button>
 
-                    <Divider my={2} />
+                    <Divider my={2} bg={dividerColor} />
 
-                    <Text color="gray.600" textAlign="center">
+                    <Text color={secondaryTextColor} textAlign="center">
                         ¿No tienes la plantilla? Descárgala aquí:
                     </Text>
 
@@ -207,12 +216,12 @@ const UploadExcelUsersScreen = () => {
                 </VStack>
 
                 {/* Información adicional */}
-                <Box mt={6} p={3} bg="gray.100" borderRadius="md">
-                    <Text bold mb={1}>Instrucciones:</Text>
-                    <Text>- Descarga la plantilla y completa los datos</Text>
-                    <Text>- Mantén el formato original del archivo</Text>
-                    <Text>- No modifiques los nombres de las columnas</Text>
-                    <Text>- Sube el archivo completado</Text>
+                <Box mt={6} p={3} bg={instructionsBg} borderRadius="md">
+                    <Text bold mb={1} color={textColor}>Instrucciones:</Text>
+                    <Text color={textColor}>- Descarga la plantilla y completa los datos</Text>
+                    <Text color={textColor}>- Mantén el formato original del archivo</Text>
+                    <Text color={textColor}>- No modifiques los nombres de las columnas</Text>
+                    <Text color={textColor}>- Sube el archivo completado</Text>
                 </Box>
             </VStack>
         </Box>

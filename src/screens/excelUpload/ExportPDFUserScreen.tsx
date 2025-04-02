@@ -13,7 +13,8 @@ import {
     Badge,
     Divider,
     Alert,
-    ScrollView
+    ScrollView,
+    useColorModeValue
 } from "native-base";
 import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system";
@@ -27,12 +28,22 @@ const ExportPDFUserScreen = () => {
     const [downloadProgress, setDownloadProgress] = useState(0);
     const toast = useToast();
 
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.600", "gray.400");
+    const infoBoxBg = useColorModeValue("blue.50", "blue.900");
+    const infoBoxBorder = useColorModeValue("blue.200", "blue.700");
+    const instructionsBg = useColorModeValue("gray.100", "gray.700");
+    const progressBg = useColorModeValue("gray.200", "gray.600");
+    const dividerColor = useColorModeValue("gray.200", "gray.600");
+
     const generatePDF = async () => {
         setIsGenerating(true);
         setDownloadProgress(0);
 
         try {
-            // Mostrar notificación de inicio
             toast.show({
                 title: "Generando PDF",
                 status: "info",
@@ -46,13 +57,11 @@ const ExportPDFUserScreen = () => {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
 
-            // Crear nombre de archivo con fecha
             const currentDate = new Date();
             const formattedDate = currentDate.toISOString().split('T')[0];
             const fileName = `usuarios_${formattedDate}.pdf`;
             const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
-            // Descargar el archivo con progreso
             const downloadResumable = FileSystem.createDownloadResumable(
                 `${API_URL}/api/users/generate-pdf`,
                 fileUri,
@@ -65,7 +74,6 @@ const ExportPDFUserScreen = () => {
 
             const { uri } = await downloadResumable.downloadAsync();
 
-            // Intentar compartir el archivo
             if (await Sharing.isAvailableAsync()) {
                 await Sharing.shareAsync(uri, {
                     mimeType: 'application/pdf',
@@ -99,7 +107,7 @@ const ExportPDFUserScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} bg="gray.50">
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} bg={bgColor}>
                 <Box safeArea p={5} flex={1}>
                     <VStack space={4}>
                         {/* Header */}
@@ -110,12 +118,12 @@ const ExportPDFUserScreen = () => {
                             </Heading>
                         </HStack>
 
-                        <Divider my={2} />
+                        <Divider my={2} bg={dividerColor} />
 
                         {/* Información */}
-                        <Box bg="blue.50" p={4} borderRadius="md" borderWidth={1} borderColor="blue.200">
-                            <Text bold mb={2}>Generar reporte de usuarios</Text>
-                            <Text>
+                        <Box bg={infoBoxBg} p={4} borderRadius="md" borderWidth={1} borderColor={infoBoxBorder}>
+                            <Text bold mb={2} color={textColor}>Generar reporte de usuarios</Text>
+                            <Text color={textColor}>
                                 Esta función generará un documento PDF con la lista completa de usuarios registrados en el sistema.
                             </Text>
                         </Box>
@@ -124,10 +132,10 @@ const ExportPDFUserScreen = () => {
                         {isGenerating && (
                             <Box mt={4}>
                                 <HStack justifyContent="space-between" mb={1}>
-                                    <Text fontSize="sm" color="gray.600">Progreso:</Text>
-                                    <Text fontSize="sm" bold>{Math.round(downloadProgress)}%</Text>
+                                    <Text fontSize="sm" color={secondaryTextColor}>Progreso:</Text>
+                                    <Text fontSize="sm" bold color={textColor}>{Math.round(downloadProgress)}%</Text>
                                 </HStack>
-                                <Box w="100%" bg="gray.200" borderRadius="full" h={2}>
+                                <Box w="100%" bg={progressBg} borderRadius="full" h={2}>
                                     <Box
                                         bg="primary.500"
                                         borderRadius="full"
@@ -153,20 +161,20 @@ const ExportPDFUserScreen = () => {
                         </Button>
 
                         {/* Instrucciones */}
-                        <Box mt={8} p={3} bg="gray.100" borderRadius="md">
-                            <Text bold mb={2}>Instrucciones:</Text>
+                        <Box mt={8} p={3} bg={instructionsBg} borderRadius="md">
+                            <Text bold mb={2} color={textColor}>Instrucciones:</Text>
                             <VStack space={2}>
                                 <HStack space={2} alignItems="flex-start">
                                     <Icon as={Ionicons} name="information-circle" size={4} mt={0.5} color="primary.600" />
-                                    <Text flex={1}>El PDF se generará con los datos actuales del sistema</Text>
+                                    <Text flex={1} color={textColor}>El PDF se generará con los datos actuales del sistema</Text>
                                 </HStack>
                                 <HStack space={2} alignItems="flex-start">
                                     <Icon as={Ionicons} name="information-circle" size={4} mt={0.5} color="primary.600" />
-                                    <Text flex={1}>En dispositivos móviles se abrirá el menú para compartir</Text>
+                                    <Text flex={1} color={textColor}>En dispositivos móviles se abrirá el menú para compartir</Text>
                                 </HStack>
                                 <HStack space={2} alignItems="flex-start">
                                     <Icon as={Ionicons} name="information-circle" size={4} mt={0.5} color="primary.600" />
-                                    <Text flex={1}>En web se descargará automáticamente</Text>
+                                    <Text flex={1} color={textColor}>En web se descargará automáticamente</Text>
                                 </HStack>
                             </VStack>
                         </Box>

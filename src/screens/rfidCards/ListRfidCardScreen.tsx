@@ -12,14 +12,16 @@ import {
     IconButton,
     useToast,
     AlertDialog,
-    Button
+    Button,
+    useColorModeValue
 } from "native-base";
 import {API_URL, SOCKET_IO} from "@env";
 import customTheme from "../../themes/index";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useAuth} from "../../context/AuthProvider";
-import io from 'socket.io-client';  // Asegúrate de tener Socket.IO instalado
+
+
 
 const ListRfidCardScreen = () => {
     const [tarjetas, setTarjetas] = useState([]);
@@ -33,14 +35,22 @@ const ListRfidCardScreen = () => {
     const route = useRoute();
     const {user} = useAuth();
 
-    // Crear la conexión al servidor ESP32 mediante Socket.IO
-    const socket = io(SOCKET_IO);
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.600", "gray.400");
+    const headerBg = useColorModeValue("primary.500", "primary.700");
+    const fabBg = useColorModeValue("primary.500", "primary.600");
+    const borderColor = useColorModeValue("gray.200", "gray.700");
 
-    socket.on('connect', () => {
-        console.log('Conectado al servidor de socket en:', SOCKET_IO);
-    });
+    // Colores fijos para iconos
+    const viewIconColor = "#3182CE";       // Azul
+    const editIconColor = "#38A169";       // Verde
+    const deleteIconColor = "#E53E3E";     // Rojo
+    const addIconColor = "white";          // Blanco
+    const headerIconColor = "white";       // Icono del header en blanco
 
-    // Obtener tarjetas RFID
     const fetchTarjetas = async () => {
         setLoading(true);
         try {
@@ -60,10 +70,7 @@ const ListRfidCardScreen = () => {
             fetchTarjetas();
         }
 
-        // Limpiar la conexión cuando el componente se desmonte
-        return () => {
-            socket.disconnect();
-        };
+
     }, [route.params?.shouldReload]);
 
     const handleDelete = async () => {
@@ -84,19 +91,6 @@ const ListRfidCardScreen = () => {
         }
     };
 
-    if (loading) {
-        return <Spinner color={customTheme.colors.primary[500]} size="lg"/>;
-    }
-
-    // Total de páginas
-    const totalPages = Math.ceil(tarjetas.length / itemsPerPage);
-
-    // Calcular los datos para la página actual
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = tarjetas.slice(startIndex, startIndex + itemsPerPage);
-
-    // Función para cambiar el modo en el ESP32
-    // Función para cambiar el modo en el ESP32 (usando HTTP)
     const handleSetMode = async (mode) => {
         try {
             const response = await fetch(`http://192.168.1.9/setMode?mode=${mode}`);
@@ -114,13 +108,20 @@ const ListRfidCardScreen = () => {
             console.error("Error:", error);
         }
     };
+
+    if (loading) {
+        return <Spinner color={customTheme.colors.primary[500]} size="lg"/>;
+    }
+
+    const totalPages = Math.ceil(tarjetas.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedData = tarjetas.slice(startIndex, startIndex + itemsPerPage);
+
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
-                <VStack flex={1} p={5}>
-                    <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
-                            justifyContent="center">
-                        <Ionicons name="card-outline" size={25} color="white"/>
+               <VStack flex={1} p={5}>
+                    <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3} justifyContent="center">
+                        <Ionicons name="card-outline" size={25} color={headerIconColor}/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
                             Lista de Tarjetas RFID
                         </Text>
@@ -130,27 +131,26 @@ const ListRfidCardScreen = () => {
                         data={paginatedData}
                         keyExtractor={(item) => item.ID_Tarjeta_RFID.toString()}
                         renderItem={({item}) => (
-                            <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg="white"
-                                    borderRadius="md" shadow={2}>
+                            <HStack justifyContent="space-between" alignItems="center" p={3} mb={2} bg={cardBg}
+                                    borderRadius="md" shadow={2} borderWidth={1} borderColor={borderColor}>
                                 <VStack>
-                                    <Text fontSize="md" fontFamily="Poppins-Bold">{item.Codigo_RFID}</Text>
+                                    <Text fontSize="md" fontFamily="Poppins-Bold" color={textColor}>{item.Codigo_RFID}</Text>
                                     <Badge
                                         colorScheme={item.Estado === "Activo" ? "success" : "danger"}>{item.Estado}</Badge>
                                 </VStack>
                                 <HStack space={2}>
                                     {user.role === 'administrador' && (
                                         <>
-
                                             <IconButton
-                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
                                                 onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
                                             />
                                             <IconButton
-                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
                                                 onPress={() => navigation.navigate("EditRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
                                             />
                                             <IconButton
-                                                icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                icon={<Ionicons name="trash-outline" size={20} color={deleteIconColor}/>}
                                                 onPress={() => {
                                                     setSelectedTarjeta(item);
                                                     setIsOpen(true);
@@ -160,25 +160,21 @@ const ListRfidCardScreen = () => {
                                     )}
                                     {user.role === 'empleado' && (
                                         <>
-
                                             <IconButton
-                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
                                                 onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
                                             />
                                             <IconButton
-                                                icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
                                                 onPress={() => navigation.navigate("EditRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
                                             />
                                         </>
                                     )}
                                     {user.role === 'invitado' && (
-                                        <>
-
-                                            <IconButton
-                                                icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
-                                            />
-                                        </>
+                                        <IconButton
+                                            icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
+                                            onPress={() => navigation.navigate("DetailRfidCards", {tarjeta_id: item.ID_Tarjeta_RFID})}
+                                        />
                                     )}
                                 </HStack>
                             </HStack>
@@ -188,12 +184,12 @@ const ListRfidCardScreen = () => {
                     <HStack justifyContent="center" space={3} mt={4}>
                         <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                 isDisabled={currentPage === 1}>Anterior</Button>
-                        <Text>{currentPage} de {totalPages}</Text>
+                        <Text color={textColor}>{currentPage} de {totalPages}</Text>
                         <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                 isDisabled={currentPage === totalPages}>Siguiente</Button>
                     </HStack>
                 </VStack>
-            </ScrollView>
+
 
             <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <AlertDialog.Content>
@@ -207,30 +203,16 @@ const ListRfidCardScreen = () => {
             </AlertDialog>
 
             {/* Botón flotante */}
-            {user.role === 'administrador' && (
+            {(user.role === 'administrador' || user.role === 'empleado') && (
                 <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
+                    icon={<Ionicons name="add" size={40} color={addIconColor}/>}
+                    bg={fabBg}
                     borderRadius="full"
                     position="absolute"
                     bottom={4}
                     right={4}
                     onPress={async () => {
-                        await handleSetMode("newCard"); // Cambia el modo antes de navegar
-                        navigation.navigate("AddRfidCard");
-                    }}
-                />
-            )}
-            {user.role === 'empleado' && (
-                <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
-                    borderRadius="full"
-                    position="absolute"
-                    bottom={4}
-                    right={4}
-                    onPress={async () => {
-                        await handleSetMode("newCard"); // Cambia el modo antes de navegar
+                        await handleSetMode("newCard");
                         navigation.navigate("AddRfidCard");
                     }}
                 />

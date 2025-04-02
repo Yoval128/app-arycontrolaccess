@@ -114,92 +114,91 @@ const ListAdministratorScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}} bg={bgColor}>
-                <Box safeArea p={5} flex={1}>
-                    <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
-                            justifyContent="center">
-                        <Ionicons name="person-circle-outline" size={28} color="white"/>
-                        <Text fontSize="xl" fontWeight="bold" ml={2} color="white">
-                            Lista de Administradores
-                        </Text>
-                    </HStack>
+            <Box safeArea p={5} flex={1}>
+                <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
+                        justifyContent="center">
+                    <Ionicons name="person-circle-outline" size={28} color="white"/>
+                    <Text fontSize="xl" fontWeight="bold" ml={2} color="white">
+                        Lista de Administradores
+                    </Text>
+                </HStack>
 
-                    {loading ? (
-                        <Spinner size="lg" color="primary.500"/>
-                    ) : (
-                        <FlatList
-                            data={administrators}
-                            keyExtractor={(item) => item.ID_Admin.toString()}
-                            renderItem={({item}) => (
-                                <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2}>
-                                    <HStack space={3} alignItems="center">
-                                        <Avatar bg="primary.400" size="md">
-                                            {item.Nombre.charAt(0)}{item.Apellido.charAt(0)}
-                                        </Avatar>
-                                        <VStack flex={1}>
-                                            <Text fontSize="md" fontWeight="bold" color={textColor}>
-                                                {item.Nombre} {item.Apellido}
-                                            </Text>
-                                            <Text fontSize="sm" color={secondaryTextColor}>
-                                                {item.Cargo}
-                                            </Text>
-                                            <Text fontSize="xs" color={secondaryTextColor}>
-                                                Permisos: {item.Nivel_Permiso}
-                                            </Text>
-                                        </VStack>
-                                        <HStack space={2}>
-                                            {user.role === 'administrador' && (
-                                                <>
-                                                    <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20}
-                                                                        color="#3182CE"/>}  // Azul fijo
-                                                        onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
-                                                    />
-                                                    <IconButton
-                                                        icon={<Ionicons name="pencil-outline" size={20}
-                                                                        color="#38A169"/>}  // Verde fijo
-                                                        onPress={() => navigation.navigate("EditAdministrator", {admin_id: item.ID_Admin})}
-                                                    />
-                                                    <IconButton
-                                                        icon={<Ionicons name="trash-outline" size={20}
-                                                                        color="#E53E3E"/>}  // Rojo fijo
-                                                        onPress={() => {
-                                                            setSelectedAdministrator(item.ID_Admin);
-                                                            setIsOpen(true);
-                                                        }}
-                                                    /> </>
-                                            )}
-                                            {user.role === 'empleado' && (
-                                                <>
-                                                    <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20}
-                                                                        color="#3182CE"/>}  // Azul fijo
-                                                        onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
-                                                    />
-                                                    <IconButton
-                                                        icon={<Ionicons name="pencil-outline" size={20}
-                                                                        color="#38A169"/>}  // Verde fijo
-                                                        onPress={() => navigation.navigate("EditAdministrator", {admin_id: item.ID_Admin})}
-                                                    />
-                                                </>
-                                            )}
-                                            {user.role === 'invitado' && (
-                                                <>
-                                                    <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20}
-                                                                        color="#3182CE"/>}  // Azul fijo
-                                                        onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
-                                                    />
-                                                </>
-                                            )}
-                                        </HStack>
+                {loading ? (
+                    <Spinner size="lg" color="primary.500"/>
+                ) : (
+                    <FlatList
+                        data={administrators}
+                        keyExtractor={(item) => item.ID_Admin.toString()}
+                        renderItem={({item}) => (
+                            <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2}>
+                                <HStack space={3} alignItems="center">
+                                    <Avatar bg="primary.400" size="md">
+                                        {item.Nombre.charAt(0)}{item.Apellido.charAt(0)}
+                                    </Avatar>
+                                    <VStack flex={1}>
+                                        <Text fontSize="md" fontWeight="bold" color={textColor}>
+                                            {item.Nombre} {item.Apellido}
+                                        </Text>
+                                        <Text fontSize="sm" color={secondaryTextColor}>
+                                            {item.Cargo}
+                                        </Text>
+                                        <Text fontSize="xs" color={secondaryTextColor}>
+                                            Permisos: {item.Nivel_Permiso}
+                                        </Text>
+                                    </VStack>
+                                    <HStack space={2}>
+                                        {user.role === 'administrador' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20}
+                                                                    color="#3182CE"/>}  // Azul fijo
+                                                    onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="pencil-outline" size={20}
+                                                                    color="#38A169"/>}  // Verde fijo
+                                                    onPress={() => navigation.navigate("EditAdministrator", {admin_id: item.ID_Admin})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="trash-outline" size={20}
+                                                                    color="#E53E3E"/>}  // Rojo fijo
+                                                    onPress={() => {
+                                                        setSelectedAdministrator(item.ID_Admin);
+                                                        setIsOpen(true);
+                                                    }}
+                                                /> </>
+                                        )}
+                                        {user.role === 'empleado' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20}
+                                                                    color="#3182CE"/>}  // Azul fijo
+                                                    onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
+                                                />
+                                                <IconButton
+                                                    icon={<Ionicons name="pencil-outline" size={20}
+                                                                    color="#38A169"/>}  // Verde fijo
+                                                    onPress={() => navigation.navigate("EditAdministrator", {admin_id: item.ID_Admin})}
+                                                />
+                                            </>
+                                        )}
+                                        {user.role === 'invitado' && (
+                                            <>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20}
+                                                                    color="#3182CE"/>}  // Azul fijo
+                                                    onPress={() => navigation.navigate("DetailAdministrator", {admin_id: item.ID_Admin})}
+                                                />
+                                            </>
+                                        )}
                                     </HStack>
-                                </Box>
-                            )}
-                        />
-                    )}
-                </Box>
-            </ScrollView>
+                                </HStack>
+                            </Box>
+                        )}
+                    />
+                )}
+            </Box>
+
 
             {/* Modal de Confirmación para Eliminar */}
             <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>

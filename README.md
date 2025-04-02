@@ -49,6 +49,7 @@ npx expo install react-native-dotenv
 npx expo install react-native-element-dropdown
 npx expo install expo-splash-screen
 expo install react-native-paper react-native-pdf
+npx expo install i18next react-i18next expo-localization
 
 ```
 * Instalar expo-router
