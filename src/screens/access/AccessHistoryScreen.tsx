@@ -21,6 +21,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { DatePickerModal } from "react-native-paper-dates";
 import { format } from "date-fns";
+import {useTranslation} from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AccessHistoryScreen = () => {
     const [accessHistory, setAccessHistory] = useState([]);
@@ -31,6 +33,19 @@ const AccessHistoryScreen = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [datePickerVisible, setDatePickerVisible] = useState(false);
     const toast = useToast();
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+    // Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
+
 
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
@@ -119,9 +134,9 @@ const AccessHistoryScreen = () => {
                         justifyContent="center"
                         textAlign="center"
                     >
-                        Historial de Accesos
+                        {t('accessHistory.header.title')}
                     </Heading>
-                    <Text color={secondaryTextColor}>Registros de accesos detectados mediante tarjetas RFID</Text>
+                    <Text color={secondaryTextColor}>{t('accessHistory.description.accessRecords')}</Text>
 
                     {/* Botón para seleccionar la fecha */}
                     <Button
@@ -129,7 +144,7 @@ const AccessHistoryScreen = () => {
                         leftIcon={<Icon as={Ionicons} name="calendar-outline" />}
                         bg={buttonBg}
                     >
-                        {selectedDate ? format(new Date(selectedDate), "dd/MM/yyyy") : "Seleccionar fecha"}
+                        {selectedDate ? format(new Date(selectedDate), "dd/MM/yyyy") : t('accessHistory.buttons.selectDate')}
                     </Button>
 
                     {/* Modal para seleccionar la fecha */}
@@ -174,11 +189,11 @@ const AccessHistoryScreen = () => {
                                 </HStack>
 
                                 <Text fontSize="sm" color={secondaryTextColor}>
-                                    <Text fontWeight="semibold" color={textColor}>Cargo:</Text> {item.Cargo}
+                                    <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.position')}:</Text> {item.Cargo}
                                 </Text>
 
                                 <Text fontSize="sm" color={secondaryTextColor}>
-                                    <Text fontWeight="semibold" color={textColor}>Tarjeta RFID:</Text> {item.Codigo_RFID}
+                                    <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.rfidCard')}:</Text> {item.Codigo_RFID}
                                 </Text>
 
                                 <HStack justifyContent="space-between" mt={2}>
@@ -197,7 +212,7 @@ const AccessHistoryScreen = () => {
                                         </Text>
                                     </Box>
                                     <Text fontSize="sm" color={secondaryTextColor}>
-                                        <Text fontWeight="semibold" color={textColor}>Ubicación:</Text> {item.Ubicacion}
+                                        <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.location')}:</Text> {item.Ubicacion}
                                     </Text>
                                 </HStack>
                             </VStack>

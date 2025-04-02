@@ -22,6 +22,9 @@ import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
 
+import {useTranslation} from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const ListAdministratorScreen = () => {
     const [administrators, setAdministrators] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,6 +36,18 @@ const ListAdministratorScreen = () => {
     const [usuarios, setUsuarios] = useState([]);
     const {user} = useAuth();
 
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+    // Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
+
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
@@ -41,6 +56,7 @@ const ListAdministratorScreen = () => {
     const headerBg = useColorModeValue("primary.500", "primary.700");
     const iconColor = useColorModeValue("gray.600", "gray.300");
     const fabBg = useColorModeValue("primary.500", "primary.600");
+
 
     useEffect(() => {
         fetchAdministrators();
@@ -118,8 +134,7 @@ const ListAdministratorScreen = () => {
                 <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
                         justifyContent="center">
                     <Ionicons name="person-circle-outline" size={28} color="white"/>
-                    <Text fontSize="xl" fontWeight="bold" ml={2} color="white">
-                        Lista de Administradores
+                    <Text fontSize="xl" fontWeight="bold" ml={2} color="white">{t('listAdministrator.header.title')}
                     </Text>
                 </HStack>
 

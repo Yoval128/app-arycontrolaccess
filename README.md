@@ -92,6 +92,9 @@ npm install recharts
 npm install react-native-chart-kit react-native-svg
 
 npm install react-pdf @react-pdf/renderer
+
+lucide-react-native
+
 ## Estructura del Proyecto
 
 ## Trabajar con ramas

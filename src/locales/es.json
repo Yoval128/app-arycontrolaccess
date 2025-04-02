@@ -108,5 +108,116 @@
   "chart_legends": {
     "active": "Activos",
     "inactive": "Inactivos"
+  },
+  "listUsers": {
+    "userManagement": "Gestión de Usuarios",
+    "buttons": {
+      "search": "Buscar",
+      "clearFilter": "Limpiar Filtro",
+      "addUser": "Agregar Usuario",
+      "deleteUser": "Eliminar Usuario",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "cancel": "Cancelar",
+      "confirmDelete": "Confirmar Eliminación"
+    },
+    "placeholders": {
+      "searchInput": "Buscar por nombre, correo o estado"
+    },
+    "alerts": {
+      "deleteConfirmation": "¿Estás seguro de que deseas eliminar este usuario?",
+      "errorFetchingUsers": "Error al obtener los usuarios",
+      "errorDeletingUser": "Error al eliminar usuario"
+    },
+    "user": {
+      "name": "Nombre",
+      "email": "Correo",
+      "role": "Rol",
+      "status": "Estado"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "employee": "Empleado",
+      "guest": "Invitado"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "menu": {
+      "uploadFile": "Subir archivo",
+      "export": "Exportar"
+    }
+  },
+
+  "accessHistory": {
+    "header": {
+      "title": "Historial de Accesos"
+    },
+    "description": {
+      "accessRecords": "Registros de accesos detectados mediante tarjetas RFID"
+    },
+    "buttons": {
+      "selectDate": "Seleccionar fecha",
+      "refresh": "Refrescar"
+    },
+    "placeholders": {
+      "selectDate": "Seleccionar fecha"
+    },
+    "alerts": {
+      "errorFetchingHistory": "Error al cargar el historial de accesos",
+      "errorFetchingHistoryDescription": "No se pudo cargar el historial de accesos"
+    },
+    "list": {
+      "name": "Nombre",
+      "position": "Cargo",
+      "rfidCard": "Tarjeta RFID",
+      "accessType": "Tipo de Acceso",
+      "location": "Ubicación"
+    },
+    "accessTypes": {
+      "entry": "Ingreso",
+      "exit": "Salida"
+    },
+    "modal": {
+      "dateSelection": "Seleccionar Fecha"
+    },
+    "formatDate": {
+      "date": "dd/MM/yyyy",
+      "time": "HH:mm"
+    }
+  },
+  "listAdministrator": {
+    "header": {
+      "title": "Lista de Administradores"
+    },
+    "description": {
+      "administratorsList": "Lista de administradores con sus permisos y roles asignados."
+    },
+    "buttons": {
+      "addAdministrator": "Agregar Administrador",
+      "deleteAdministrator": "Eliminar Administrador",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "alerts": {
+      "deleteAdministrator": "¿Estás seguro de que deseas eliminar este administrador?",
+      "errorDeletingAdministrator": "Error al eliminar administrador"
+    },
+    "labels": {
+      "permissions": "Permisos",
+      "role": "Cargo",
+      "userPermissions": "Permisos: {level}",
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "employee": "Empleado",
+      "guest": "Invitado"
+    }
   }
 }
+
+

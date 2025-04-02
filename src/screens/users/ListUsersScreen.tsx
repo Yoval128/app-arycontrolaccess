@@ -25,6 +25,8 @@ import {API_URL} from "@env";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
+import {useTranslation} from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ListUsersScreen = () => {
     const [users, setUsers] = useState([]);
@@ -41,6 +43,8 @@ const ListUsersScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
 
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
@@ -122,6 +126,16 @@ const ListUsersScreen = () => {
         setFilteredUsers(users);
     };
 
+    // Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
+
     const deleteUser = async (id) => {
         setIsOpen(false);
         try {
@@ -148,7 +162,7 @@ const ListUsersScreen = () => {
                         justifyContent="center">
                     <HStack alignItems="center" space={3} textAlign="center">
                         <Icon as={Ionicons} name="people" size={6} color="white"/>
-                        <Heading color="white" size="lg" textAlign={"center"}>Gestión de Usuarios</Heading>
+                        <Heading color="white" size="lg" textAlign={"center"}>{t('listUsers.userManagement')}</Heading>
                     </HStack>
                 </HStack>
 
@@ -157,7 +171,7 @@ const ListUsersScreen = () => {
                     {/* Campo de texto para ingresar el filtro */}
                     <FormControl flex={1}>
                         <Input
-                            placeholder="Buscar por nombre, correo o estado"
+                            placeholder={t('listUsers.placeholders.searchInput')}
                             value={filter}
                             onChangeText={setFilter}
                             bg={useColorModeValue("gray.100", "gray.700")} // Fondo adaptable
@@ -199,9 +213,8 @@ const ListUsersScreen = () => {
                     >
                         {user.role === 'administrador' && (
                             <>
-                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir
-                                    archivo</Menu.Item>
-                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>{t('listUsers.menu.uploadFile')}</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>{t('listUsers.menu.export')}</Menu.Item>
                             </>
                         )}
                         {user.role === 'empleado' && (
@@ -294,10 +307,10 @@ const ListUsersScreen = () => {
 
                 <HStack justifyContent="center" space={3} mt={4}>
                     <Button onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                            isDisabled={currentPage === 1}>Anterior</Button>
+                            isDisabled={currentPage === 1}>{t('listUsers.buttons.previous')}</Button>
                     <Text>{currentPage} de {totalPages}</Text>
                     <Button onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                            isDisabled={currentPage === totalPages}>Siguiente</Button>
+                            isDisabled={currentPage === totalPages}>{t('listUsers.buttons.next')}</Button>
                 </HStack>
             </Box>
 
