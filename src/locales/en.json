@@ -1,6 +1,113 @@
 {
-  "welcome": "Welcome",
-  "dashboard": "Dashboard",
-  "profile": "Profile",
-  "settings": "Settings"
+  "common": {
+    "welcome": "Welcome",
+    "profile": "Profile",
+    "settings": "Settings",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": "Statistics",
+    "recent": "Recent"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "notifications": "Notifications"
+  },
+  "user": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "profile": {
+    "title": "My Profile",
+    "role": "Role",
+    "personalInformation": "Personal Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "rfidCard": "RFID Card",
+    "preferences": "Preferences",
+    "theme": "App Theme",
+    "language": "Language",
+    "logout": "Log Out",
+    "loadingProfile": "Loading your profile...",
+    "retry": "Retry",
+    "errorLoadingProfile": "There was a problem loading the data",
+    "sessionClosed": "Session Closed",
+    "sessionClosedSuccess": "You have successfully logged out",
+    "sessionCloseError": "There was a problem logging out"
+  },
+  "tabs": {
+    "home": "Home",
+    "management": "Management",
+    "profile": "Profile"
+  },
+  "management": {
+    "management_panel": "Management Panel",
+    "full_management": "Full system management",
+    "users": "Users",
+    "accesses": "Accesses",
+    "administrators": "Administrators",
+    "documents": "Documents",
+    "rfid_labels": "RFID Labels",
+    "movements": "Movements",
+    "rfid_cards": "RFID Cards",
+    "statistics": "Statistics",
+    "user_management": "User management",
+    "access_history": "Access history",
+    "admin_management": "Administrator management",
+    "document_management": "Document management",
+    "rfid_labels_management": "RFID labels management",
+    "document_movements": "Document movements",
+    "rfid_cards_management": "RFID card management",
+    "system_statistics": "System statistics",
+    "admin": "Admin"
+  },
+  "admin_dashboard": {
+    "dashboard_panel": "Dashboard Panel",
+    "last_updated": "Last Updated: ",
+    "loading": "Loading...",
+    "users": "Users",
+    "active_cards": "Active Cards",
+    "inactive_cards": "Inactive Cards",
+    "user_distribution": "User Distribution",
+    "rfid_card_status": "RFID Card Status",
+    "visual_statistics": "Visual Statistics",
+    "total_users": "Total Users",
+    "active_users": "Active Users",
+    "inactive_users": "Inactive Users",
+    "administrators": "Administrators",
+    "guests": "Guests",
+    "employees": "Employees",
+    "error_loading_dashboard_data": "Error loading dashboard data",
+    "warning": "Warning",
+    "total": "Total",
+    "role": "Role",
+    "admin": "Admin",
+    "loading_statistics": "Loading Statistics...",
+    "loading_rfid_cards": "Loading RFID Cards...",
+    "error_changing_language": "Error changing language",
+    "change_language": "Change Language",
+    "theme_toggle": "Toggle Theme"
+  },
+  "dashboard_stats": {
+    "total_users": "Total Users",
+    "active_cards": "Active Cards",
+    "inactive_cards": "Inactive Cards"
+  },
+  "chart_labels": {
+    "administrators": "Administrators",
+    "guests": "Guests",
+    "employees": "Employees"
+  },
+  "chart_legends": {
+    "active": "Active",
+    "inactive": "Inactive"
+  }
 }
+

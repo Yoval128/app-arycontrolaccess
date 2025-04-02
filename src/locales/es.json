@@ -1,6 +1,112 @@
 {
-  "welcome": "Bienvenido",
-  "dashboard": "Panel de Control",
-  "profile": "Perfil",
-  "settings": "Configuración"
+  "common": {
+    "welcome": "Bienvenido",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "loading": "Cargando..."
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "stats": "Estadísticas",
+    "recent": "Recientes"
+  },
+  "settings": {
+    "title": "Configuraciones",
+    "theme": "Tema",
+    "language": "Idioma",
+    "notifications": "Notificaciones"
+  },
+  "user": {
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "phone": "Teléfono"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "role": "Rol",
+    "personalInformation": "Información Personal",
+    "fullName": "Nombre completo",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "rfidCard": "Tarjeta RFID",
+    "preferences": "Preferencias",
+    "theme": "Tema de la aplicación",
+    "language": "Idioma",
+    "logout": "Cerrar Sesión",
+    "loadingProfile": "Cargando tu perfil...",
+    "retry": "Reintentar",
+    "errorLoadingProfile": "Hubo un problema al cargar los datos",
+    "sessionClosed": "Sesión cerrada",
+    "sessionClosedSuccess": "Has cerrado sesión correctamente",
+    "sessionCloseError": "Hubo un problema al cerrar sesión"
+  },
+  "tabs": {
+    "home": "Inicio",
+    "management": "Gestión",
+    "profile": "Perfil"
+  },
+  "management": {
+    "management_panel": "Panel de Gestión",
+    "full_management": "Gestión completa del sistema",
+    "users": "Usuarios",
+    "accesses": "Accesos",
+    "administrators": "Administradores",
+    "documents": "Documentos",
+    "rfid_labels": "Etiquetas RFID",
+    "movements": "Movimientos",
+    "rfid_cards": "Tarjetas RFID",
+    "statistics": "Estadísticas",
+    "user_management": "Gestión de usuarios",
+    "access_history": "Historial de accesos",
+    "admin_management": "Gestión de administradores",
+    "document_management": "Gestión de documentos",
+    "rfid_labels_management": "Gestión de etiquetas RFID",
+    "document_movements": "Movimientos de documentos",
+    "rfid_cards_management": "Gestión de tarjetas RFID",
+    "system_statistics": "Estadísticas del sistema",
+    "admin": "Admin"
+  },
+  "admin_dashboard": {
+    "dashboard_panel": "Panel de Control",
+    "last_updated": "Última actualización: ",
+    "loading": "Cargando...",
+    "users": "Usuarios",
+    "active_cards": "Tarjetas Activas",
+    "inactive_cards": "Tarjetas Inactivas",
+    "user_distribution": "Distribución de Usuarios",
+    "rfid_card_status": "Estado de Tarjetas RFID",
+    "visual_statistics": "Estadísticas Visuales",
+    "total_users": "Usuarios Totales",
+    "active_users": "Usuarios Activos",
+    "inactive_users": "Usuarios Inactivos",
+    "administrators": "Administradores",
+    "guests": "Invitados",
+    "employees": "Empleados",
+    "error_loading_dashboard_data": "Error al cargar los datos del dashboard",
+    "warning": "Advertencia",
+    "total": "Total",
+    "role": "Rol",
+    "admin": "Admin",
+    "loading_statistics": "Cargando Estadísticas...",
+    "loading_rfid_cards": "Cargando Tarjetas RFID...",
+    "error_changing_language": "Error al cambiar el idioma",
+    "change_language": "Cambiar Idioma",
+    "theme_toggle": "Alternar Tema"
+  },
+  "dashboard_stats": {
+    "total_users": "Usuarios Totales",
+    "active_cards": "Tarjetas Activas",
+    "inactive_cards": "Tarjetas Inactivas"
+  },
+  "chart_labels": {
+    "administrators": "Administradores",
+    "guests": "Invitados",
+    "employees": "Empleados"
+  },
+  "chart_legends": {
+    "active": "Activos",
+    "inactive": "Inactivos"
+  }
 }

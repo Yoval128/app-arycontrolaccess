@@ -20,6 +20,7 @@ import {useNavigation} from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAuth} from "../../context/AuthProvider";
 import ThemeToggle from "../../components/ThemeToggle";
+import {useTranslation} from "react-i18next";
 
 const ProfileUserScreen = () => {
     const [user, setUser] = useState(null);
@@ -35,6 +36,9 @@ const ProfileUserScreen = () => {
     const textColor = useColorModeValue("gray.800", "white");
     const headingColor = useColorModeValue("primary.600", "primary.300");
     const dividerColor = useColorModeValue("gray.200", "gray.600");
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
 
     const getUserData = async () => {
         try {
@@ -85,6 +89,17 @@ const ProfileUserScreen = () => {
         return unsubscribe;
     }, [navigation]);
 
+
+// Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
+
     if (loading) {
         return (
             <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
@@ -125,7 +140,7 @@ const ProfileUserScreen = () => {
                 {/* Header */}
                 <VStack space={3} mb={6}>
                     <HStack justifyContent="space-between" alignItems="center">
-                        <Heading size="xl" color={headingColor}>Mi Perfil</Heading>
+                        <Heading size="xl" color={headingColor}>{t('profile.title')}</Heading>
                         <Badge colorScheme="primary" borderRadius="full" px={3} py={1}>
                             <Text color="white" fontSize="xs">{user?.rol || 'Usuario'}</Text>
                         </Badge>
@@ -156,42 +171,64 @@ const ProfileUserScreen = () => {
 
                 {/* Details Section */}
                 <VStack space={4} mb={6} bg={cardBg} p={4} borderRadius="lg" shadow={1}>
-                    <Heading size="md" color={textColor} mb={2}>Información Personal</Heading>
+                    <Heading size="md" color={textColor} mb={2}>{t('profile.personalInformation')}</Heading>
 
                     <HStack space={3} alignItems="center">
                         <Icon as={Ionicons} name="person" size={5} color="primary.500"/>
-                        <Text flex={1} color={textColor}>Nombre completo:</Text>
+                        <Text flex={1} color={textColor}>{t('profile.fullName')}:</Text>
                         <Text bold color={textColor}>{user?.nombre} {user?.apellido}</Text>
                     </HStack>
 
                     <HStack space={3} alignItems="center">
                         <Icon as={Ionicons} name="mail" size={5} color="primary.500"/>
-                        <Text flex={1} color={textColor}>Correo electrónico:</Text>
+                        <Text flex={1} color={textColor}>{t('profile.email')}:</Text>
                         <Text bold color={textColor}>{user?.email}</Text>
                     </HStack>
 
                     <HStack space={3} alignItems="center">
                         <Icon as={Ionicons} name="call" size={5} color="primary.500"/>
-                        <Text flex={1} color={textColor}>Teléfono:</Text>
+                        <Text flex={1} color={textColor}>{t('profile.phone')}:</Text>
                         <Text bold color={textColor}>{user?.telefono || 'No especificado'}</Text>
                     </HStack>
 
                     <HStack space={3} alignItems="center">
                         <Icon as={FontAwesome5} name="id-card" size={5} color="primary.500"/>
-                        <Text flex={1} color={textColor}>Tarjeta RFID:</Text>
+                        <Text flex={1} color={textColor}>{t('profile.rfidCard')}:</Text>
                         <Text bold color={textColor}>{user?.id_tarjeta_rfid || 'No asignada'}</Text>
                     </HStack>
                 </VStack>
 
                 {/* Theme Toggle Section - Integrado mejor */}
                 <VStack space={4} mb={6} bg={cardBg} p={4} borderRadius="lg" shadow={1}>
-                    <Heading size="md" color={textColor} mb={2}>Preferencias</Heading>
+                    <Heading size="md" color={textColor} mb={2}>{t('profile.preferences')}</Heading>
+
+                    {/* Sección de Tema */}
                     <HStack justifyContent="space-between" alignItems="center">
                         <HStack space={3} alignItems="center">
                             <Icon as={Ionicons} name="contrast" size={5} color="primary.500"/>
-                            <Text color={textColor}>Tema de la aplicación</Text>
+                            <Text color={textColor}>{t('theme')}</Text>
                         </HStack>
                         <ThemeToggle/>
+                    </HStack>
+
+                    {/* Sección de Idioma */}
+                    <HStack space={2}>
+                        <Button
+                            size="sm"
+                            variant={i18n.language === "es" ? "solid" : "outline"}
+                            colorScheme={i18n.language === "es" ? "primary" : "gray"}
+                            onPress={() => changeAppLanguage("es")}
+                        >
+                            Español
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant={i18n.language === "en" ? "solid" : "outline"}
+                            colorScheme={i18n.language === "en" ? "primary" : "gray"}
+                            onPress={() => changeAppLanguage("en")}
+                        >
+                            English
+                        </Button>
                     </HStack>
                 </VStack>
 
@@ -202,7 +239,7 @@ const ProfileUserScreen = () => {
                         colorScheme="danger"
                         onPress={handleLogout}
                         borderRadius="lg">
-                        Cerrar Sesión
+                        {t('profile.logout')}
                     </Button>
                 </VStack>
             </Box>

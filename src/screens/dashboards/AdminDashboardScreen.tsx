@@ -19,6 +19,7 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ThemeToggle from '../../components/ThemeToggle';
 import {API_URL} from '@env';
+import {useTranslation} from "react-i18next";
 
 const AdminDashboardScreen = () => {
     const [user, setUser] = useState(null);
@@ -35,6 +36,9 @@ const AdminDashboardScreen = () => {
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
     const navigation = useNavigation();
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
 
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
@@ -55,24 +59,33 @@ const AdminDashboardScreen = () => {
         info: useColorModeValue('#5bc0de', '#06b6d4')
     };
 
+// Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
     // Datos para el gráfico de pastel
     const userCargosPieData = [
         {
-            name: 'Administradores',
+            name: t('admin_dashboard.administrators'),
             population: userCargos.Admin,
             color: colors.primary,
             legendFontColor: chartTextColor,
             legendFontSize: 12
         },
         {
-            name: 'Invitados',
+            name:  t('admin_dashboard.guests'),
             population: userCargos.Invitado,
             color: colors.danger,
             legendFontColor: chartTextColor,
             legendFontSize: 12
         },
         {
-            name: 'Empleados',
+            name:  t('admin_dashboard.employees'),
             population: userCargos.Empleado,
             color: colors.secondary,
             legendFontColor: chartTextColor,
@@ -138,7 +151,7 @@ const AdminDashboardScreen = () => {
     );
 
     const activeRfidCardsBarData = {
-        labels: ['Activas', 'Inactivas'],
+        labels: [t('chart_legends.active'), t('chart_legends.inactive')],
         datasets: [
             {
                 data: [activeRfidCards || 0, inactiveRfidCards || 0],
@@ -189,13 +202,13 @@ const AdminDashboardScreen = () => {
                 {/* Header */}
                 <HStack justifyContent="space-between" alignItems="center" mb={4}>
                     <VStack>
-                        <Heading size="lg" color={headingColor}>Panel de Control</Heading>
+                        <Heading size="lg" color={headingColor}>{t('admin_dashboard.dashboard_panel')}</Heading>
                         <Text fontSize="xs" color={textColor}>
-                            Última actualización: {lastUpdated || 'Cargando...'}
+                            {t('admin_dashboard.last_updated')}: {lastUpdated || 'Cargando...'}
                         </Text>
                     </VStack>
                     <HStack alignItems="center" space={2}>
-                        <ThemeToggle />
+                        <ThemeToggle/>
                         <HStack alignItems="center">
                             <Icon
                                 as={Ionicons}
@@ -227,28 +240,28 @@ const AdminDashboardScreen = () => {
                     <StatCard
                         icon={Ionicons}
                         iconName="people"
-                        title="Usuarios"
+                        title={t('dashboard_stats.total_users')}
                         value={userCargos.Admin + userCargos.Empleado + userCargos.Invitado}
                         color="primary"
                     />
                     <StatCard
                         icon={MaterialCommunityIcons}
                         iconName="card-account-details"
-                        title="Tarjetas Activas"
+                        title={t('dashboard_stats.active_cards')}
                         value={activeRfidCards}
                         color="success"
                     />
                     <StatCard
                         icon={MaterialCommunityIcons}
                         iconName="card-off"
-                        title="Tarjetas Inactivas"
+                        title={t('dashboard_stats.inactive_cards')}
                         value={inactiveRfidCards}
                         color="danger"
                     />
                 </HStack>
 
                 {/* Sección de gráficos */}
-                <Heading size="md" mb={3} color={headingColor}>📊 Estadísticas Visuales</Heading>
+                <Heading size="md" mb={3} color={headingColor}>📊 {t('admin_dashboard.visual_statistics')}</Heading>
 
                 {error && (
                     <Box bg="red.100" p={3} borderRadius="md" mb={4}>
@@ -263,9 +276,10 @@ const AdminDashboardScreen = () => {
                     {/* Gráfico de distribución de cargos */}
                     <Box p={4} bg={cardBg} borderRadius="lg" shadow={2}>
                         <HStack justifyContent="space-between" alignItems="center" mb={2}>
-                            <Text bold color={textColor}>Distribución de Usuarios</Text>
+                            <Text bold color={textColor}>{t('admin_dashboard.user_distribution')}</Text>
                             <Badge colorScheme="primary" borderRadius="full" px={2}>
-                                <Text fontSize="xs">Total: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
+                                <Text
+                                    fontSize="xs">{t('admin_dashboard.total')}: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
                             </Badge>
                         </HStack>
                         {loading ? (
@@ -302,7 +316,7 @@ const AdminDashboardScreen = () => {
                     {/* Gráfico de tarjetas RFID */}
                     <Box p={4} bg={cardBg} borderRadius="lg" shadow={2}>
                         <HStack justifyContent="space-between" alignItems="center" mb={2}>
-                            <Text bold color={textColor}>Estado de Tarjetas RFID</Text>
+                            <Text bold color={textColor}>{t('admin_dashboard.rfid_card_status')}</Text>
                             <Badge colorScheme="info" borderRadius="full" px={2}>
                                 <Text fontSize="xs">Total: {(activeRfidCards || 0) + (inactiveRfidCards || 0)}</Text>
                             </Badge>

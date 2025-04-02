@@ -37,6 +37,9 @@ import DetailRfidTagsScreen from "../screens/rfidTags/DetailRfidTagsScreen";
 import EditRfidTagsScreen from "../screens/rfidTags/EditRfidTagsScreen";
 import AddRfidTagsScreen from "../screens/rfidTags/AddRfidTagsScreen";
 
+import {useTranslation} from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -111,6 +114,17 @@ export default function AdminNavigation() {
     const tabBarBackground = useColorModeValue("#FFFFFF", "#1F2937"); // Blanco en claro, gris oscuro en oscuro
     const tabBarActiveTintColor = useColorModeValue("#3B82F6", "#93C5FD"); // Azul en claro, azul claro en oscuro
     const tabBarInactiveTintColor = useColorModeValue("#6B7280", "#9CA3AF"); // Gris en claro, gris claro en oscuro
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+    // Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
 
     return (
         <Tab.Navigator
@@ -125,13 +139,13 @@ export default function AdminNavigation() {
                 tabBarIcon: ({color, size, focused}) => {
                     let iconName;
                     switch (route.name) {
-                        case "Inicio":
+                        case t('tabs.home'):
                             iconName = focused ? "home" : "home-outline";
                             break;
-                        case "Gestión":
+                        case t('tabs.management'):
                             iconName = focused ? "construct" : "construct-outline";
                             break;
-                        case "Perfil":
+                        case t('tabs.profile'):
                             iconName = focused ? "person" : "person-outline";
                             break;
                         default:
@@ -148,19 +162,19 @@ export default function AdminNavigation() {
             })}
         >
             <Tab.Screen
-                name="Inicio"
+                name={t('tabs.home')}
                 component={AdminDashboardScreen}
-                options={{title: 'Inicio'}}
+                options={{title: t('tabs.home')}}
             />
             <Tab.Screen
-                name="Gestión"
+                name={t('tabs.management')}
                 component={ManagementStack}
-                options={{title: 'Gestión'}}
+                options={{title: t('tabs.management')}}
             />
             <Tab.Screen
-                name="Perfil"
+                name={t('tabs.profile')}
                 component={ProfileUserScreen}
-                options={{title: 'Perfil'}}
+                options={{title: t('tabs.profile')}}
             />
         </Tab.Navigator>
     );
