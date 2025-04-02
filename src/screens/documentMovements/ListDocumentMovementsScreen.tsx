@@ -12,7 +12,8 @@ import {
     IconButton,
     useToast,
     AlertDialog,
-    Button
+    Button,
+    useColorModeValue
 } from "native-base";
 import {API_URL} from "@env";
 import customTheme from "../../themes/index";
@@ -23,13 +24,27 @@ import {useAuth} from "../../context/AuthProvider";
 const ListDocumentMovementsScreen = () => {
     const [movements, setMovements] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isOpen, setIsOpen] = useState(false); // State for AlertDialog
-    const [selectedMovement, setSelectedMovement] = useState(null); // Track the selected movement to delete
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedMovement, setSelectedMovement] = useState(null);
     const toast = useToast();
     const navigation = useNavigation();
     const route = useRoute();
     const {user} = useAuth();
-    // Función para obtener los movimientos de documentos
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.600", "gray.400");
+    const headerBg = useColorModeValue("primary.500", "primary.700");
+    const fabBg = useColorModeValue("primary.500", "primary.600");
+
+    // Colores fijos para iconos
+    const viewIconColor = "#3182CE";       // Azul
+    const editIconColor = "#38A169";       // Verde
+    const deleteIconColor = "#E53E3E";     // Rojo
+    const addIconColor = "white";          // Blanco
+
     const fetchMovements = async () => {
         setLoading(true);
         try {
@@ -46,11 +61,10 @@ const ListDocumentMovementsScreen = () => {
     useEffect(() => {
         fetchMovements();
 
-        // Recargar los movimientos si el parámetro shouldReload está presente
         if (route.params?.shouldReload) {
-            fetchMovements();  // Recargar la lista de movimientos
+            fetchMovements();
         }
-    }, [route.params?.shouldReload]);  // Dependemos de shouldReload
+    }, [route.params?.shouldReload]);
 
     const handleDelete = async () => {
         try {
@@ -60,14 +74,14 @@ const ListDocumentMovementsScreen = () => {
 
             if (response.ok) {
                 toast.show({description: "Movimiento eliminado con éxito."});
-                fetchMovements(); // Vuelve a cargar los movimientos después de eliminar
+                fetchMovements();
             } else {
                 toast.show({description: "Error al eliminar el movimiento."});
             }
         } catch (error) {
             toast.show({description: "Error al eliminar."});
         } finally {
-            setIsOpen(false); // Cierra el dialogo
+            setIsOpen(false);
         }
     };
 
@@ -77,68 +91,86 @@ const ListDocumentMovementsScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <VStack flex={1} p={5}>
-                <HStack alignItems="center" mb={6} bg="primary.500" p={4} borderRadius="md" shadow={3}
+            <VStack flex={1} p={5} bg={bgColor}>
+                <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
                         justifyContent="center">
                     <Text fontSize="xl" fontWeight="bold" ml={2} color="white">
-                      Movimientos de Documentos
+                        Movimientos de Documentos
                     </Text>
                 </HStack>
-                <FlatList data={movements} keyExtractor={(item) => item.ID_Movimiento.toString()}
-                          renderItem={({item}) => (
-                              <HStack justifyContent="space-between" alignItems="center" p={3} mb={2}
-                                      bg="white"
-                                      borderRadius="md" shadow={2}>
-                                  <VStack>
-                                      <Text fontSize="md" margin="1"
-                                            fontFamily="Poppins-Bold">{`Documento: ${item.Nombre_Documento}`}</Text>
-                                      <Badge
-                                          colorScheme={item.Estado === "En préstamo" ? "warning" : "success"}>{item.Estado}</Badge>
-                                  </VStack>
 
-                                  <HStack space={2}>
-                                      {user.role === 'administrador' && (
-                                          <>
-                                              <IconButton
-                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                              />
-                                              <IconButton
-                                                  icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
-                                                  onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                              />
-                                              <IconButton
-                                                  icon={<Ionicons name="trash-outline" size={20} color="red"/>}
-                                                  onPress={() => {
-                                                      setSelectedMovement(item);
-                                                      setIsOpen(true); // Open the confirmation dialog
-                                                  }}
-                                              />
-                                          </>
-                                      )}
-                                      {user.role === 'empleado' && (
-                                          <>
-                                              <IconButton
-                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                              />
-                                              <IconButton
-                                                  icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
-                                                  onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                              />
-                                          </>
-                                      )}
-                                      {user.role === 'invitado' && (
-                                          <>
-                                              <IconButton
-                                                  icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                  onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
-                                              />
-                                          </>
-                                      )}
-                                  </HStack>
-                              </HStack>
-                          )}
+                <FlatList
+                    data={movements}
+                    keyExtractor={(item) => item.ID_Movimiento.toString()}
+                    renderItem={({item}) => (
+                        <HStack
+                            justifyContent="space-between"
+                            alignItems="center"
+                            p={3}
+                            mb={2}
+                            bg={cardBg}
+                            borderRadius="md"
+                            shadow={2}
+                        >
+                            <VStack>
+                                <Text
+                                    fontSize="md"
+                                    margin="1"
+                                    fontFamily="Poppins-Bold"
+                                    color={textColor}
+                                >
+                                    {`Documento: ${item.Nombre_Documento}`}
+                                </Text>
+                                <Badge
+                                    colorScheme={item.Estado === "En préstamo" ? "warning" : "success"}
+                                >
+                                    {item.Estado}
+                                </Badge>
+                            </VStack>
+
+                            <HStack space={2}>
+                                {user.role === 'administrador' && (
+                                    <>
+                                        <IconButton
+                                            icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
+                                            onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                        />
+                                        <IconButton
+                                            icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
+                                            onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                        />
+                                        <IconButton
+                                            icon={<Ionicons name="trash-outline" size={20} color={deleteIconColor}/>}
+                                            onPress={() => {
+                                                setSelectedMovement(item);
+                                                setIsOpen(true);
+                                            }}
+                                        />
+                                    </>
+                                )}
+                                {user.role === 'empleado' && (
+                                    <>
+                                        <IconButton
+                                            icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
+                                            onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                        />
+                                        <IconButton
+                                            icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
+                                            onPress={() => navigation.navigate("EditDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                        />
+                                    </>
+                                )}
+                                {user.role === 'invitado' && (
+                                    <>
+                                        <IconButton
+                                            icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
+                                            onPress={() => navigation.navigate("DetailDocumentMovements", {movement_id: item.ID_Movimiento})}
+                                        />
+                                    </>
+                                )}
+                            </HStack>
+                        </HStack>
+                    )}
                 />
             </VStack>
 
@@ -153,27 +185,18 @@ const ListDocumentMovementsScreen = () => {
                 </AlertDialog.Content>
             </AlertDialog>
 
-            {/* Agregar un registrp */}
-            {user.role === 'administrador' && (
+            {/* Botón flotante para agregar */}
+            {(user.role === 'administrador' || user.role === 'empleado') && (
                 <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
+                    icon={<Ionicons name="add" size={40} color={addIconColor}/>}
+                    bg={fabBg}
                     borderRadius="full"
                     position="absolute"
                     bottom={4}
                     right={4}
                     onPress={() => navigation.navigate("AddDocumentMovements")}
-                />)}
-            {user.role === 'empleado' && (
-                <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
-                    borderRadius="full"
-                    position="absolute"
-                    bottom={4}
-                    right={4}
-                    onPress={() => navigation.navigate("AddDocumentMovements")}
-                />)}
+                />
+            )}
         </NativeBaseProvider>
     );
 };

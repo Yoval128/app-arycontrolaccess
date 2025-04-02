@@ -35,6 +35,7 @@
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.8",
+    "lucide-react-native": "^0.486.0",
     "native-base": "^3.4.28",
     "nativewind": "^4.1.23",
     "normalize-css-color": "^1.0.2",

@@ -16,7 +16,7 @@ export default function AppNavigator() {
                 {user.token ? (
                     <Stack.Screen name="RoleNavigator" component={RoleNavigator} />
                 ) : (
-                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
                 )}
             </Stack.Navigator>
         </NavigationContainer>

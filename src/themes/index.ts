@@ -2,9 +2,9 @@ import { extendTheme } from "native-base";
 
 const customTheme = extendTheme({
     fonts: {
-        heading: "Poppins-Bold",  // Usamos Poppins para títulos y encabezados
-        body: "Inter-Italic",    // Inter para el contenido principal
-        mono: "Roboto-Mono",      // Opcional: Fuente monoespaciada si se usa código o datos técnicos
+        heading: "Poppins-Bold",
+        body: "Inter-Italic",
+        mono: "Roboto-Mono",
     },
     colors: {
         primary: {
@@ -13,21 +13,22 @@ const customTheme = extendTheme({
             200: "#A6B9CF",
             300: "#879FBF",
             400: "#6786AF",
-            500: "#2C3E50", // Color Primario Base (para Login)
+            500: "#2C3E50",
             600: "#253646",
             700: "#1E2D3C",
             800: "#17242F",
             900: "#101A23",
         },
         secondary: {
-            500: "#304C69", // Azul oscuro medio
-            600: "#2C2C50", // Azul grisáceo profundo
-            700: "#252729", // Gris oscuro neutro
+            500: "#304C69",
+            600: "#2C2C50",
+            700: "#252729",
         },
         accent: {
-            500: "#003469", // Azul profundo
-            600: "#0074E8", // Azul vibrante
+            500: "#003469",
+            600: "#0074E8",
         },
+        // Mejoramos la definición de colores para dark/light
         background: {
             light: "#F5F7FA",
             dark: "#1C1E22",
@@ -37,56 +38,66 @@ const customTheme = extendTheme({
             dark: "#FFFFFF",
         },
         status: {
-            success: "#4CAF50", // Verde
-            warning: "#FFEB3B", // Amarillo
-            error: "#F44336", // Rojo
+            success: "#4CAF50",
+            warning: "#FFEB3B",
+            error: "#F44336",
         }
     },
     components: {
         Button: {
-            baseStyle: {
+            baseStyle: ({ colorMode }: { colorMode: "light" | "dark" }) => ({
                 rounded: "xl",
                 _text: {
                     fontWeight: "bold",
                     fontFamily: "Poppins-Bold",
-                    color: "white",
+                    color: colorMode === "dark" ? "text.dark" : "text.light",
                 },
-            },
+                bg: colorMode === "dark" ? "primary.700" : "primary.500",
+            }),
             defaultProps: {
                 colorScheme: "secondary",
             },
         },
         Input: {
-            baseStyle: {
+            baseStyle: ({ colorMode }: { colorMode: "light" | "dark" }) => ({
                 borderRadius: "md",
-                borderColor: "primary.400",
+                borderColor: colorMode === "dark" ? "primary.400" : "primary.500",
                 fontFamily: "Inter-Regular",
+                bg: colorMode === "dark" ? "coolGray.800" : "coolGray.100",
                 _focus: {
                     borderColor: "primary.500",
-                    bg: "primary.50",
+                    bg: colorMode === "dark" ? "coolGray.700" : "primary.50",
                 },
-            },
+            }),
         },
         Text: {
-            baseStyle: {
-                color: "text.light",
+            baseStyle: ({ colorMode }: { colorMode: "light" | "dark" }) => ({
+                color: colorMode === "dark" ? "text.dark" : "text.light",
                 fontFamily: "Inter-Regular",
-            },
+            }),
             defaultProps: {
                 fontSize: "md",
             },
         },
         Heading: {
-            baseStyle: {
+            baseStyle: ({ colorMode }: { colorMode: "light" | "dark" }) => ({
                 fontFamily: "Poppins-Bold",
                 fontWeight: "bold",
-                color: "text.light",
-            },
+                color: colorMode === "dark" ? "text.dark" : "text.light",
+            }),
         },
     },
     config: {
         initialColorMode: "light",
+        useSystemColorMode: false,
     },
 });
+
+// Extender los tipos para TypeScript
+type CustomThemeType = typeof customTheme;
+
+declare module "native-base" {
+    interface ICustomTheme extends CustomThemeType {}
+}
 
 export default customTheme;

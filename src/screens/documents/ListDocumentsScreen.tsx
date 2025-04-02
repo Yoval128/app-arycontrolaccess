@@ -12,7 +12,8 @@ import {
     Spinner,
     IconButton,
     AlertDialog,
-    Button
+    Button,
+    useColorModeValue
 } from "native-base";
 import {Ionicons} from '@expo/vector-icons';
 import customTheme from "../../themes/index";
@@ -28,15 +29,31 @@ const ListDocumentsScreen = () => {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [error, setError] = useState(null);
     const navigation = useNavigation();
-    const route = useRoute(); // Usar useRoute para acceder a los parámetros
+    const route = useRoute();
     const {user} = useAuth();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const headerBg = useColorModeValue("primary.500", "primary.700");
+    const fabBg = useColorModeValue("primary.500", "primary.600");
+
+    // Colores fijos para iconos
+    const viewIconColor = "#3182CE";       // Azul
+    const editIconColor = "#38A169";       // Verde
+    const deleteIconColor = "#E53E3E";     // Rojo
+    const addIconColor = "white";          // Blanco
+    const headerIconColor = "white";       // Icono del header en blanco
+
     useEffect(() => {
         fetchDocuments();
     }, []);
 
     useEffect(() => {
         if (route.params?.refresh) {
-            fetchDocuments(); // Recargar los documentos cuando el parámetro `refresh` es true
+            fetchDocuments();
         }
     }, [route.params?.refresh]);
 
@@ -50,7 +67,7 @@ const ListDocumentsScreen = () => {
             const data = await response.json();
             setDocuments(data);
         } catch (error) {
-            setError(error.message); // Manejo de error
+            setError(error.message);
         } finally {
             setLoading(false);
         }
@@ -71,13 +88,13 @@ const ListDocumentsScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}}>
-                <Box safeArea p={5} bg="background.light" flex={1}>
-                    <HStack alignItems="center" mb={4} bg="primary.500" p={4} borderRadius="md" shadow={3}
-                            justifyContent="center">>
-                        <Ionicons name="document-text-outline" size={28} color="#003469"/>
+            <ScrollView contentContainerStyle={{flexGrow: 1}} bg={bgColor}>
+                <Box safeArea p={5} flex={1}>
+                    <HStack alignItems="center" mb={4} bg={headerBg} p={4} borderRadius="md" shadow={3} justifyContent="center">
+                        <Ionicons name="document-text-outline" size={28} color={headerIconColor}/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
-                            Lista de Documentos</Text>
+                            Lista de Documentos
+                        </Text>
                     </HStack>
 
                     {loading ? (
@@ -87,19 +104,19 @@ const ListDocumentsScreen = () => {
                             data={documents}
                             keyExtractor={(item) => item.ID_Documento.toString()}
                             renderItem={({item}) => (
-                                <Box bg="white" p={4} mb={3} borderRadius="lg" shadow={2}>
+                                <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2}>
                                     <HStack space={3} alignItems="center">
                                         <Avatar bg="primary.400" size="md">
                                             {item.Nombre_Documento[0]}
                                         </Avatar>
                                         <VStack flex={1}>
-                                            <Text fontSize="md" fontWeight="bold">
+                                            <Text fontSize="md" fontWeight="bold" color={textColor}>
                                                 {item.Tipo_Documento}
                                             </Text>
-                                            <Text fontSize="sm" color="gray.500">
+                                            <Text fontSize="sm" color={secondaryTextColor}>
                                                 {item.Ubicacion}
                                             </Text>
-                                            <Text fontSize="xs" color="gray.400">
+                                            <Text fontSize="xs" color={secondaryTextColor}>
                                                 {item.Estado}
                                             </Text>
                                         </VStack>
@@ -107,15 +124,15 @@ const ListDocumentsScreen = () => {
                                             {user.role === 'administrador' && (
                                                 <>
                                                     <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                        icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
                                                         onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
                                                     />
                                                     <IconButton
-                                                        icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                        icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
                                                         onPress={() => navigation.navigate("EditDocuments", {documento_id: item.ID_Documento})}
                                                     />
                                                     <IconButton
-                                                        icon={<Ionicons name="trash-outline" size={20} color="red"/>}
+                                                        icon={<Ionicons name="trash-outline" size={20} color={deleteIconColor}/>}
                                                         onPress={() => {
                                                             setSelectedDocument(item.ID_Documento);
                                                             setIsOpen(true);
@@ -126,22 +143,20 @@ const ListDocumentsScreen = () => {
                                             {user.role === 'empleado' && (
                                                 <>
                                                     <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
+                                                        icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
                                                         onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
                                                     />
                                                     <IconButton
-                                                        icon={<Ionicons name="pencil-outline" size={20} color="green"/>}
+                                                        icon={<Ionicons name="pencil-outline" size={20} color={editIconColor}/>}
                                                         onPress={() => navigation.navigate("EditDocuments", {documento_id: item.ID_Documento})}
                                                     />
                                                 </>
                                             )}
                                             {user.role === 'invitado' && (
-                                                <>
-                                                    <IconButton
-                                                        icon={<Ionicons name="eye-outline" size={20} color="blue"/>}
-                                                        onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
-                                                    />
-                                                </>
+                                                <IconButton
+                                                    icon={<Ionicons name="eye-outline" size={20} color={viewIconColor}/>}
+                                                    onPress={() => navigation.navigate("DetailDocuments", {documento_id: item.ID_Documento})}
+                                                />
                                             )}
                                         </HStack>
                                     </HStack>
@@ -164,10 +179,11 @@ const ListDocumentsScreen = () => {
                 </AlertDialog.Content>
             </AlertDialog>
 
-            {user.role === 'administrador' && (
+            {/* Botón flotante para agregar */}
+            {(user.role === 'administrador' || user.role === 'empleado') && (
                 <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
+                    icon={<Ionicons name="add" size={40} color={addIconColor}/>}
+                    bg={fabBg}
                     borderRadius="full"
                     position="absolute"
                     bottom={4}
@@ -175,18 +191,6 @@ const ListDocumentsScreen = () => {
                     onPress={() => navigation.navigate("AddDocument")}
                 />
             )}
-            {user.role === 'empleado' && (
-                <IconButton
-                    icon={<Ionicons name="add" size={40} color="white"/>}
-                    bg="primary.500"
-                    borderRadius="full"
-                    position="absolute"
-                    bottom={4}
-                    right={4}
-                    onPress={() => navigation.navigate("AddDocument")}
-                />
-            )}
-
         </NativeBaseProvider>
     );
 };
