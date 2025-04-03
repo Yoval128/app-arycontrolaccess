@@ -1,22 +1,29 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, NativeBaseProvider, Box, VStack, HStack, Spinner, Badge, Button} from "native-base";
-import {Ionicons} from "@expo/vector-icons";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { View, Text, NativeBaseProvider, Box, VStack, HStack, Spinner, Badge, Button, Input, Alert } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import customTheme from "../../themes/index";
-import {API_URL} from "@env";
+import { API_URL } from "@env";
+import NfcManager, { NfcTech } from "react-native-nfc-manager";
+import * as FileSystem from "expo-file-system";
+
+NfcManager.start(); // Inicializa NFC
 
 const DetailRfidCardsScreen = () => {
     const [card, setCard] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [password, setPassword] = useState("");
+    const [rfidCode, setRfidCode] = useState("");
+    const [downloading, setDownloading] = useState(false);
+
     const route = useRoute();
     const navigation = useNavigation();
-    const {tarjeta_id} = route.params;
+    const { tarjeta_id } = route.params;
 
     useEffect(() => {
         fetchCardDetails();
     }, []);
-
 
     const fetchCardDetails = async () => {
         try {
@@ -30,6 +37,51 @@ const DetailRfidCardsScreen = () => {
             setError(error.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Función para leer el código RFID con NFC
+    const readRFID = async () => {
+        try {
+            await NfcManager.requestTechnology(NfcTech.NfcA);
+            const tag = await NfcManager.getTag();
+            if (tag) {
+                setRfidCode(tag.id);
+                Alert.alert("Éxito", `Código RFID leído: ${tag.id}`);
+            }
+        } catch (error) {
+            Alert.alert("Error", "No se pudo leer la tarjeta NFC");
+        } finally {
+            NfcManager.cancelTechnologyRequest();
+        }
+    };
+
+    // Función para descargar el documento
+    const downloadDocument = async () => {
+        if (!password || !rfidCode) {
+            Alert.alert("Error", "Ingresa la contraseña y lee la tarjeta RFID");
+            return;
+        }
+
+        setDownloading(true);
+
+        try {
+            const apiUrl = `${API_URL}/api/documents/download?rfid=${rfidCode}&password=${password}`;
+            const fileUri = FileSystem.documentDirectory + "documento.pdf";
+
+            const response = await FileSystem.downloadAsync(apiUrl, fileUri);
+
+            if (response.status === 200) {
+                Alert.alert("Éxito", "Documento descargado correctamente", [
+                    { text: "Abrir", onPress: () => FileSystem.getContentUriAsync(fileUri).then(uri => FileSystem.openDocumentAsync(uri)) }
+                ]);
+            } else {
+                Alert.alert("Error", "No se pudo descargar el documento");
+            }
+        } catch (error) {
+            Alert.alert("Error", "Ocurrió un problema al descargar");
+        } finally {
+            setDownloading(false);
         }
     };
 
@@ -110,14 +162,29 @@ const DetailRfidCardsScreen = () => {
                                 No hay usuario asignado a esta tarjeta.
                             </Text>
                         )}
-                        <HStack space={2} alignItems="center">
-                            <Button
-                                onPress={() => navigation.navigate("DetailUser", {usuario_id: card.ID_Usuario})}
-                                colorScheme="blue">
-                                Consultar perfil
-                            </Button>
-                        </HStack>
 
+                        <Input
+                            placeholder="Ingresa tu contraseña"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={setPassword}
+                            borderWidth={1}
+                            borderRadius={5}
+                            p={2}
+                        />
+
+                        <Button colorScheme="blue" mt={3} onPress={readRFID}>
+                            Leer Tarjeta RFID
+                        </Button>
+
+                        <Button
+                            colorScheme="green"
+                            mt={3}
+                            isLoading={downloading}
+                            onPress={downloadDocument}
+                        >
+                            Descargar Documento
+                        </Button>
                     </VStack>
                 </Box>
             </Box>
