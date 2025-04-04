@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {
-    NativeBaseProvider,
     Box,
     Text,
     VStack,
@@ -11,15 +10,16 @@ import {
     Icon,
     Badge,
     Divider,
-    Button
+    useColorModeValue
 } from 'native-base';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {useFocusEffect} from '@react-navigation/native';
 import {BarChart, PieChart} from 'react-native-chart-kit';
-import customTheme from "../../themes/index";
-import {API_URL} from "@env";
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ThemeToggle from '../../components/ThemeToggle';
+import {API_URL} from '@env';
+import {useTranslation} from "react-i18next";
 
 const EmpleadoDashboardScreen = () => {
     const [user, setUser] = useState(null);
@@ -37,37 +37,58 @@ const EmpleadoDashboardScreen = () => {
     const [lastUpdated, setLastUpdated] = useState(null);
     const navigation = useNavigation();
 
-    // Colores personalizados para el tema
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const headingColor = useColorModeValue("primary.600", "primary.300");
+    const dividerColor = useColorModeValue("gray.200", "gray.600");
+    const chartBgColor = useColorModeValue("white", "transparent");
+    const chartTextColor = useColorModeValue("#7F7F7F", "#E2E2E2");
+
+    // Colores personalizados para gráficos que responden al tema
     const colors = {
-        primary: '#34c1c3',
-        secondary: '#2b6cb0',
-        danger: '#d9534f',
-        warning: '#f0ad4e',
-        success: '#5cb85c',
-        info: '#5bc0de'
+        primary: useColorModeValue('#34c1c3', '#2dd4bf'),
+        secondary: useColorModeValue('#2b6cb0', '#3b82f6'),
+        danger: useColorModeValue('#d9534f', '#ef4444'),
+        warning: useColorModeValue('#f0ad4e', '#f59e0b'),
+        success: useColorModeValue('#5cb85c', '#10b981'),
+        info: useColorModeValue('#5bc0de', '#06b6d4')
     };
 
+// Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
     // Datos para el gráfico de pastel
     const userCargosPieData = [
         {
-            name: 'Administradores',
+            name: t('admin_dashboard.administrators'),
             population: userCargos.Admin,
             color: colors.primary,
-            legendFontColor: '#7F7F7F',
+            legendFontColor: chartTextColor,
             legendFontSize: 12
         },
         {
-            name: 'Invitados',
+            name: t('admin_dashboard.guests'),
             population: userCargos.Invitado,
             color: colors.danger,
-            legendFontColor: '#7F7F7F',
+            legendFontColor: chartTextColor,
             legendFontSize: 12
         },
         {
-            name: 'Empleados',
+            name: t('admin_dashboard.employees'),
             population: userCargos.Empleado,
             color: colors.secondary,
-            legendFontColor: '#7F7F7F',
+            legendFontColor: chartTextColor,
             legendFontSize: 12
         },
     ];
@@ -130,16 +151,24 @@ const EmpleadoDashboardScreen = () => {
     );
 
     const activeRfidCardsBarData = {
-        labels: ['Activas', 'Inactivas'],
+        labels: [t('chart_legends.active'), t('chart_legends.inactive')],
         datasets: [
             {
                 data: [activeRfidCards || 0, inactiveRfidCards || 0],
                 colors: [
-                    (opacity = 1) => `rgba(52, 193, 195, ${opacity})`,  // Color primario
-                    (opacity = 1) => `rgba(217, 83, 79, ${opacity})`,   // Color danger
+                    (opacity = 1) => `rgba(${hexToRgb(colors.primary).join(', ')}, ${opacity})`,
+                    (opacity = 1) => `rgba(${hexToRgb(colors.danger).join(', ')}, ${opacity})`,
                 ],
             },
         ],
+    };
+
+    // Función para convertir hex a rgb
+    const hexToRgb = (hex) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return [r, g, b];
     };
 
     // Card de estadísticas
@@ -147,7 +176,7 @@ const EmpleadoDashboardScreen = () => {
         <Box
             flex={1}
             p={3}
-            bg="white"
+            bg={cardBg}
             borderRadius="lg"
             shadow={2}
             mx={1}
@@ -159,25 +188,27 @@ const EmpleadoDashboardScreen = () => {
                     size="sm"
                     color={`${color}.500`}
                 />
-                <Text fontSize="xs" color="gray.500">{title}</Text>
+                <Text fontSize="xs" color={textColor}>{title}</Text>
             </HStack>
             <Text fontSize="xl" bold mt={1} color={`${color}.600`}>
                 {value || 0}
             </Text>
         </Box>
     );
+
     return (
-        <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}} bg="gray.50">
-                <Box safeArea p={4} flex={1}>
-                    {/* Header */}
-                    <HStack justifyContent="space-between" alignItems="center" mb={4}>
-                        <VStack>
-                            <Heading size="lg" color="primary.600">Panel de Control</Heading>
-                            <Text fontSize="xs" color="gray.500">
-                                Última actualización: {lastUpdated || 'Cargando...'}
-                            </Text>
-                        </VStack>
+        <ScrollView contentContainerStyle={{flexGrow: 1}} bg={bgColor}>
+            <Box safeArea p={4} flex={1}>
+                {/* Header */}
+                <HStack justifyContent="space-between" alignItems="center" mb={4}>
+                    <VStack>
+                        <Heading size="lg" color={headingColor}>{t('admin_dashboard.dashboard_panel')}</Heading>
+                        <Text fontSize="xs" color={textColor}>
+                            {t('admin_dashboard.last_updated')}: {lastUpdated || 'Cargando...'}
+                        </Text>
+                    </VStack>
+                    <HStack alignItems="center" space={2}>
+                        <ThemeToggle/>
                         <HStack alignItems="center">
                             <Icon
                                 as={Ionicons}
@@ -187,7 +218,7 @@ const EmpleadoDashboardScreen = () => {
                                 mr={2}
                             />
                             <VStack>
-                                <Text fontSize="sm" bold color="gray.700">
+                                <Text fontSize="sm" bold color={textColor}>
                                     {user?.nombre || 'Usuario'}
                                 </Text>
                                 <Badge
@@ -202,129 +233,128 @@ const EmpleadoDashboardScreen = () => {
                             </VStack>
                         </HStack>
                     </HStack>
+                </HStack>
 
-                    {/* Tarjetas de resumen */}
-                    <HStack space={2} mb={4}>
-                        <StatCard
-                            icon={Ionicons}
-                            iconName="people"
-                            title="Usuarios"
-                            value={userCargos.Admin + userCargos.Empleado + userCargos.Invitado}
-                            color="primary"
-                        />
-                        <StatCard
-                            icon={MaterialCommunityIcons}
-                            iconName="card-account-details"
-                            title="Tarjetas Activas"
-                            value={activeRfidCards}
-                            color="success"
-                        />
-                        <StatCard
-                            icon={MaterialCommunityIcons}
-                            iconName="card-off"
-                            title="Tarjetas Inactivas"
-                            value={inactiveRfidCards}
-                            color="danger"
-                        />
-                    </HStack>
+                {/* Tarjetas de resumen */}
+                <HStack space={2} mb={4}>
+                    <StatCard
+                        icon={Ionicons}
+                        iconName="people"
+                        title={t('dashboard_stats.total_users')}
+                        value={userCargos.Admin + userCargos.Empleado + userCargos.Invitado}
+                        color="primary"
+                    />
+                    <StatCard
+                        icon={MaterialCommunityIcons}
+                        iconName="card-account-details"
+                        title={t('dashboard_stats.active_cards')}
+                        value={activeRfidCards}
+                        color="success"
+                    />
+                    <StatCard
+                        icon={MaterialCommunityIcons}
+                        iconName="card-off"
+                        title={t('dashboard_stats.inactive_cards')}
+                        value={inactiveRfidCards}
+                        color="danger"
+                    />
+                </HStack>
 
-                    {/* Sección de gráficos */}
-                    <Heading size="md" mb={3} color="primary.600">📊 Estadísticas Visuales</Heading>
+                {/* Sección de gráficos */}
+                <Heading size="md" mb={3} color={headingColor}>📊 {t('admin_dashboard.visual_statistics')}</Heading>
 
-                    {error && (
-                        <Box bg="red.100" p={3} borderRadius="md" mb={4}>
-                            <HStack space={2} alignItems="center">
-                                <Icon as={Ionicons} name="warning" color="red.500"/>
-                                <Text color="red.600">{error}</Text>
-                            </HStack>
-                        </Box>
-                    )}
+                {error && (
+                    <Box bg="red.100" p={3} borderRadius="md" mb={4}>
+                        <HStack space={2} alignItems="center">
+                            <Icon as={Ionicons} name="warning" color="red.500"/>
+                            <Text color="red.600">{error}</Text>
+                        </HStack>
+                    </Box>
+                )}
 
-                    <VStack space={4} mb={4}>
-                        {/* Gráfico de distribución de cargos */}
-                        <Box p={4} bg="white" borderRadius="lg" shadow={2}>
-                            <HStack justifyContent="space-between" alignItems="center" mb={2}>
-                                <Text bold>Distribución de Usuarios</Text>
-                                <Badge colorScheme="primary" borderRadius="full" px={2}>
-                                    <Text
-                                        fontSize="xs">Total: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
-                                </Badge>
-                            </HStack>
-                            {loading ? (
-                                <Box height={220} justifyContent="center" alignItems="center">
-                                    <Spinner size="lg" color="primary.500"/>
-                                </Box>
-                            ) : (
-                                <PieChart
-                                    data={userCargosPieData}
-                                    width={350}
-                                    height={200}
-                                    chartConfig={{
-                                        backgroundColor: 'white',
-                                        backgroundGradientFrom: 'white',
-                                        backgroundGradientTo: 'white',
-                                        decimalPlaces: 0,
-                                        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                        style: {
-                                            borderRadius: 16
-                                        }
-                                    }}
-                                    accessor="population"
-                                    backgroundColor="transparent"
-                                    paddingLeft="15"
-                                    absolute
-                                    style={{
-                                        marginVertical: 8,
+                <VStack space={4} mb={4}>
+                    {/* Gráfico de distribución de cargos */}
+                    <Box p={4} bg={cardBg} borderRadius="lg" shadow={2}>
+                        <HStack justifyContent="space-between" alignItems="center" mb={2}>
+                            <Text bold color={textColor}>{t('admin_dashboard.user_distribution')}</Text>
+                            <Badge colorScheme="primary" borderRadius="full" px={2}>
+                                <Text
+                                    fontSize="xs">{t('admin_dashboard.total')}: {userCargos.Admin + userCargos.Empleado + userCargos.Invitado}</Text>
+                            </Badge>
+                        </HStack>
+                        {loading ? (
+                            <Box height={220} justifyContent="center" alignItems="center">
+                                <Spinner size="lg" color="primary.500"/>
+                            </Box>
+                        ) : (
+                            <PieChart
+                                data={userCargosPieData}
+                                width={350}
+                                height={200}
+                                chartConfig={{
+                                    backgroundColor: chartBgColor,
+                                    backgroundGradientFrom: chartBgColor,
+                                    backgroundGradientTo: chartBgColor,
+                                    decimalPlaces: 0,
+                                    color: (opacity = 1) => `rgba(${hexToRgb(textColor).join(', ')}, ${opacity})`,
+                                    style: {
                                         borderRadius: 16
-                                    }}
-                                />
-                            )}
-                        </Box>
+                                    }
+                                }}
+                                accessor="population"
+                                backgroundColor="transparent"
+                                paddingLeft="15"
+                                absolute
+                                style={{
+                                    marginVertical: 8,
+                                    borderRadius: 16
+                                }}
+                            />
+                        )}
+                    </Box>
 
-                        {/* Gráfico de tarjetas RFID */}
-                        <Box p={4} bg="white" borderRadius="lg" shadow={2}>
-                            <HStack justifyContent="space-between" alignItems="center" mb={2}>
-                                <Text bold>Estado de Tarjetas RFID</Text>
-                                <Badge colorScheme="info" borderRadius="full" px={2}>
-                                    <Text
-                                        fontSize="xs">Total: {(activeRfidCards || 0) + (inactiveRfidCards || 0)}</Text>
-                                </Badge>
-                            </HStack>
-                            {loading ? (
-                                <Box height={220} justifyContent="center" alignItems="center">
-                                    <Spinner size="lg" color="primary.500"/>
-                                </Box>
-                            ) : (
-                                <BarChart
-                                    data={activeRfidCardsBarData}
-                                    width={350}
-                                    height={220}
-                                    yAxisLabel=""
-                                    chartConfig={{
-                                        backgroundColor: 'white',
-                                        backgroundGradientFrom: 'white',
-                                        backgroundGradientTo: 'white',
-                                        decimalPlaces: 0,
-                                        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                        barPercentage: 0.6,
-                                        style: {
-                                            borderRadius: 16
-                                        }
-                                    }}
-                                    style={{
-                                        marginVertical: 8,
+                    {/* Gráfico de tarjetas RFID */}
+                    <Box p={4} bg={cardBg} borderRadius="lg" shadow={2}>
+                        <HStack justifyContent="space-between" alignItems="center" mb={2}>
+                            <Text bold color={textColor}>{t('admin_dashboard.rfid_card_status')}</Text>
+                            <Badge colorScheme="info" borderRadius="full" px={2}>
+                                <Text fontSize="xs">Total: {(activeRfidCards || 0) + (inactiveRfidCards || 0)}</Text>
+                            </Badge>
+                        </HStack>
+                        {loading ? (
+                            <Box height={220} justifyContent="center" alignItems="center">
+                                <Spinner size="lg" color="primary.500"/>
+                            </Box>
+                        ) : (
+                            <BarChart
+                                data={activeRfidCardsBarData}
+                                width={350}
+                                height={220}
+                                yAxisLabel=""
+                                chartConfig={{
+                                    backgroundColor: 'white',
+                                    backgroundGradientFrom: 'white',
+                                    backgroundGradientTo: 'white',
+                                    decimalPlaces: 0,
+                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                    barPercentage: 0.6,
+                                    style: {
                                         borderRadius: 16
-                                    }}
-                                    fromZero
-                                />
-                            )}
-                        </Box>
-                    </VStack>
-
-                </Box>
-            </ScrollView>
-        </NativeBaseProvider>
-    )
+                                    }
+                                }}
+                                style={{
+                                    marginVertical: 8,
+                                    borderRadius: 16
+                                }}
+                                fromZero
+                            />
+                        )}
+                    </Box>
+                </VStack>
+            </Box>
+        </ScrollView>
+    );
 };
+
 
 export default EmpleadoDashboardScreen;
