@@ -6,7 +6,6 @@ import {useColorModeValue} from "native-base";
 import AdminDashboardScreen from "../screens/dashboards/AdminDashboardScreen";
 import ProfileUserScreen from "../screens/profile/ProfileUserScreen";
 import GestionStackScreen from "../screens/management/GestionStackScreen";
-// Importa todas tus pantallas aquí...
 import LoginScreen from "../screens/auth/LoginScreen";
 import GraficosScreen from "../screens/Graficos/GraficosScreen";
 import ListUsersScreen from "../screens/users/ListUsersScreen";
@@ -59,8 +58,7 @@ function ManagementStack() {
                 cardStyle: {
                     backgroundColor: useColorModeValue("#F9FAFB", "#111827"), // Fondo gris claro en claro, gris muy oscuro en oscuro
                 }
-            }}
-        >
+            }}>
 
             <Stack.Screen name="GestiónStack " component={GestionStackScreen} options={{headerShown: false}}/>
             <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
