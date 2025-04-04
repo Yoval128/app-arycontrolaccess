@@ -14,9 +14,13 @@
       "android": {
         "buildType": "apk"
       }
+    },
+    "development": {
+      "distribution": "internal",
+      "developmentClient": true,
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
