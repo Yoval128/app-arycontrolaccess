@@ -119,6 +119,7 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "cancel": "Cancelar",
+      "delete":"Eliminar",
       "confirmDelete": "Confirmar Eliminación"
     },
     "placeholders": {

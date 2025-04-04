@@ -25,6 +25,7 @@ import {API_URL} from "@env";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
+
 import {useTranslation} from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -45,6 +46,16 @@ const ListUsersScreen = () => {
 
     // Hook para obtener traducciones
     const {t, i18n} = useTranslation();
+    // Función para cambiar el idioma y guardar la preferencia
+    const changeAppLanguage = async (lng) => {
+        try {
+            await i18n.changeLanguage(lng);
+            await AsyncStorage.setItem('userLanguage', lng);
+        } catch (error) {
+            console.error("Error changing language:", error);
+        }
+    };
+    
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
     const cardBg = useColorModeValue("white", "gray.800");
@@ -54,6 +65,7 @@ const ListUsersScreen = () => {
     const iconColor = useColorModeValue("gray.600", "gray.300");
     const fabBg = useColorModeValue("primary.500", "primary.600");
     const buttonBg = useColorModeValue("white", "red");
+
     useEffect(() => {
         fetchUsers();
     }, [currentPage]);
@@ -124,16 +136,6 @@ const ListUsersScreen = () => {
     const clearFilter = () => {
         setFilter("");
         setFilteredUsers(users);
-    };
-
-    // Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
     };
 
     const deleteUser = async (id) => {
@@ -219,14 +221,13 @@ const ListUsersScreen = () => {
                         )}
                         {user.role === 'empleado' && (
                             <>
-                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>Subir
-                                    archivo</Menu.Item>
-                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("UploadExcelUsers")}>{t('listUsers.menu.uploadFile')}</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>{t('listUsers.menu.export')}</Menu.Item>
                             </>
                         )}
                         {user.role === 'invitado' && (
                             <>
-                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>Exportar</Menu.Item>
+                                <Menu.Item onPress={() => navigation.navigate("ExportPDFUser")}>{t('listUsers.menu.export')}</Menu.Item>
                             </>
                         )}
                     </Menu>
@@ -316,11 +317,11 @@ const ListUsersScreen = () => {
 
             <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <AlertDialog.Content>
-                    <AlertDialog.Header>Eliminar Usuario</AlertDialog.Header>
-                    <AlertDialog.Body>¿Estás seguro de que deseas eliminar este usuario?</AlertDialog.Body>
+                    <AlertDialog.Header>{t('listUsers.buttons.deleteUser')}</AlertDialog.Header>
+                    <AlertDialog.Body>{t('listUsers.alerts.deleteConfirmation')}</AlertDialog.Body>
                     <AlertDialog.Footer>
-                        <Button variant="ghost" onPress={() => setIsOpen(false)}>Cancelar</Button>
-                        <Button colorScheme="danger" onPress={() => deleteUser(selectedUser)}>Eliminar</Button>
+                        <Button variant="ghost" onPress={() => setIsOpen(false)}>{t('listUsers.buttons.cancel')}</Button>
+                        <Button colorScheme="danger" onPress={() => deleteUser(selectedUser)}>{t('listUsers.buttons.delete')}</Button>
                     </AlertDialog.Footer>
                 </AlertDialog.Content>
             </AlertDialog>
