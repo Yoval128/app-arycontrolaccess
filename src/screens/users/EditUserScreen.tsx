@@ -17,12 +17,15 @@ import {
     Divider,
     Badge,
     Alert,
-    CheckIcon, IconButton
+    CheckIcon,
+    IconButton,
+    useColorModeValue
 } from "native-base";
 import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import customTheme from "../../themes/index";
 import {API_URL} from "@env";
+import Header from "../../components/Header";
 
 const EditUserScreen = () => {
     const navigation = useNavigation();
@@ -43,6 +46,18 @@ const EditUserScreen = () => {
     const [saving, setSaving] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const toast = useToast();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const dividerColor = useColorModeValue("gray.200", "gray.700");
+    const headingColor = useColorModeValue("primary.600", "primary.300");
+    const iconColor = useColorModeValue("gray.400", "gray.300");
+    const placeholderColor = useColorModeValue("gray.400", "gray.500");
+    const inputBg = useColorModeValue("white", "gray.700");
+    const selectBg = useColorModeValue("white", "gray.700");
 
     const cargos = [
         {label: 'Administrador', value: 'administrador'},
@@ -138,10 +153,10 @@ const EditUserScreen = () => {
     if (loading) {
         return (
             <NativeBaseProvider theme={customTheme}>
-                <Box flex={1} justifyContent="center" alignItems="center">
+                <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
                     <VStack space={4} alignItems="center">
-                        <Spinner size="lg" color="primary.500" />
-                        <Text color="gray.600">Cargando datos del usuario...</Text>
+                        <Spinner size="lg" color={headingColor}/>
+                        <Text color={secondaryTextColor}>Cargando datos del usuario...</Text>
                     </VStack>
                 </Box>
             </NativeBaseProvider>
@@ -151,12 +166,12 @@ const EditUserScreen = () => {
     if (fetchError) {
         return (
             <NativeBaseProvider theme={customTheme}>
-                <Box flex={1} justifyContent="center" alignItems="center" p={5}>
+                <Box flex={1} justifyContent="center" alignItems="center" p={5} bg={bgColor}>
                     <Alert status="error" mb={4} w="100%">
                         <VStack space={2} flexShrink={1} w="100%">
                             <HStack flexShrink={1} space={2} justifyContent="space-between">
                                 <HStack space={2} flexShrink={1}>
-                                    <Alert.Icon mt="1" />
+                                    <Alert.Icon mt="1"/>
                                     <Text fontSize="md" color="coolGray.800">
                                         {fetchError}
                                     </Text>
@@ -167,7 +182,7 @@ const EditUserScreen = () => {
                     <Button
                         onPress={() => navigation.goBack()}
                         colorScheme="primary"
-                        leftIcon={<Icon as={Ionicons} name="arrow-back" />}
+                        leftIcon={<Icon as={Ionicons} name="arrow-back"/>}
                     >
                         Regresar
                     </Button>
@@ -178,111 +193,118 @@ const EditUserScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}} bg="gray.50">
+            <ScrollView contentContainerStyle={{flexGrow: 1}} bg={bgColor}>
                 <Box safeArea flex={1} p={4}>
                     {/* Header */}
-                    <Box bg="primary.600" p={4} borderBottomRadius="xl" shadow={4}>
-                        <HStack justifyContent="space-between" alignItems="center">
-                            <HStack alignItems="center" space={3}>
-                                <Icon as={Ionicons} name="person" size={6} color="white" />
-                                <Heading color="white" size="lg">Editar Usuario</Heading>
-                            </HStack>
-                            <IconButton
-                                icon={<Icon as={Ionicons} name="arrow-back" size={6} color="white" />}
-                                onPress={() => navigation.goBack()}
-                            />
-                        </HStack>
-                    </Box>
+                    <Header title="Editar Usuario" iconName="person"/>
 
                     {/* Form Section */}
-                    <Box mt={4} bg="white" p={5} borderRadius="xl" shadow={2}>
+                    <Box mt={4} bg={cardBg} p={5} borderRadius="xl" shadow={2}>
                         <VStack space={4}>
                             {/* Personal Info */}
-                            <Heading size="md" color="primary.600">Información Personal</Heading>
-                            <Divider mb={2} />
+                            <Heading size="md" color={headingColor}>Información Personal</Heading>
+                            <Divider mb={2} bg={dividerColor}/>
 
                             <FormControl isRequired>
-                                <FormControl.Label>Nombre</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Nombre</FormControl.Label>
                                 <Input
                                     value={user.Nombre}
                                     onChangeText={(text) => setUser({...user, Nombre: text})}
                                     placeholder="Ingrese el nombre"
+                                    placeholderTextColor={placeholderColor}
+                                    bg={inputBg}
+                                    color={textColor}
                                     InputLeftElement={
-                                        <Icon as={Ionicons} name="person" size={5} ml={2} color="gray.400" />
+                                        <Icon as={Ionicons} name="person" size={5} ml={2} color={iconColor}/>
                                     }
                                 />
                             </FormControl>
 
                             <FormControl isRequired>
-                                <FormControl.Label>Apellido</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Apellido</FormControl.Label>
                                 <Input
                                     value={user.Apellido}
                                     onChangeText={(text) => setUser({...user, Apellido: text})}
                                     placeholder="Ingrese el apellido"
+                                    placeholderTextColor={placeholderColor}
+                                    bg={inputBg}
+                                    color={textColor}
                                     InputLeftElement={
-                                        <Icon as={Ionicons} name="people" size={5} ml={2} color="gray.400" />
+                                        <Icon as={Ionicons} name="people" size={5} ml={2} color={iconColor}/>
                                     }
                                 />
                             </FormControl>
 
                             <FormControl isRequired>
-                                <FormControl.Label>Correo Electrónico</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Correo Electrónico</FormControl.Label>
                                 <Input
                                     value={user.Correo}
                                     onChangeText={(text) => setUser({...user, Correo: text})}
                                     placeholder="Ingrese el correo"
+                                    placeholderTextColor={placeholderColor}
                                     keyboardType="email-address"
                                     autoCapitalize="none"
+                                    bg={inputBg}
+                                    color={textColor}
                                     InputLeftElement={
-                                        <Icon as={Ionicons} name="mail" size={5} ml={2} color="gray.400" />
+                                        <Icon as={Ionicons} name="mail" size={5} ml={2} color={iconColor}/>
                                     }
                                 />
                             </FormControl>
 
                             <FormControl>
-                                <FormControl.Label>Teléfono</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Teléfono</FormControl.Label>
                                 <Input
                                     value={user.Telefono}
                                     onChangeText={(text) => setUser({...user, Telefono: text})}
                                     placeholder="Ingrese el teléfono"
+                                    placeholderTextColor={placeholderColor}
                                     keyboardType="phone-pad"
+                                    bg={inputBg}
+                                    color={textColor}
                                     InputLeftElement={
-                                        <Icon as={Ionicons} name="call" size={5} ml={2} color="gray.400" />
+                                        <Icon as={Ionicons} name="call" size={5} ml={2} color={iconColor}/>
                                     }
                                 />
                             </FormControl>
 
                             <FormControl>
-                                <FormControl.Label>Contraseña (dejar en blanco para no cambiar)</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Contraseña (dejar en blanco para no cambiar)</FormControl.Label>
                                 <Input
                                     value={password}
                                     secureTextEntry
                                     onChangeText={setPassword}
                                     placeholder="Nueva contraseña"
+                                    placeholderTextColor={placeholderColor}
+                                    bg={inputBg}
+                                    color={textColor}
                                     InputLeftElement={
-                                        <Icon as={Ionicons} name="lock-closed" size={5} ml={2} color="gray.400" />
+                                        <Icon as={Ionicons} name="lock-closed" size={5} ml={2} color={iconColor}/>
                                     }
                                 />
                             </FormControl>
 
                             {/* Role and Status */}
-                            <Heading size="md" color="primary.600" mt={4}>Configuración</Heading>
-                            <Divider mb={2} />
+                            <Heading size="md" color={headingColor} mt={4}>Configuración</Heading>
+                            <Divider mb={2} bg={dividerColor}/>
 
                             <FormControl isRequired>
-                                <FormControl.Label>Cargo</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Cargo</FormControl.Label>
                                 <Select
                                     selectedValue={user.Cargo}
                                     minWidth="200"
                                     accessibilityLabel="Seleccione un cargo"
                                     placeholder="Seleccione un cargo"
+                                    placeholderTextColor={placeholderColor}
+                                    bg={selectBg}
+                                    color={textColor}
                                     _selectedItem={{
                                         bg: "primary.500",
-                                        endIcon: <CheckIcon size="5" />
+                                        endIcon: <CheckIcon size="5"/>
                                     }}
                                     onValueChange={(value) => setUser({...user, Cargo: value})}
-                                    leftIcon={
-                                        <Icon as={Ionicons} name="briefcase" size={5} ml={2} color="gray.400" />
+                                    dropdownIcon={
+                                        <Icon as={Ionicons} name="chevron-down" size={5} mr={2} color={iconColor}/>
                                     }
                                 >
                                     {cargos.map((cargo, index) => (
@@ -296,19 +318,22 @@ const EditUserScreen = () => {
                             </FormControl>
 
                             <FormControl isRequired>
-                                <FormControl.Label>Estado</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Estado</FormControl.Label>
                                 <Select
                                     selectedValue={user.Estado}
                                     minWidth="200"
                                     accessibilityLabel="Seleccione un estado"
                                     placeholder="Seleccione un estado"
+                                    placeholderTextColor={placeholderColor}
+                                    bg={selectBg}
+                                    color={textColor}
                                     _selectedItem={{
                                         bg: "primary.500",
-                                        endIcon: <CheckIcon size="5" />
+                                        endIcon: <CheckIcon size="5"/>
                                     }}
                                     onValueChange={(value) => setUser({...user, Estado: value})}
-                                    leftIcon={
-                                        <Icon as={MaterialCommunityIcons} name="account-check" size={5} ml={2} color="gray.400" />
+                                    dropdownIcon={
+                                        <Icon as={Ionicons} name="chevron-down" size={5} mr={2} color={iconColor}/>
                                     }
                                 >
                                     {estados.map((estado, index) => (
@@ -322,20 +347,23 @@ const EditUserScreen = () => {
                             </FormControl>
 
                             <FormControl>
-                                <FormControl.Label>Tarjeta RFID</FormControl.Label>
+                                <FormControl.Label _text={{color: textColor}}>Tarjeta RFID</FormControl.Label>
                                 <Select
                                     selectedValue={user.ID_Tarjeta_RFID}
                                     minWidth="200"
                                     accessibilityLabel="Seleccione una tarjeta"
                                     placeholder={tarjetas.length ? "Seleccione una tarjeta" : "No hay tarjetas disponibles"}
+                                    placeholderTextColor={placeholderColor}
+                                    bg={selectBg}
+                                    color={textColor}
                                     _selectedItem={{
                                         bg: "primary.500",
-                                        endIcon: <CheckIcon size="5" />
+                                        endIcon: <CheckIcon size="5"/>
                                     }}
                                     onValueChange={(value) => setUser({...user, ID_Tarjeta_RFID: value})}
                                     isDisabled={tarjetas.length === 0}
-                                    leftIcon={
-                                        <Icon as={MaterialCommunityIcons} name="card-account-details" size={5} ml={2} color="gray.400" />
+                                    dropdownIcon={
+                                        <Icon as={Ionicons} name="chevron-down" size={5} mr={2} color={iconColor}/>
                                     }
                                 >
                                     {tarjetas.map((tarjeta, index) => (
@@ -347,7 +375,7 @@ const EditUserScreen = () => {
                                     ))}
                                 </Select>
                                 {tarjetas.length === 0 && (
-                                    <Text fontSize="xs" color="gray.500" mt={1}>
+                                    <Text fontSize="xs" color={secondaryTextColor} mt={1}>
                                         No hay tarjetas RFID disponibles
                                     </Text>
                                 )}
@@ -361,8 +389,9 @@ const EditUserScreen = () => {
                                 variant="outline"
                                 colorScheme="danger"
                                 onPress={() => navigation.goBack()}
-                                leftIcon={<Icon as={Ionicons} name="close" size={5} />}
+                                leftIcon={<Icon as={Ionicons} name="close" size={5}/>}
                                 isDisabled={saving}
+                                _text={{color: textColor}}
                             >
                                 Cancelar
                             </Button>
@@ -370,7 +399,7 @@ const EditUserScreen = () => {
                                 flex={1}
                                 colorScheme="primary"
                                 onPress={handleSave}
-                                leftIcon={<Icon as={Ionicons} name="save" size={5} />}
+                                leftIcon={<Icon as={Ionicons} name="save" size={5}/>}
                                 isLoading={saving}
                                 isLoadingText="Guardando..."
                             >

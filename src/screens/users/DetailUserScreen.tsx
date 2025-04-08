@@ -15,13 +15,14 @@ import {
     useToast,
     Button,
     Alert,
-    ScrollView
+    useColorModeValue,
 } from "native-base";
 import {Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import {useNavigation, useRoute} from "@react-navigation/native";
 import customTheme from "../../themes/index";
 import {API_URL} from "@env";
 import {useAuth} from "../../context/AuthProvider";
+import Header from "../../components/Header";
 
 const DetailUserScreen = () => {
     const [user, setUser] = useState(null);
@@ -33,6 +34,14 @@ const DetailUserScreen = () => {
     const toast = useToast();
     const {user: currentUser} = useAuth();
     const {usuario_id} = route.params;
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const dividerColor = useColorModeValue("gray.200", "gray.700");
+    const iconColor = useColorModeValue("primary.500", "primary.300");
 
     const fetchUserDetails = async () => {
         try {
@@ -66,10 +75,10 @@ const DetailUserScreen = () => {
     if (loading) {
         return (
             <NativeBaseProvider theme={customTheme}>
-                <Box flex={1} justifyContent="center" alignItems="center">
+                <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
                     <VStack space={4} alignItems="center">
-                        <Spinner size="lg" color="primary.500" />
-                        <Text color="gray.600">Cargando detalles del usuario...</Text>
+                        <Spinner size="lg" color={iconColor} />
+                        <Text color={secondaryTextColor}>Cargando detalles del usuario...</Text>
                     </VStack>
                 </Box>
             </NativeBaseProvider>
@@ -79,7 +88,7 @@ const DetailUserScreen = () => {
     if (error) {
         return (
             <NativeBaseProvider theme={customTheme}>
-                <Box flex={1} justifyContent="center" alignItems="center" p={5}>
+                <Box flex={1} justifyContent="center" alignItems="center" p={5} bg={bgColor}>
                     <Alert status="error" mb={4} w="100%">
                         <VStack space={2} flexShrink={1} w="100%">
                             <HStack flexShrink={1} space={2} justifyContent="space-between">
@@ -106,107 +115,103 @@ const DetailUserScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{flexGrow: 1}} bg="gray.50">
-                <Box safeArea flex={1}>
-                    {/* Header */}
-                    <Box bg="primary.600" p={4} borderBottomRadius="xl" shadow={4}>
-                        <HStack justifyContent="space-between" alignItems="center">
-                            <HStack alignItems="center" space={3}>
-                                <Icon as={Ionicons} name="person" size={6} color="white" />
-                                <Heading color="white" size="lg">Detalles del Usuario</Heading>
-                            </HStack>
-                            <IconButton
-                                icon={<Icon as={Ionicons} name="arrow-back" size={6} color="white" />}
-                                onPress={() => navigation.goBack()}
-                            />
-                        </HStack>
-                    </Box>
+            <Box safeArea flex={1} bg={bgColor} p={4}>
+                {/* Header */}
+                <Header title="Detalles" iconName="person" />
 
-                    {/* User Profile Section */}
-                    <Box p={4}>
-                        <Box bg="white" p={5} borderRadius="xl" shadow={2}>
-                            <HStack space={4} alignItems="center">
-                                <Avatar
-                                    bg="primary.400"
-                                    size="xl"
-                                    source={user?.photoUrl ? { uri: user.photoUrl } : null}
-                                >
-                                    {user?.Nombre?.[0]}{user?.Apellido?.[0]}
-                                </Avatar>
-                                <VStack flex={1}>
-                                    <Heading size="md">{user?.Nombre} {user?.Apellido}</Heading>
-                                    <Text fontSize="md" color="gray.500">{user?.Cargo}</Text>
-                                    <Badge
-                                        colorScheme={user?.Estado === 'activo' ? 'success' : 'danger'}
-                                        alignSelf="flex-start"
-                                        borderRadius="full"
-                                        variant="subtle"
-                                        mt={1}
-                                    >
-                                        {user?.Estado === 'activo' ? 'Activo' : 'Inactivo'}
-                                    </Badge>
-                                </VStack>
-                            </HStack>
-
-                            <Divider my={4} />
-
-                            {/* User Details */}
-                            <VStack space={4}>
-                                <DetailItem
-                                    icon={<Icon as={Ionicons} name="mail" size={5} color="primary.500" />}
-                                    label="Correo electrónico"
-                                    value={user?.Correo}
-                                />
-
-                                <DetailItem
-                                    icon={<Icon as={Ionicons} name="call" size={5} color="primary.500" />}
-                                    label="Teléfono"
-                                    value={user?.Telefono || "No disponible"}
-                                />
-
-                                <DetailItem
-                                    icon={<Icon as={MaterialCommunityIcons} name="card-account-details" size={5} color="primary.500" />}
-                                    label="Tarjeta RFID"
-                                    value={user?.Codigo_RFID || "No asignada"}
-                                />
-
-
-                                {user?.Ultimo_Acceso && (
-                                    <DetailItem
-                                        icon={<Icon as={MaterialIcons} name="history" size={5} color="primary.500" />}
-                                        label="Último acceso"
-                                        value={new Date(user?.Ultimo_Acceso).toLocaleString()}
-                                    />
-                                )}
-                            </VStack>
-                        </Box>
-
-                        {/* Action Buttons */}
-                        {currentUser?.role === 'administrador' && (
-                            <Button
-                                mt={6}
-                                colorScheme="primary"
-                                leftIcon={<Icon as={Ionicons} name="create" size={5} />}
-                                onPress={handleEdit}
-                                borderRadius="lg"
+                {/* User Profile Section */}
+                <Box marginTop={4}>
+                    <Box bg={cardBg} p={5} borderRadius="xl" shadow={2}>
+                        <HStack space={4} alignItems="center">
+                            <Avatar
+                                bg="primary.400"
+                                size="xl"
+                                source={user?.photoUrl ? { uri: user.photoUrl } : null}
                             >
-                                Editar Usuario
-                            </Button>
-                        )}
+                                {user?.Nombre?.[0]}{user?.Apellido?.[0]}
+                            </Avatar>
+                            <VStack flex={1}>
+                                <Heading size="md" color={textColor}>
+                                    {user?.Nombre} {user?.Apellido}
+                                </Heading>
+                                <Text fontSize="md" color={secondaryTextColor}>{user?.Cargo}</Text>
+                                <Badge
+                                    colorScheme={user?.Estado === 'activo' ? 'success' : 'danger'}
+                                    alignSelf="flex-start"
+                                    borderRadius="full"
+                                    variant="subtle"
+                                    mt={1}
+                                >
+                                    {user?.Estado === 'activo' ? 'Activo' : 'Inactivo'}
+                                </Badge>
+                            </VStack>
+                        </HStack>
+
+                        <Divider my={4} bg={dividerColor} />
+
+                        {/* User Details */}
+                        <VStack space={4}>
+                            <DetailItem
+                                icon={<Icon as={Ionicons} name="mail" size={5} color={iconColor} />}
+                                label="Correo electrónico"
+                                value={user?.Correo}
+                                textColor={textColor}
+                                secondaryTextColor={secondaryTextColor}
+                            />
+
+                            <DetailItem
+                                icon={<Icon as={Ionicons} name="call" size={5} color={iconColor} />}
+                                label="Teléfono"
+                                value={user?.Telefono || "No disponible"}
+                                textColor={textColor}
+                                secondaryTextColor={secondaryTextColor}
+                            />
+
+                            <DetailItem
+                                icon={<Icon as={MaterialCommunityIcons} name="card-account-details" size={5} color={iconColor} />}
+                                label="Tarjeta RFID"
+                                value={user?.Codigo_RFID || "No asignada"}
+                                textColor={textColor}
+                                secondaryTextColor={secondaryTextColor}
+                            />
+
+                            {user?.Ultimo_Acceso && (
+                                <DetailItem
+                                    icon={<Icon as={MaterialIcons} name="history" size={5} color={iconColor} />}
+                                    label="Último acceso"
+                                    value={new Date(user?.Ultimo_Acceso).toLocaleString()}
+                                    textColor={textColor}
+                                    secondaryTextColor={secondaryTextColor}
+                                />
+                            )}
+                        </VStack>
                     </Box>
+
+                    {/* Action Buttons */}
+                    {currentUser?.role === 'administrador' && (
+                        <Button
+                            mt={6}
+                            colorScheme="primary"
+                            leftIcon={<Icon as={Ionicons} name="create" size={5} />}
+                            onPress={handleEdit}
+                            borderRadius="lg"
+                        >
+                            Editar Usuario
+                        </Button>
+                    )}
                 </Box>
-            </ScrollView>
+            </Box>
         </NativeBaseProvider>
     );
 };
 
 // Reusable component for detail items
-const DetailItem = ({icon, label, value}) => (
+const DetailItem = ({icon, label, value, textColor, secondaryTextColor}) => (
     <HStack space={3} alignItems="flex-start">
         <Box mt={0.5}>{icon}</Box>
         <VStack flex={1}>
-            <Text fontSize="sm" color="gray.500">{label}</Text>
-            <Text fontSize="md" fontWeight="medium">{value}</Text>
+            <Text fontSize="sm" color={secondaryTextColor}>{label}</Text>
+            <Text fontSize="md" fontWeight="medium" color={textColor}>{value}</Text>
         </VStack>
     </HStack>
 );

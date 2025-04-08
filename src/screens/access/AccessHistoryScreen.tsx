@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {
     View,
     Text,
@@ -15,14 +15,15 @@ import {
     Icon,
     useColorModeValue
 } from "native-base";
-import { API_URL } from "@env";
+import {API_URL} from "@env";
 import customTheme from "../../themes/index";
-import { useFocusEffect } from '@react-navigation/native';
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { DatePickerModal } from "react-native-paper-dates";
-import { format } from "date-fns";
+import {useFocusEffect} from '@react-navigation/native';
+import {Ionicons, MaterialIcons} from "@expo/vector-icons";
+import {DatePickerModal} from "react-native-paper-dates";
+import {format} from "date-fns";
 import {useTranslation} from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Header from "../../components/Header";
 
 const AccessHistoryScreen = () => {
     const [accessHistory, setAccessHistory] = useState([]);
@@ -123,25 +124,14 @@ const AccessHistoryScreen = () => {
         <NativeBaseProvider theme={customTheme}>
             <Box flex={1} bg={bgColor} safeArea>
                 <VStack px={4} pt={4} space={4}>
-                    <Heading
-                        size="lg"
-                        color="white"
-                        padding="2"
-                        bg={headingBg}
-                        p={4}
-                        borderRadius="md"
-                        shadow={3}
-                        justifyContent="center"
-                        textAlign="center"
-                    >
-                        {t('accessHistory.header.title')}
-                    </Heading>
+                    <Header title={t('accessHistory.header.title')} iconName=""/>
+
                     <Text color={secondaryTextColor}>{t('accessHistory.description.accessRecords')}</Text>
 
                     {/* Botón para seleccionar la fecha */}
                     <Button
                         onPress={() => setDatePickerVisible(true)}
-                        leftIcon={<Icon as={Ionicons} name="calendar-outline" />}
+                        leftIcon={<Icon as={Ionicons} name="calendar-outline"/>}
                         bg={buttonBg}
                     >
                         {selectedDate ? format(new Date(selectedDate), "dd/MM/yyyy") : t('accessHistory.buttons.selectDate')}
@@ -165,10 +155,10 @@ const AccessHistoryScreen = () => {
                 <FlatList
                     data={filteredHistory}
                     keyExtractor={(item) => item.ID_Acceso.toString()}
-                    contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 4 }}
+                    contentContainerStyle={{paddingBottom: 20, paddingHorizontal: 4}}
                     refreshing={refreshing}
                     onRefresh={fetchAccessHistory}
-                    renderItem={({ item }) => (
+                    renderItem={({item}) => (
                         <Box
                             bg={cardBg}
                             p={4}
@@ -189,11 +179,13 @@ const AccessHistoryScreen = () => {
                                 </HStack>
 
                                 <Text fontSize="sm" color={secondaryTextColor}>
-                                    <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.position')}:</Text> {item.Cargo}
+                                    <Text fontWeight="semibold"
+                                          color={textColor}>{t('accessHistory.list.position')}:</Text> {item.Cargo}
                                 </Text>
 
                                 <Text fontSize="sm" color={secondaryTextColor}>
-                                    <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.rfidCard')}:</Text> {item.Codigo_RFID}
+                                    <Text fontWeight="semibold"
+                                          color={textColor}>{t('accessHistory.list.rfidCard')}:</Text> {item.Codigo_RFID}
                                 </Text>
 
                                 <HStack justifyContent="space-between" mt={2}>
@@ -212,7 +204,8 @@ const AccessHistoryScreen = () => {
                                         </Text>
                                     </Box>
                                     <Text fontSize="sm" color={secondaryTextColor}>
-                                        <Text fontWeight="semibold" color={textColor}>{t('accessHistory.list.location')}:</Text> {item.Ubicacion}
+                                        <Text fontWeight="semibold"
+                                              color={textColor}>{t('accessHistory.list.location')}:</Text> {item.Ubicacion}
                                     </Text>
                                 </HStack>
                             </VStack>

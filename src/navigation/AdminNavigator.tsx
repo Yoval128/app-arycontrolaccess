@@ -63,10 +63,10 @@ function ManagementStack() {
             <Stack.Screen name="GestiónStack " component={GestionStackScreen} options={{headerShown: false}}/>
             <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
 
-            <Stack.Screen name="ListUsers" component={ListUsersScreen}/>
-            <Stack.Screen name="AddUser" component={AddUserScreen}/>
-            <Stack.Screen name="EditUser" component={EditUserScreen}/>
-            <Stack.Screen name="DetailUser" component={DetailUserScreen}/>
+            <Stack.Screen name="ListUsers" component={ListUsersScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="AddUser" component={AddUserScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="EditUser" component={EditUserScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="DetailUser" component={DetailUserScreen} options={{headerShown: false}}/>
 
             <Stack.Screen name="AccessHistory" component={AccessHistoryScreen}/>
 

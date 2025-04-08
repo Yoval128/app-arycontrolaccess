@@ -27,6 +27,7 @@ import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
 import {useTranslation} from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Header from "../../components/Header";
 
 const ListUsersScreen = () => {
     const [users, setUsers] = useState([]);
@@ -156,16 +157,11 @@ const ListUsersScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
+            <ScrollView>
+
             <Box safeArea p={5} flex={1}>
                 {/* Header */}
-                <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
-                        justifyContent="center">
-                    <HStack alignItems="center" space={3} textAlign="center">
-                        <Icon as={Ionicons} name="people" size={6} color="white"/>
-                        <Heading color="white" size="lg" textAlign={"center"}>{t('listUsers.userManagement')}</Heading>
-                    </HStack>
-                </HStack>
-
+                <Header title="Usuarios" iconName="people" />
                 {/* Filtro y opciones de búsqueda */}
                 <HStack mb={2} space={4} alignItems="center" bg={cardBg} p={3} borderRadius="md">
                     {/* Campo de texto para ingresar el filtro */}
@@ -347,6 +343,8 @@ const ListUsersScreen = () => {
                     onPress={() => navigation.navigate("AddUser")}
                 />
             )}
+
+            </ScrollView>
         </NativeBaseProvider>
     );
 };

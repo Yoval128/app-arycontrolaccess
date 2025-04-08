@@ -1,104 +1,72 @@
 # ARYControlAccess
 
-**Version Final**
+**Versión Final - Proyecto Integrador**  
+**Almacén Inteligente para Gestión de Contratos con Tecnología RFID**
 
-**ARYControlAccess** es una aplicación de gestión de acceso y control de empleados, que incluye funcionalidades de
-autenticación, visualización de perfiles, y administración de expedientes. Está construida con **React Native**
-utilizando **Expo** y **TypeScript**.
+**ARYControlAccess** es una aplicación móvil enfocada en la **seguridad, control de accesos y gestión confidencial de documentos** mediante tecnología RFID y NFC. Diseñada para entornos empresariales, permite registrar, monitorear y administrar de manera segura usuarios, documentos y dispositivos RFID, todo desde una interfaz intuitiva y multilenguaje.
 
-## Funcionalidades
+Construida con **React Native**, **Expo**, **TypeScript** y una API en **Node.js**, la aplicación garantiza la protección de información mediante autenticación robusta, control de roles y administración digital de expedientes.
 
-- Registro e inicio de sesión de usuarios.
-- Pantalla de inicio con acceso a diversas funcionalidades.
-- CRUD de empleados (por agregar).
-- Consulta de expedientes (por agregar).
+---
 
-## Tecnologías utilizadas
+## 🔐 Funcionalidades clave
 
-- **React Native**: Framework para desarrollar aplicaciones móviles.
-- **Expo**: Herramienta para facilitar el desarrollo y construcción de apps en React Native.
-- **TypeScript**: Lenguaje de programación para mejorar la robustez del código.
-- **React Navigation**: Biblioteca para la navegación en la app.
-- **Axios/Fetch**: Para realizar solicitudes HTTP a la API.
-- **Context API**: Para la gestión del estado global (autenticación, etc.).
-- **Tailwind CSS**: Para los css
-## Instalación
+- **Autenticación segura** con control de roles: Administrador, Empleado e Invitado.
+- **Modo claro y oscuro** adaptable al sistema del usuario.
+- **Lectura de tarjetas RFID** desde hardware (ESP32 + RC522).
+- **Lectura nativa por NFC** desde dispositivos compatibles (Android).
+- **Gestión digital de documentos PDF** con subida, almacenamiento y consulta segura.
+- **Registro automático o manual de tarjetas RFID**.
+- **Navegación dinámica** adaptada al tipo de usuario.
+- **Interfaz en español e inglés**, con cambio de idioma.
+- **Dashboard** con estadísticas de actividad, accesos y movimientos recientes.
+- **Control de accesos y monitoreo en tiempo real.**
+- **Perfil personalizado de usuario.** modo oscuro y claro
 
-Para instalar y ejecutar este proyecto localmente, sigue estos pasos:
+---
 
-1. **Clona el repositorio**:
+## 🛠️ Tecnologías utilizadas
 
-   ```bash
-   git clone https://github.com/
+### Frontend
+- **React Native + Expo**
+- **TypeScript**
+- **NativeBase**
+- **React Navigation** (Stack & Bottom Tabs)
+- **Axios** (comunicación API)
+- **Expo FileSystem** (gestión de archivos PDF)
+- **Expo NFC** (lectura nativa NFC)
+- **i18n-js** (soporte multilenguaje: español / inglés)
+- **Context API** (manejo global del estado)
+- **Modo claro/oscuro** (automático o manual)
 
-## Dependencias necesarias para el correcto desarrollo
-* Para poder visualizar tu aplicación en el navegador  
-  npx expo install react-dom@18.3.1 react-native-web@~0.19.13 @expo/metro-runtime@~4.0.1
+### Backend
+- **Node.js + Express**
+- **Mysql**
+- **Multer** (subida de archivos)
+- **dotenv, cors, uuid** y otras utilidades
+
+### Hardware
+- **ESP32** con módulo **RFID RC522** para lectura remota
+- **Dispositivo móvil con NFC** para lectura directa
+
+---
+
+## ⚙️ Instalación
+
+### Frontend
 
 ```bash
-npx expo install @react-navigation/native
-npx expo install @react-navigation/stack
-npx expo install @react-navigation/drawer
-npx expo install react-native-gesture-handler
-npx expo install react-native-reanimated
-npx expo install react-native-screens
-npx expo install @react-native-picker/picker
-npx expo install react-native-safe-area-context
-npx expo install @react-native-async-storage/async-storage
-npx expo install react-native-dotenv
-npx expo install react-native-element-dropdown
-npx expo install expo-splash-screen
-expo install react-native-paper react-native-pdf
-npx expo install i18next react-i18next expo-localization
+git clone https://github.com/Yoval128/app-arycontrolaccess.git
+cd app-arycontrolaccess
+npm install
+npx expo start
+````
 
-```
-* Instalar expo-router
-  npx expo install expo-router
+----
 
-# Instalar
-  npm install @react-navigation/bottom-tabs
-  npx expo install axios
-  npx expo install expo-document-picker
+## 👨‍💻 Autor
+**Yoval128**
 
-# Instalar Tailwind CSS en Expo
-  npm install tailwind-rn
-  npx expo install react-native-svg
+Técnico en Programación | Estudiante TSU en Desarrollo de Software
 
-* npm install nativewind tailwindcss
-* npx tailwindcss init
-
-# React Base para los estilos
-* npx expo install native-base
-* npm install normalize-css-color
-
-# Expo Vector Icons
-* expo install @expo/vector-icons
-* npm install react-native-element-dropdown --save
-
-# react-native-drop-shadow
-* npm i react-native-drop-shadow
-
-# Fuentes
-* expo install expo-font @expo-google-fonts/inter @expo-google-fonts/poppins
-* expo install expo-font @expo-google-fonts/inter @expo-google-fonts/poppins @expo-google-fonts/roboto
-
-# Exportación de datos PDF
-npm install react-native-pdf-lib
-npx expo install expo-file-system expo-sharing
-
-
-# Graficos
-npm install recharts
-npm install react-native-chart-kit react-native-svg
-
-npm install react-pdf @react-pdf/renderer
-
-lucide-react-native
-
-## Estructura del Proyecto
-
-## Trabajar con ramas
-* Obtén los últimos cambios de la rama principal
-git pull origin main 
-* 
-
+GitHub: [Yoval128](https://github.com/Yoval128)

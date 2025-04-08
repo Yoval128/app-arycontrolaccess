@@ -120,6 +120,7 @@ const AddAdministratorScreen = () => {
             <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
                 <Box flex={1} p={5} bg={theme.colors.primary[50]}>
                     <Heading size="lg" color={theme.colors.primary[500]}>Registro de Administrador</Heading>
+
                     <VStack space={4} mt={5}>
                         <Dropdown
                             style={{
