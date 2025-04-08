@@ -9,13 +9,16 @@ import {
     NativeBaseProvider,
     ScrollView,
     Select,
-    CheckIcon
+    CheckIcon,
+    useColorModeValue
 } from "native-base";
 import {API_URL} from '@env';
 import customTheme from "../../themes/index";
 import {useNavigation} from "@react-navigation/native";
 import {Dropdown} from "react-native-element-dropdown";
 import {useAuth} from "../../context/AuthProvider";
+import {useTranslation} from "react-i18next";
+import Header from "../../components/Header";
 
 const nivelesPermiso = [
     {label: "Básico", value: "Básico"},
@@ -31,10 +34,23 @@ const AddAdministratorScreen = () => {
     const navigation = useNavigation();
     const {user} = useAuth();
     const [form, setForm] = useState({
-        ID_Usuario: "",  // Inicialmente vacío
+        ID_Usuario: "",
         nivelPermiso: ""
     });
 
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const borderColor = useColorModeValue("primary.400", "primary.300");
+    const dropdownBg = useColorModeValue("white", "gray.700");
+    const dropdownTextColor = useColorModeValue("black", "white");
+    const dropdownPlaceholderColor = useColorModeValue("gray.500", "gray.400");
+    const dropdownIconColor = useColorModeValue("gray", "white");
 
     // Función para obtener los usuarios
     const fetchUsuarios = async () => {
@@ -117,52 +133,51 @@ const AddAdministratorScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
-                <Box flex={1} p={5} bg={theme.colors.primary[50]}>
-                    <Heading size="lg" color={theme.colors.primary[500]}>Registro de Administrador</Heading>
+            <Box flex={1} p={5} bgColor>
 
-                    <VStack space={4} mt={5}>
-                        <Dropdown
-                            style={{
-                                height: 50,
-                                borderColor: "primary.400",
-                                borderWidth: 1,
-                                borderRadius: 8,
-                                padding: 2
-                            }}
-                            placeholderStyle={{color: "grey"}}
-                            selectedTextStyle={{color: "black"}}
-                            inputSearchStyle={{height: 40}}
-                            iconStyle={{width: 20, height: 20}}
-                            data={usuarios}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Selecciona un usuario"
-                            searchPlaceholder="Buscar..."
-                            value={form.ID_Usuario}
-                            onChange={item => handleChange('ID_Usuario', item.value)}/>
+                <Header title={t('addAdministrator.title')} iconName="person"/>
+
+                <VStack space={4} mt={5} >
+                    <Dropdown
+                        style={{
+                            height: 50,
+                            borderColor: "primary.400",
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            padding: 2
+                        }}
+                        placeholderStyle={{color: "grey"}}
+                        selectedTextStyle={{color: "black"}}
+                        inputSearchStyle={{height: 40}}
+                        iconStyle={{width: 20, height: 20}}
+                        data={usuarios}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={t('addAdministrator.selectUser')}
+                        searchPlaceholder="Buscar..."
+                        value={form.ID_Usuario}
+                        onChange={item => handleChange('ID_Usuario', item.value)}/>
 
 
-                        {/* Select para seleccionar el nivel de permiso */}
-                        <Select
-                            selectedValue={form.nivelPermiso}  // Asegúrate de que el valor del estado esté vinculado
-                            onValueChange={(value) => handleChange("nivelPermiso", value)}  // Al seleccionar, actualiza el estado
-                            placeholder="Selecciona el nivel de permiso"
-                            _selectedItem={{
-                                bg: theme.colors.primary[500],
-                                endIcon: <CheckIcon size={4}/>
-                            }}
-                        >
-                            {nivelesPermiso.map((item) => (
-                                <Select.Item key={item.value} label={item.label} value={item.value}/>
-                            ))}
-                        </Select>
+                    {/* Select para seleccionar el nivel de permiso */}
+                    <Select
+                        selectedValue={form.nivelPermiso}  // Asegúrate de que el valor del estado esté vinculado
+                        onValueChange={(value) => handleChange("nivelPermiso", value)}  // Al seleccionar, actualiza el estado
+                        placeholder={t('addAdministrator.selectPermission')}
+                        _selectedItem={{
+                            bg: "primary.500",
+                            endIcon: <CheckIcon size={4}/>
+                        }}
+                    >
+                        {nivelesPermiso.map((item) => (
+                            <Select.Item key={item.value} label={item.label} value={item.value}/>
+                        ))}
+                    </Select>
 
-                        {/* Botón para registrar el administrador */}
-                        <Button isLoading={loading} onPress={handleSubmit} mt={3}>Registrar Administrador</Button>
-                    </VStack>
-                </Box>
-            </ScrollView>
+                    {/* Botón para registrar el administrador */}
+                    <Button isLoading={loading} onPress={handleSubmit} mt={3}>{t('addAdministrator.registerAdmin')}</Button>
+                </VStack>
+            </Box>
         </NativeBaseProvider>
     );
 };

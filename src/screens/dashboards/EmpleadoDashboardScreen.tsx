@@ -59,15 +59,6 @@ const EmpleadoDashboardScreen = () => {
         info: useColorModeValue('#5bc0de', '#06b6d4')
     };
 
-// Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
-    };
     // Datos para el gráfico de pastel
     const userCargosPieData = [
         {

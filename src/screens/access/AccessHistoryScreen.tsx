@@ -37,16 +37,6 @@ const AccessHistoryScreen = () => {
 
     // Hook para obtener traducciones
     const {t, i18n} = useTranslation();
-    // Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
-    };
-
 
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");

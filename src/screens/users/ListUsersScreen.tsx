@@ -26,7 +26,6 @@ import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native"
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
 import {useTranslation} from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../../components/Header";
 
 const ListUsersScreen = () => {
@@ -55,6 +54,7 @@ const ListUsersScreen = () => {
     const iconColor = useColorModeValue("gray.600", "gray.300");
     const fabBg = useColorModeValue("primary.500", "primary.600");
     const buttonBg = useColorModeValue("white", "red");
+
     useEffect(() => {
         fetchUsers();
     }, [currentPage]);
@@ -127,16 +127,6 @@ const ListUsersScreen = () => {
         setFilteredUsers(users);
     };
 
-    // Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
-    };
-
     const deleteUser = async (id) => {
         setIsOpen(false);
         try {
@@ -158,7 +148,6 @@ const ListUsersScreen = () => {
     return (
         <NativeBaseProvider theme={customTheme}>
             <ScrollView>
-
             <Box safeArea p={5} flex={1}>
                 {/* Header */}
                 <Header title="Usuarios" iconName="people" />

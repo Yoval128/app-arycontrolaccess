@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -10,12 +10,17 @@ import {
     Divider,
     IconButton,
     ScrollView,
-    Badge
+    Badge,
+    useColorModeValue,
+    Icon,
+    Button
 } from "native-base";
-import { Ionicons } from '@expo/vector-icons';
-import { useRoute, useNavigation } from "@react-navigation/native";
+import {Ionicons} from '@expo/vector-icons';
+import {useRoute, useNavigation} from "@react-navigation/native";
 import customTheme from "../../themes/index";
-import { API_URL } from "@env";
+import {API_URL} from "@env";
+import Header from "../../components/Header";
+import {useTranslation} from "react-i18next";
 
 const DetailAdministratorScreen = () => {
     const [administrator, setAdministrator] = useState(null);
@@ -23,7 +28,19 @@ const DetailAdministratorScreen = () => {
     const [error, setError] = useState(null);
     const route = useRoute();
     const navigation = useNavigation();
-    const { admin_id } = route.params;
+    const {admin_id} = route.params;
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const dividerColor = useColorModeValue("gray.200", "gray.700");
+    const iconColor = useColorModeValue("primary.500", "primary.300");
+    const badgeTextColor = useColorModeValue("white", "gray.900");
 
     useEffect(() => {
         fetchAdministratorDetails();
@@ -46,90 +63,106 @@ const DetailAdministratorScreen = () => {
 
     if (loading) return (
         <NativeBaseProvider theme={customTheme}>
-            <Box flex={1} justifyContent="center" alignItems="center">
-                <Spinner size="lg" color="primary.500" />
+            <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
+                <VStack space={2} alignItems="center">
+                    <Spinner size="lg" color={iconColor}/>
+                    <Text color={secondaryTextColor}>{t('common.loading')}</Text>
+                </VStack>
             </Box>
         </NativeBaseProvider>
     );
 
     if (error) return (
         <NativeBaseProvider theme={customTheme}>
-            <Box flex={1} justifyContent="center" alignItems="center" p={5}>
-                <Text color="red.500" fontSize="lg">Error: {error}</Text>
+            <Box flex={1} justifyContent="center" alignItems="center" p={5} bg={bgColor}>
+                <Text color="red.500" fontSize="lg">{t('common.error')}: {error}</Text>
+                <Button
+                    mt={4}
+                    colorScheme="primary"
+                    onPress={fetchAdministratorDetails}
+                    leftIcon={<Icon as={Ionicons} name="refresh" />}
+                >
+                    {t('common.retry')}
+                </Button>
             </Box>
         </NativeBaseProvider>
     );
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
-                <Box flex={1} p={5} bg="background.light">
-                    <HStack alignItems="center" mb={4}>
-                        <IconButton
-                            icon={<Ionicons name="arrow-back" size={24} />}
-                            onPress={() => navigation.goBack()}
-                            mr={2}
-                        />
-                        <Text fontSize="xl" fontWeight="bold" color="primary.500">
-                            Detalles del Administrador
-                        </Text>
-                    </HStack>
+            <Box safeArea flex={1} bg={bgColor} p={4}>
+                {/* Header */}
+                <Header title={t('AdministratorDetails.title')} iconName="person"/>
 
-                    <Box bg="white" p={5} borderRadius="lg" shadow={2}>
+                <Box bg={cardBg} p={5} borderRadius="lg" shadow={2}>
+                    <VStack space={4}>
+                        {/* Sección de información principal */}
+                        <HStack space={4} alignItems="center">
+                            <Icon
+                                as={Ionicons}
+                                name="person-circle-outline"
+                                size={10}
+                                color={iconColor}
+                            />
+                            <VStack>
+                                <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                                    {administrator?.Usuario?.Nombre} {administrator?.Usuario?.Apellido}
+                                </Text>
+                                <Badge
+                                    colorScheme={administrator?.Usuario?.Estado === 'activo' ? 'green' : 'red'}
+                                    alignSelf="flex-start"
+                                    mt={1}
+                                    _text={{color: badgeTextColor}}
+                                >
+                                    {administrator?.Usuario?.Estado === 'activo'
+                                        ? t('AdministratorDetails.active')
+                                        : t('AdministratorDetails.inactive')}
+                                </Badge>
+                            </VStack>
+                        </HStack>
+
+                        <Divider my={3} bg={dividerColor}/>
+
+                        {/* Sección de detalles */}
                         <VStack space={4}>
-                            {/* Sección de información principal */}
-                            <HStack space={4} alignItems="center">
-                                <Ionicons name="person-circle-outline" size={40} color="#0074E8" />
-                                <VStack>
-                                    <Text fontSize="lg" fontWeight="bold">
-                                        {administrator?.Usuario?.Nombre} {administrator?.Usuario?.Apellido}
-                                    </Text>
-                                    <Badge
-                                        colorScheme={administrator?.Usuario?.Estado === 'activo' ? 'green' : 'red'}
-                                        alignSelf="flex-start"
-                                        mt={1}
-                                    >
-                                        {administrator?.Usuario?.Estado}
-                                    </Badge>
-                                </VStack>
+                            <HStack justifyContent="space-between">
+                                <HStack space={2} alignItems="center">
+                                    <Icon as={Ionicons} name="id-card-outline" size={5} color={iconColor}/>
+                                    <Text color={secondaryTextColor}>{t('AdministratorDetails.administratorID')}:</Text>
+                                </HStack>
+                                <Text fontWeight="medium" color={textColor}>{administrator?.ID_Admin}</Text>
                             </HStack>
 
-                            <Divider my={3} />
-
-                            {/* Sección de detalles */}
-                            <VStack space={4}>
-                                <HStack justifyContent="space-between">
-                                    <HStack space={2} alignItems="center">
-                                        <Ionicons name="id-card-outline" size={20} color="#0074E8" />
-                                        <Text color="gray.500">ID Administrador:</Text>
-                                    </HStack>
-                                    <Text fontWeight="medium">{administrator?.ID_Admin}</Text>
+                            <HStack justifyContent="space-between">
+                                <HStack space={2} alignItems="center">
+                                    <Icon as={Ionicons} name="briefcase-outline" size={5} color={iconColor}/>
+                                    <Text color={secondaryTextColor}>{t('AdministratorDetails.position')}:</Text>
                                 </HStack>
+                                <Text fontWeight="medium" color={textColor}>
+                                    {administrator?.Usuario?.Cargo || t('common.notSpecified')}
+                                </Text>
+                            </HStack>
 
-                                <HStack justifyContent="space-between">
-                                    <HStack space={2} alignItems="center">
-                                        <Ionicons name="briefcase-outline" size={20} color="#0074E8" />
-                                        <Text color="gray.500">Cargo:</Text>
-                                    </HStack>
-                                    <Text fontWeight="medium">{administrator?.Usuario?.Cargo || "No especificado"}</Text>
+                            <HStack justifyContent="space-between">
+                                <HStack space={2} alignItems="center">
+                                    <Icon as={Ionicons} name="shield-checkmark-outline" size={5} color={iconColor}/>
+                                    <Text color={secondaryTextColor}>{t('AdministratorDetails.permissionLevel')}:</Text>
                                 </HStack>
-                                <HStack justifyContent="space-between">
-                                    <HStack space={2} alignItems="center">
-                                        <Ionicons name="shield-checkmark-outline" size={20} color="#0074E8" />
-                                        <Text color="gray.500">Nivel de permiso:</Text>
-                                    </HStack>
-                                    <Badge colorScheme={
+                                <Badge
+                                    colorScheme={
                                         administrator?.Nivel_Permiso === 'Avanzado' ? 'red' :
                                             administrator?.Nivel_Permiso === 'Medio' ? 'orange' : 'green'
-                                    }>
-                                        {administrator?.Nivel_Permiso}
-                                    </Badge>
-                                </HStack>
-                            </VStack>
+                                    }
+                                    _text={{color: badgeTextColor}}
+                                >
+                                    {administrator?.Nivel_Permiso}
+                                </Badge>
+
+                            </HStack>
                         </VStack>
-                    </Box>
+                    </VStack>
                 </Box>
-            </ScrollView>
+            </Box>
         </NativeBaseProvider>
     );
 };

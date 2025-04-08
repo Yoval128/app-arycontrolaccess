@@ -21,6 +21,7 @@ import {API_URL} from "@env";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
+import {useTranslation} from "react-i18next";
 
 const ListDocumentsScreen = () => {
     const [documents, setDocuments] = useState([]);
@@ -31,6 +32,9 @@ const ListDocumentsScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const {user} = useAuth();
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
 
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
@@ -93,7 +97,7 @@ const ListDocumentsScreen = () => {
                     <HStack alignItems="center" mb={4} bg={headerBg} p={4} borderRadius="md" shadow={3} justifyContent="center">
                         <Ionicons name="document-text-outline" size={28} color={headerIconColor}/>
                         <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
-                            Lista de Documentos
+                            {t('documents.listDocuments.listTitle')}
                         </Text>
                     </HStack>
 

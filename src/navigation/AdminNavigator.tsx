@@ -61,46 +61,51 @@ function ManagementStack() {
             }}>
 
             <Stack.Screen name="GestiónStack " component={GestionStackScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="ProfileUser" component={ProfileUserScreen}/>
+            <Stack.Screen name="ProfileUser" component={ProfileUserScreen} options={{headerShown: false}}/>
 
             <Stack.Screen name="ListUsers" component={ListUsersScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddUser" component={AddUserScreen} options={{headerShown: false}}/>
             <Stack.Screen name="EditUser" component={EditUserScreen} options={{headerShown: false}}/>
             <Stack.Screen name="DetailUser" component={DetailUserScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="AccessHistory" component={AccessHistoryScreen}/>
+            <Stack.Screen name="AccessHistory" component={AccessHistoryScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="AddAdministrator" component={AddAdministratorScreen}/>
-            <Stack.Screen name="DetailAdministrator" component={DetailAdministratorScreen}/>
-            <Stack.Screen name="ListAdministrator" component={ListAdministratorScreen}/>
-            <Stack.Screen name="EditAdministrator" component={EditAdministratorScreen}/>
+            <Stack.Screen name="AddAdministrator" component={AddAdministratorScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="DetailAdministrator" component={DetailAdministratorScreen}
+                          options={{headerShown: false}}/>
+            <Stack.Screen name="ListAdministrator" component={ListAdministratorScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="EditAdministrator" component={EditAdministratorScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="AddDocumentMovements" component={AddDocumentMovementsScreen}/>
-            <Stack.Screen name="ListDocumentMovements" component={ListDocumentMovementsScreen}/>
-            <Stack.Screen name="DetailDocumentMovements" component={DetailDocumentMovementsScreen}/>
-            <Stack.Screen name="EditDocumentMovements" component={EditDocumentMovementsScreen}/>
+            <Stack.Screen name="AddDocumentMovements" component={AddDocumentMovementsScreen}
+                          options={{headerShown: false}}/>
+            <Stack.Screen name="ListDocumentMovements" component={ListDocumentMovementsScreen}
+                          options={{headerShown: false}}/>
+            <Stack.Screen name="DetailDocumentMovements" component={DetailDocumentMovementsScreen}
+                          options={{headerShown: false}}/>
+            <Stack.Screen name="EditDocumentMovements" component={EditDocumentMovementsScreen}
+                          options={{headerShown: false}}/>
 
-            <Stack.Screen name="AddDocument" component={AddDocumentScreen}/>
-            <Stack.Screen name="EditDocuments" component={EditDocumentsScreen}/>
-            <Stack.Screen name="ListDocuments" component={ListDocumentsScreen}/>
-            <Stack.Screen name="DetailDocuments" component={DetailDocumentsScreen}/>
+            <Stack.Screen name="AddDocument" component={AddDocumentScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="EditDocuments" component={EditDocumentsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="ListDocuments" component={ListDocumentsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="DetailDocuments" component={DetailDocumentsScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="UploadExcelUsers" component={UploadExcelUsersScreen}/>
-            <Stack.Screen name="ExportPDFUser" component={ExportPDFUserScreen}/>
+            <Stack.Screen name="UploadExcelUsers" component={UploadExcelUsersScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="ExportPDFUser" component={ExportPDFUserScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="AddRfidCard" component={AddRfidCardScreen}/>
-            <Stack.Screen name="ListRfidCard" component={ListRfidCardScreen}/>
-            <Stack.Screen name="EditRfidCards" component={EditRfidCardsScreen}/>
-            <Stack.Screen name="DetailRfidCards" component={DetailRfidCardsScreen}/>
+            <Stack.Screen name="AddRfidCard" component={AddRfidCardScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="ListRfidCard" component={ListRfidCardScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="EditRfidCards" component={EditRfidCardsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="DetailRfidCards" component={DetailRfidCardsScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="ListRfidTags" component={ListRfidTagsScreen}/>
-            <Stack.Screen name="DetailRfidTags" component={DetailRfidTagsScreen}/>
-            <Stack.Screen name="EditRfidTags" component={EditRfidTagsScreen}/>
-            <Stack.Screen name="AddRfidTags" component={AddRfidTagsScreen}/>
+            <Stack.Screen name="ListRfidTags" component={ListRfidTagsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="DetailRfidTags" component={DetailRfidTagsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="EditRfidTags" component={EditRfidTagsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="AddRfidTags" component={AddRfidTagsScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="Login" component={LoginScreen}/>
+            <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
 
-            <Stack.Screen name="Graficas" component={GraficosScreen}/>
+            <Stack.Screen name="Graficas" component={GraficosScreen} options={{headerShown: false}}/>
 
 
         </Stack.Navigator>
