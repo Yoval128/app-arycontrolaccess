@@ -44,15 +44,6 @@ const EmpleadoStackScreen = () => {
         { title: t('management.statistics'), icon: "stats-chart", color: "green", screen: "Graficas", description: t('management.system_statistics') }
     ];
 
-    // Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
-    };
 
     return (
         <Box safeArea p={4} flex={1} bg={useColorModeValue("gray.50", "gray.900")}>

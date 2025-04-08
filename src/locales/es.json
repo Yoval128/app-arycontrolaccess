@@ -149,7 +149,6 @@
       "export": "Exportar"
     }
   },
-
   "accessHistory": {
     "header": {
       "title": "Historial de Accesos"
@@ -216,6 +215,58 @@
       "admin": "Administrador",
       "employee": "Empleado",
       "guest": "Invitado"
+    }
+  },
+  "AdministratorDetails": {
+    "title": "Detalles",
+    "administratorID": "ID Administrador",
+    "position": "Cargo",
+    "permissionLevel": "Nivel de permiso",
+    "status": "Estado",
+    "active": "Activos",
+    "inactive": "Inactivos"
+  },
+  "administratorEdit": {
+    "title": "Editar Administrador",
+    "permissionLevel": "Nivel de Permiso",
+    "saveChanges": "Guardar Cambios",
+    "cancel": "Cancelar",
+    "permissionLevelPlaceholder": "Seleccione un nivel",
+    "permissionRequired": "El nivel de permiso es obligatorio"
+  },
+  "addAdministrator": {
+    "title": "Registro de Administrador",
+    "selectUser": "Selecciona un usuario",
+    "permissionLevel": "Nivel de Permiso",
+    "registerAdmin": "Registrar Administrador",
+    "selectPermission": "Selecciona el nivel de permiso",
+    "error": "Error",
+    "allFieldsRequired": "Todos los campos son obligatorios",
+    "connectionError": "Error de conexión con el servidor",
+    "adminRegistered": "Administrador registrado correctamente",
+    "registrationError": "No se pudo registrar el administrador"
+  },
+  "login": {
+    "welcome": "Bienvenido",
+    "enterCredentials": "Ingresa tus credenciales para continuar",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "apiStatusConnected": "Conectado",
+    "apiStatusDisconnected": "Sin conexión",
+    "error": "Error",
+    "loginError": "Error al iniciar sesión. Por favor, verifica tus credenciales.",
+    "connectionError": "Error de conexión con el servidor."
+  },
+  "documents": {
+    "listDocuments": {
+      "listTitle": "Lista de Documentos",
+      "deleteHeader": "Eliminar Documento",
+      "deleteBody": "¿Estás seguro de que deseas eliminar este documento?",
+      "addButton": "Agregar Documento"
+      "general": "Algo salió mal. Por favor, intenta de nuevo más tarde."
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
     }
   }
 }

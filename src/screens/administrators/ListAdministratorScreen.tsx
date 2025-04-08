@@ -21,9 +21,7 @@ import {API_URL} from "@env";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
-
 import {useTranslation} from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ListAdministratorScreen = () => {
     const [administrators, setAdministrators] = useState([]);
@@ -38,15 +36,7 @@ const ListAdministratorScreen = () => {
 
     // Hook para obtener traducciones
     const {t, i18n} = useTranslation();
-    // Función para cambiar el idioma y guardar la preferencia
-    const changeAppLanguage = async (lng) => {
-        try {
-            await i18n.changeLanguage(lng);
-            await AsyncStorage.setItem('userLanguage', lng);
-        } catch (error) {
-            console.error("Error changing language:", error);
-        }
-    };
+
 
     // Colores adaptables al tema
     const bgColor = useColorModeValue("gray.50", "gray.900");
@@ -152,10 +142,10 @@ const ListAdministratorScreen = () => {
                                     </Avatar>
                                     <VStack flex={1}>
                                         <Text fontSize="md" fontWeight="bold" color={textColor}>
-                                            {item.Nombre} {item.Apellido}
+                                            {item.Nombre || "Nombre no disponible"} {item.Apellido || "Apellido no disponible"}
                                         </Text>
                                         <Text fontSize="sm" color={secondaryTextColor}>
-                                            {item.Cargo}
+                                            {item.Cargo ? item.Cargo : "Cargo no disponible"}
                                         </Text>
                                         <Text fontSize="xs" color={secondaryTextColor}>
                                             Permisos: {item.Nivel_Permiso}

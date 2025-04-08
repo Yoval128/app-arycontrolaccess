@@ -202,8 +202,7 @@ const AddDocumentScreen = () => {
     };
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
-                <Box flex={1} p={5} bg={theme.colors.primary[50]}>
+             <Box flex={1} p={5} bg={theme.colors.primary[50]}>
                     <Heading size="lg" color={theme.colors.primary[500]}>Registro de Documento</Heading>
                     <VStack space={4} mt={5}>
                         <Input placeholder="Nombre del Documento" value={form.nombre} onChangeText={(value) => handleChange("nombre", value)} />
@@ -246,7 +245,6 @@ const AddDocumentScreen = () => {
                         </Button>
                     </VStack>
                 </Box>
-            </ScrollView>
         </NativeBaseProvider>
     );
 };

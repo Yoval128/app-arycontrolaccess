@@ -6,6 +6,7 @@ import {API_URL} from '@env';
 import {Ionicons} from "@expo/vector-icons";
 import customTheme from '../../themes/index';
 import {useAuth} from '../../context/AuthProvider';
+import {useTranslation} from "react-i18next";
 
 const LoginScreen = () => {
 
@@ -19,6 +20,9 @@ const LoginScreen = () => {
     const [error, setError] = useState('');
     const [isApiConnected, setIsApiConnected] = useState(false);
     const [isCheckingApi, setIsCheckingApi] = useState(true);
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
 
     useEffect(() => {
         // Verificar conexión a la API cuando el componente se monte
@@ -90,10 +94,10 @@ const LoginScreen = () => {
                             mb={2}
                         />
                         <Text color="white" fontSize="2xl" fontWeight="bold" textAlign="center">
-                            Bienvenido
+                            {t('login.welcome')}
                         </Text>
                         <Text color="white" opacity={0.8} textAlign="center">
-                            Ingresa tus credenciales para continuar
+                            {t('login.enterCredentials')}
                         </Text>
                     </Box>
 
@@ -118,7 +122,7 @@ const LoginScreen = () => {
                                     mr={1}
                                 />
                                 <Text fontSize="xs" color={isApiConnected ? "green.800" : "red.800"}>
-                                    {isApiConnected ? "Conectado" : "Sin conexión"}
+                                    {isApiConnected ? t('login.apiStatusConnected') : t('login.apiStatusDisconnected')}
                                 </Text>
                             </Box>
                         </Box>
@@ -136,7 +140,7 @@ const LoginScreen = () => {
                             <Input
                                 value={correo}
                                 onChangeText={setCorreo}
-                                placeholder="Correo electrónico"
+                                placeholder={t('login.emailPlaceholder')}
                                 placeholderTextColor="gray.400"
                                 bg="white"
                                 borderRadius="lg"
@@ -163,7 +167,7 @@ const LoginScreen = () => {
                             <Input
                                 value={contrasena}
                                 onChangeText={setContrasena}
-                                placeholder="Contraseña"
+                                placeholder={t('login.passwordPlaceholder')}
                                 placeholderTextColor="gray.400"
                                 type="password"
                                 bg="white"
@@ -203,7 +207,7 @@ const LoginScreen = () => {
                                 bg: "gray.100"
                             }}
                         >
-                            Iniciar sesión
+                            {t('login.loginButton')}
                         </Button>
                     </VStack>
 

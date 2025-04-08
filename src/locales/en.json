@@ -149,7 +149,6 @@
       "export": "Export"
     }
   },
-
   "accessHistory": {
     "header": {
       "title": "Access History"
@@ -187,7 +186,6 @@
       "time": "HH:mm"
     }
   },
-
   "listAdministrator": {
     "header": {
       "title": "Administrators List"
@@ -218,7 +216,58 @@
       "employee": "Employee",
       "guest": "Guest"
     }
+  },
+  "AdministratorDetails": {
+    "title": "Details",
+    "administratorID": "Administrator ID",
+    "position": "Position",
+    "permissionLevel": "Permission Level",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "administratorEdit": {
+    "title": "Edit Administrator",
+    "permissionLevel": "Permission Level",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "permissionLevelPlaceholder": "Select a permission level",
+    "permissionRequired": "Permission level is required"
+  },
+  "addAdministrator": {
+    "title": "Register Administrator",
+    "selectUser": "Select a user",
+    "permissionLevel": "Permission Level",
+    "registerAdmin": "Register Administrator",
+    "selectPermission": "Select permission level",
+    "error": "Error",
+    "allFieldsRequired": "All fields are required",
+    "connectionError": "Connection error with the server",
+    "adminRegistered": "Administrator registered successfully",
+    "registrationError": "Could not register the administrator"
+  },
+  "login": {
+    "welcome": "Welcome",
+    "enterCredentials": "Enter your credentials to continue",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Login",
+    "apiStatusConnected": "Connected",
+    "apiStatusDisconnected": "No connection",
+    "error": "Error",
+    "loginError": "Login failed. Please check your credentials.",
+    "connectionError": "Connection error with the server."
+  },
+  "documents": {
+    "listDocuments": {
+      "listTitle": "Document List",
+      "deleteHeader": "Delete Document",
+      "deleteBody": "Are you sure you want to delete this document?",
+      "addButton": "Add Document",
+      "general": "Something went wrong. Please try again later.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
   }
-
 }
 
