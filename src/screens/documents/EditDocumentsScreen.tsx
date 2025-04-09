@@ -13,14 +13,16 @@ import {
     useToast,
     Link,
     Icon,
-    HStack,
+    HStack, useColorModeValue,
 } from "native-base";
 import { Dropdown } from "react-native-element-dropdown";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API_URL } from "@env";
 import * as DocumentPicker from 'expo-document-picker';
-import customTheme from "../../themes"; // Importamos DocumentPicker
+import customTheme from "../../themes";
+import {useTranslation} from "react-i18next";
+import Header from "../../components/Header";
 
 const EditDocumentsScreen = () => {
     const navigation = useNavigation();
@@ -46,6 +48,20 @@ const EditDocumentsScreen = () => {
         { label: 'Disponible', value: 'Disponible' },
         { label: 'Prestado', value: 'Prestado' }
     ];
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const headerBg = useColorModeValue("primary.500", "primary.700");
+    const iconColor = useColorModeValue("gray.600", "gray.300");
+    const fabBg = useColorModeValue("primary.500", "primary.600");
+    const buttonBg = useColorModeValue("white", "red");
+
 
     const fetchDocument = async () => {
         try {
@@ -146,59 +162,68 @@ const EditDocumentsScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <Box safeArea p={5} bg="background.light" flex={1}>
-                    <Heading size="lg" color="primary.500" mb={5}>
-                        <Ionicons name="pencil-outline" size={24} /> Editar Documento
-                    </Heading>
+               <Box safeArea flex={1} p={4}>
+                   <Header title={t('documents.editDocument.title')} iconName="pencil-outline"/>
 
-                    <VStack space={4}>
-                        <FormControl>
-                            <FormControl.Label>Nombre del Documento</FormControl.Label>
+                   <VStack space={4} >
+                        <FormControl marginTop={5}>
+                            <FormControl.Label>{t('documents.editDocument.documentName')}</FormControl.Label>
                             <Input
                                 value={document?.Nombre_Documento || ''}
                                 onChangeText={(text) => setDocument({ ...document, Nombre_Documento: text })}
                             />
                         </FormControl>
                         <FormControl>
-                            <FormControl.Label>Tipo de Documento</FormControl.Label>
+                            <FormControl.Label>{t('documents.editDocument.documentType')}</FormControl.Label>
                             <Input
                                 value={document?.Tipo_Documento || ''}
                                 onChangeText={(text) => setDocument({ ...document, Tipo_Documento: text })}
                             />
                         </FormControl>
                         <FormControl>
-                            <FormControl.Label>Ubicación</FormControl.Label>
+                            <FormControl.Label>{t('documents.editDocument.location')}</FormControl.Label>
                             <Input
                                 value={document?.Ubicacion || ''}
                                 onChangeText={(text) => setDocument({ ...document, Ubicacion: text })}
                             />
                         </FormControl>
                         <FormControl>
-                            <FormControl.Label>Estado</FormControl.Label>
+                            <FormControl.Label>{t('documents.editDocument.status')}</FormControl.Label>
                             <Dropdown
                                 data={estados}
                                 labelField="label"
                                 valueField="value"
                                 value={document?.Estado || ''}
                                 onChange={(item) => setDocument({ ...document, Estado: item.value })}
-                            />
+                                style={{
+                                    backgroundColor: 'white',
+                                    padding: 10,
+                                    borderRadius: 8,
+                                    borderColor: '#ccc',
+                                    borderWidth: 1
+                                }} />
                         </FormControl>
                         <FormControl>
-                            <FormControl.Label>ID Etiqueta RFID</FormControl.Label>
+                            <FormControl.Label>{t('documents.editDocument.rfidTag')}</FormControl.Label>
                             <Dropdown
                                 data={rfidTags}
                                 labelField="label"
                                 valueField="value"
                                 value={document?.ID_Etiqueta_RFID || ''}
                                 onChange={(item) => setDocument({ ...document, ID_Etiqueta_RFID: item.value })}
-                            />
+                                style={{
+                                    backgroundColor: 'white',
+                                    padding: 10,
+                                    borderRadius: 8,
+                                    borderColor: '#ccc',
+                                    borderWidth: 1
+                                }}  />
                         </FormControl>
 
                         {/* Mostrar el nombre del archivo seleccionado */}
                         {document?.newFile && (
                             <FormControl>
-                                <FormControl.Label>Archivo Seleccionado</FormControl.Label>
+                                <FormControl.Label>{t('documents.editDocument.fileSelected')}</FormControl.Label>
                                 <Text color="gray.500">
                                     {document.newFile.name} {/* Muestra el nombre del archivo */}
                                 </Text>
@@ -208,7 +233,7 @@ const EditDocumentsScreen = () => {
                         {/* Mostrar el documento guardado */}
                         {document?.filePath && (
                             <FormControl>
-                                <FormControl.Label>Documento Guardado</FormControl.Label>
+                                <FormControl.Label>{t('documents.editDocument.savedDocument')}</FormControl.Label>
                                 <HStack alignItems="center" backgroundColor="red.800" padding={2} textAlign="center">
                                     <Ionicons name="document-text-outline" size={25} color="white"/>
                                     <Link
@@ -233,7 +258,7 @@ const EditDocumentsScreen = () => {
                             onPress={handlePickDocument}
                             leftIcon={<Ionicons name="cloud-upload-outline" size={20} color="white" />}
                         >
-                            Seleccionar Nuevo Documento
+                            {t('documents.editDocument.selectNewDocument')}
                         </Button>
 
                         <Button
@@ -243,7 +268,7 @@ const EditDocumentsScreen = () => {
                             onPress={handleSave}
                             leftIcon={<Ionicons name="save-outline" size={20} color="white" />}
                         >
-                            Guardar Cambios
+                            {t('documents.editDocument.saveChanges')}
                         </Button>
                         <Button
                             mt={2}
@@ -252,11 +277,10 @@ const EditDocumentsScreen = () => {
                             colorScheme="danger"
                             leftIcon={<Ionicons name="close" size={20} color="red" />}
                         >
-                            Cancelar
+                            {t('documents.editDocument.cancel')}
                         </Button>
                     </VStack>
                 </Box>
-            </ScrollView>
         </NativeBaseProvider>
     );
 };

@@ -15,7 +15,10 @@ import {
     AlertDialog,
     Radio,
     Stack,
-    Center, Badge
+    Icon,
+    Center,
+    Badge,
+    useColorModeValue
 } from "native-base";
 import {Ionicons} from '@expo/vector-icons';
 import {useRoute, useNavigation} from "@react-navigation/native";
@@ -26,6 +29,8 @@ import {API_URL} from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NfcManager, {NfcTech} from "react-native-nfc-manager";
 import {Alert} from "react-native";
+import Header from "../../components/Header";
+import {useTranslation} from "react-i18next";
 
 const DetailDocumentsScreen = () => {
     const [document, setDocument] = useState(null);
@@ -39,9 +44,24 @@ const DetailDocumentsScreen = () => {
     const {documento_id} = route.params;
     const [user, setUser] = useState(null);
     const [rfidCode, setRfidCode] = useState("");
-    const [validationMethod, setValidationMethod] = useState("password"); // 'password' o 'rfid'
+    const [validationMethod, setValidationMethod] = useState("password");
     const [isReadingNFC, setIsReadingNFC] = useState(false);
     const [rfidStatus, setRfidStatus] = useState("no_leido");
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const dividerColor = useColorModeValue("gray.200", "gray.700");
+    const iconColor = useColorModeValue("primary.500", "primary.300");
+    const badgeTextColor = useColorModeValue("white", "gray.900");
+    const radioTextColor = useColorModeValue("gray.800", "gray.100");
+    const statusBoxBg = useColorModeValue("gray.100", "gray.700");
+    const alertDialogBg = useColorModeValue("white", "gray.800");
 
     const getUserData = async () => {
         try {
@@ -59,16 +79,12 @@ const DetailDocumentsScreen = () => {
 
     useEffect(() => {
         getUserData();
-
-        // Inicializar NFC
         NfcManager.start();
 
         return () => {
-            // Solo cancelar la tecnología si está en uso
             if (isReadingNFC) {
                 NfcManager.cancelTechnologyRequest().catch(() => 0);
             }
-            // No llamar a NfcManager.stop() porque no existe
         };
     }, []);
 
@@ -184,19 +200,17 @@ const DetailDocumentsScreen = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Accept": "application/json"  // Asegurarnos que esperamos JSON
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({codigo_rfid: rfid}),
             });
 
-            // Verificar primero el estado de la respuesta
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Error del servidor:", errorText);
                 throw new Error(`Error HTTP: ${response.status}`);
             }
 
-            // Verificar el content-type antes de parsear
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 const text = await response.text();
@@ -225,150 +239,159 @@ const DetailDocumentsScreen = () => {
         }
     };
 
-    if (loading) return <Spinner size="lg" color="primary.500"/>;
-    if (error) return <Text color="red.500">Error: {error}</Text>;
+    if (loading) return (
+        <NativeBaseProvider theme={customTheme}>
+            <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
+                <Spinner size="lg" color={iconColor}/>
+            </Box>
+        </NativeBaseProvider>
+    );
 
-
-    if (loading) return <Spinner size="lg" color="primary.500"/>;
-    if (error) return <Text color="red.500">Error: {error}</Text>;
+    if (error) return (
+        <NativeBaseProvider theme={customTheme}>
+            <Box flex={1} justifyContent="center" alignItems="center" bg={bgColor}>
+                <Text color="red.500">Error: {error}</Text>
+            </Box>
+        </NativeBaseProvider>
+    );
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps="handled">
-                <Box flex={1} p={5} bg="background.light">
-                    <HStack alignItems="center" mb={4} bg="primary.500" p={4} borderRadius="md" shadow={3}
-                            justifyContent="center">
-                        <Ionicons name="document-text-outline" size={28} color="#003469"/>
-                        <Text fontSize="2xl" fontWeight="bold" ml={3} color="white">
-                            Detalles del Documento
-                        </Text>
-                    </HStack>
+            <Box safeArea flex={1} bg={bgColor} p={4}>
+                <Header title={t('documents.detailsDocument.title')} iconName="document-text-outline"/>
 
-                    <Box bg="white" p={5} borderRadius="lg" shadow={2}>
-                        <VStack space={4}>
-                            <HStack space={4} alignItems="center">
-                                <IconButton icon={<Ionicons name="file-tray" size={20} color="#0074E8"/>}/>
-                                <VStack>
-                                    <Text fontSize="lg" fontWeight="bold">{document?.Nombre_Documento}</Text>
-                                    <Text fontSize="md" color="gray.500">{document?.Ubicacion}</Text>
-                                    <Text fontSize="sm"
-                                          color="gray.400">{document?.Tipo_Documento || "No disponible"}</Text>
-                                </VStack>
-                            </HStack>
-                            <Divider my={3}/>
-                            <VStack space={3}>
-                                <HStack space={2} alignItems="center">
-                                    <Ionicons name="card-outline" size={20} color="#0074E8"/>
-                                    <Text fontSize="md">ID Documento: {document?.ID_Documento}</Text>
-                                </HStack>
-                                <HStack space={2} alignItems="center">
-                                    <Ionicons name="cloud-upload-outline" size={20} color="#0074E8"/>
-                                    <Text fontSize="md">{document?.Estado || "Estado no disponible"}</Text>
-                                </HStack>
+                <Box bg={cardBg} p={5} borderRadius="lg" shadow={2} marginTop={5}>
+                    <VStack space={4}>
+                        <HStack space={4} alignItems="center">
+                            <Icon as={Ionicons} name="file-tray" size={6} color={iconColor}/>
+                            <VStack>
+                                <Text fontSize="lg" fontWeight="bold" color={textColor}>{document?.Nombre_Documento}</Text>
+                                <Text fontSize="md" color={secondaryTextColor}>{document?.Ubicacion}</Text>
+                                <Text fontSize="sm" color={secondaryTextColor}>
+                                    {document?.Tipo_Documento || "No disponible"}
+                                </Text>
                             </VStack>
-
-                            {document?.filePath && (
-                                <>
-                                    <Divider my={3}/>
-                                    <VStack space={3}>
-                                        {/* ... (sección de archivo adjunto permanece igual) ... */}
-
-                                        <Text fontSize="md" fontWeight="bold">Método de autenticación:</Text>
-
-                                        <Center>
-                                            <Radio.Group
-                                                name="validationMethod"
-                                                value={validationMethod}
-                                                onChange={(value) => {
-                                                    setValidationMethod(value);
-                                                    setRfidCode("");
-                                                    setRfidStatus("no_leido");
-                                                }}
-                                            >
-                                                <Stack direction="row" space={4}>
-                                                    <Radio value="password" colorScheme="primary">
-                                                        <Text>Contraseña</Text>
-                                                    </Radio>
-                                                    <Radio value="rfid" colorScheme="primary">
-                                                        <Text>Tarjeta RFID</Text>
-                                                    </Radio>
-                                                </Stack>
-                                            </Radio.Group>
-                                        </Center>
-
-                                        {validationMethod === "rfid" && (
-                                            <VStack space={2} mt={3}>
-                                                <Text fontSize="md" fontWeight="bold">Estado de lectura RFID:</Text>
-                                                <Box p={3} bg="gray.100" borderRadius="md">
-                                                    {rfidStatus === "no_leido" && (
-                                                        <Text color="gray.600">Presiona el botón "Leer RFID" para comenzar</Text>
-                                                    )}
-                                                    {rfidStatus === "leyendo" && (
-                                                        <HStack space={2} alignItems="center">
-                                                            <Spinner size="sm" color="primary.500"/>
-                                                            <Text color="primary.500">Leyendo tarjeta... Acércala al dispositivo</Text>
-                                                        </HStack>
-                                                    )}
-                                                    {rfidStatus === "leido" && (
-                                                        <VStack space={1}>
-                                                            <Text color="green.600">Tarjeta leída correctamente</Text>
-                                                            <Badge colorScheme="success" alignSelf="flex-start" variant="outline">
-                                                                <Text fontWeight="bold">Código: {rfidCode}</Text>
-                                                            </Badge>
-                                                        </VStack>
-                                                    )}
-                                                    {rfidStatus === "error" && (
-                                                        <Text color="red.600">Error al leer la tarjeta. Intenta nuevamente.</Text>
-                                                    )}
-                                                </Box>
-
-                                                <Button
-                                                    onPress={readRFID}
-                                                    isLoading={isReadingNFC}
-                                                    leftIcon={<Ionicons name="card-outline" size={20} color="white"/>}
-                                                    colorScheme="secondary"
-                                                    mt={2}
-                                                    isDisabled={rfidStatus === "leyendo"}
-                                                >
-                                                    {rfidStatus === "leido" ? "Leer otra tarjeta" : "Leer RFID"}
-                                                </Button>
-
-                                                <Text fontSize="xs" color="gray.500" textAlign="center">
-                                                    Acerca tu tarjeta RFID al dispositivo cuando presiones el botón de lectura
-                                                </Text>
-                                            </VStack>
-                                        )}
-
-                                        <Button
-                                            onPress={validationMethod === "password" ? () => setIsPasswordDialogOpen(true) : handleDownloadAndOpen}
-                                            isLoading={downloading}
-                                            leftIcon={<Ionicons name="download-outline" size={20} color="white"/>}
-                                            colorScheme="primary"
-                                            mt={2}
-                                            isDisabled={validationMethod === "rfid" && rfidStatus !== "leido"}
-                                        >
-                                            {validationMethod === "password"
-                                                ? "Descargar con contraseña"
-                                                : "Descargar archivo"}
-                                        </Button>
-                                    </VStack>
-                                </>
-                            )}
+                        </HStack>
+                        <Divider my={3} bg={dividerColor}/>
+                        <VStack space={3}>
+                            <HStack space={2} alignItems="center">
+                                <Icon as={Ionicons} name="card-outline" size={5} color={iconColor}/>
+                                <Text fontSize="md" color={textColor}>ID Documento: {document?.ID_Documento}</Text>
+                            </HStack>
+                            <HStack space={2} alignItems="center">
+                                <Icon as={Ionicons} name="cloud-upload-outline" size={5} color={iconColor}/>
+                                <Text fontSize="md" color={textColor}>{document?.Estado || "Estado no disponible"}</Text>
+                            </HStack>
                         </VStack>
-                    </Box>
+
+                        {document?.filePath && (
+                            <>
+                                <Divider my={3} bg={dividerColor}/>
+                                <VStack space={3}>
+                                    <Text fontSize="md" fontWeight="bold" color={textColor}>Método de autenticación:</Text>
+
+                                    <Center>
+                                        <Radio.Group
+                                            name="validationMethod"
+                                            value={validationMethod}
+                                            onChange={(value) => {
+                                                setValidationMethod(value);
+                                                setRfidCode("");
+                                                setRfidStatus("no_leido");
+                                            }}
+                                        >
+                                            <Stack direction="row" space={4}>
+                                                <Radio value="password" colorScheme="primary">
+                                                    <Text color={radioTextColor}>Contraseña</Text>
+                                                </Radio>
+                                                <Radio value="rfid" colorScheme="primary">
+                                                    <Text color={radioTextColor}>Tarjeta RFID</Text>
+                                                </Radio>
+                                            </Stack>
+                                        </Radio.Group>
+                                    </Center>
+
+                                    {validationMethod === "rfid" && (
+                                        <VStack space={2} mt={3}>
+                                            <Text fontSize="md" fontWeight="bold" color={textColor}>Estado de lectura RFID:</Text>
+                                            <Box p={3} bg={statusBoxBg} borderRadius="md">
+                                                {rfidStatus === "no_leido" && (
+                                                    <Text color={secondaryTextColor}>Presiona el botón "Leer RFID" para comenzar</Text>
+                                                )}
+                                                {rfidStatus === "leyendo" && (
+                                                    <HStack space={2} alignItems="center">
+                                                        <Spinner size="sm" color={iconColor}/>
+                                                        <Text color={iconColor}>Leyendo tarjeta... Acércala al dispositivo</Text>
+                                                    </HStack>
+                                                )}
+                                                {rfidStatus === "leido" && (
+                                                    <VStack space={1}>
+                                                        <Text color="green.500">Tarjeta leída correctamente</Text>
+                                                        <Badge colorScheme="success" alignSelf="flex-start" variant="outline">
+                                                            <Text fontWeight="bold" color={badgeTextColor}>Código: {rfidCode}</Text>
+                                                        </Badge>
+                                                    </VStack>
+                                                )}
+                                                {rfidStatus === "error" && (
+                                                    <Text color="red.500">Error al leer la tarjeta. Intenta nuevamente.</Text>
+                                                )}
+                                            </Box>
+
+                                            <Button
+                                                onPress={readRFID}
+                                                isLoading={isReadingNFC}
+                                                leftIcon={<Icon as={Ionicons} name="card-outline" size={5}/>}
+                                                colorScheme="secondary"
+                                                mt={2}
+                                                isDisabled={rfidStatus === "leyendo"}
+                                            >
+                                                {rfidStatus === "leido" ? "Leer otra tarjeta" : "Leer RFID"}
+                                            </Button>
+
+                                            <Text fontSize="xs" color={secondaryTextColor} textAlign="center">
+                                                Acerca tu tarjeta RFID al dispositivo cuando presiones el botón de lectura
+                                            </Text>
+                                        </VStack>
+                                    )}
+
+                                    <Button
+                                        onPress={handleDownloadRequest}
+                                        isLoading={downloading}
+                                        leftIcon={<Icon as={Ionicons} name="download-outline" size={5}/>}
+                                        colorScheme="primary"
+                                        mt={2}
+                                        isDisabled={validationMethod === "rfid" && rfidStatus !== "leido"}
+                                    >
+                                        {validationMethod === "password"
+                                            ? "Descargar con contraseña"
+                                            : "Descargar archivo"}
+                                    </Button>
+                                </VStack>
+                            </>
+                        )}
+                    </VStack>
                 </Box>
-            </ScrollView>
+            </Box>
+
             {/* Diálogo para contraseña */}
             <AlertDialog isOpen={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)}>
-                <AlertDialog.Content>
-                    <AlertDialog.Header>Ingresar contraseña</AlertDialog.Header>
+                <AlertDialog.Content bg={alertDialogBg}>
+                    <AlertDialog.Header _text={{color: textColor}}>Ingresar contraseña</AlertDialog.Header>
                     <AlertDialog.Body>
                         <Input
                             placeholder="Contraseña"
+                            placeholderTextColor={secondaryTextColor}
                             secureTextEntry
                             value={password}
                             onChangeText={setPassword}
                             onSubmitEditing={handlePasswordSubmit}
+                            bg={cardBg}
+                            color={textColor}
+                            borderColor={dividerColor}
+                            _focus={{
+                                borderColor: iconColor,
+                                bg: cardBg
+                            }}
                         />
                     </AlertDialog.Body>
                     <AlertDialog.Footer>
@@ -384,4 +407,5 @@ const DetailDocumentsScreen = () => {
         </NativeBaseProvider>
     );
 }
-    export default DetailDocumentsScreen;
+
+export default DetailDocumentsScreen;

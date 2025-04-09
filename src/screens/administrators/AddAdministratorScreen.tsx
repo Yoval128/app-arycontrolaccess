@@ -133,7 +133,7 @@ const AddAdministratorScreen = () => {
 
     return (
         <NativeBaseProvider theme={customTheme}>
-            <Box flex={1} p={5} bgColor>
+            <Box flex={1} p={5}>
 
                 <Header title={t('addAdministrator.title')} iconName="person"/>
 

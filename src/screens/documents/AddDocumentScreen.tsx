@@ -1,16 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
-    Box, Button, Input, VStack, Heading, useTheme, useToast, NativeBaseProvider, ScrollView, Text, HStack
+    Box,
+    Button,
+    Input,
+    VStack,
+    Heading,
+    useTheme,
+    useToast,
+    NativeBaseProvider,
+    ScrollView,
+    Text,
+    HStack,
+    useColorModeValue
 } from "native-base";
-import { Dropdown } from "react-native-element-dropdown";
-import { MaterialIcons } from "@expo/vector-icons";
+import {Dropdown} from "react-native-element-dropdown";
+import {MaterialIcons} from "@expo/vector-icons";
 import * as DocumentPicker from 'expo-document-picker';
-import { API_URL } from '@env';
-
+import {API_URL} from '@env';
 import customTheme from "../../themes/index";
-import { useNavigation } from "@react-navigation/native";
-
-const estados = [{ label: "Disponible", value: "Disponible" }];
+import {useNavigation} from "@react-navigation/native";
+import {useTranslation} from "react-i18next";
+import Header from "../../components/Header";
 
 const AddDocumentScreen = () => {
     const theme = useTheme();
@@ -30,6 +40,21 @@ const AddDocumentScreen = () => {
         estado: "",
         etiquetaRFID: ""
     });
+    const estados = [{label: "Disponible", value: "Disponible"}];
+
+    // Hook para obtener traducciones
+    const {t, i18n} = useTranslation();
+
+    // Colores adaptables al tema
+    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const cardBg = useColorModeValue("white", "gray.800");
+    const textColor = useColorModeValue("gray.800", "white");
+    const secondaryTextColor = useColorModeValue("gray.500", "gray.400");
+    const borderColor = useColorModeValue("primary.400", "primary.300");
+    const dropdownBg = useColorModeValue("white", "gray.700");
+    const dropdownTextColor = useColorModeValue("black", "white");
+    const dropdownPlaceholderColor = useColorModeValue("gray.500", "gray.400");
+    const dropdownIconColor = useColorModeValue("gray", "white");
 
     useEffect(() => {
         const fetchEtiquetasRFID = async () => {
@@ -40,7 +65,7 @@ const AddDocumentScreen = () => {
                     label: item.Codigo_RFID,
                     value: item.ID_Etiqueta_RFID
                 }));
-                setEtiquetasRFID([{ label: "Sin etiqueta", value: "" }, ...formattedData]);
+                setEtiquetasRFID([{label: "Sin etiqueta", value: ""}, ...formattedData]);
             } catch (error) {
                 toast.show({
                     title: "Error",
@@ -56,7 +81,7 @@ const AddDocumentScreen = () => {
     }, []);
 
     const handleChange = (key, value) => {
-        setForm({ ...form, [key]: value });
+        setForm({...form, [key]: value});
     };
 
     const pickDocument = async () => {
@@ -100,7 +125,7 @@ const AddDocumentScreen = () => {
             const response = await fetch(`${API_URL}/api/documents/upload`, {
                 method: 'POST',
                 body: formData,
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: {'Content-Type': 'multipart/form-data'}
             });
 
             const data = await response.json();
@@ -180,7 +205,7 @@ const AddDocumentScreen = () => {
                     description: "Documento registrado correctamente",
                     status: "success"
                 });
-                setForm({ nombre: "", tipo: "", ubicacion: "", estado: "", etiquetaRFID: "" });
+                setForm({nombre: "", tipo: "", ubicacion: "", estado: "", etiquetaRFID: ""});
                 setFile(null);
                 navigation.navigate('ListDocuments');
             } else {
@@ -202,49 +227,65 @@ const AddDocumentScreen = () => {
     };
     return (
         <NativeBaseProvider theme={customTheme}>
-             <Box flex={1} p={5} bg={theme.colors.primary[50]}>
-                    <Heading size="lg" color={theme.colors.primary[500]}>Registro de Documento</Heading>
-                    <VStack space={4} mt={5}>
-                        <Input placeholder="Nombre del Documento" value={form.nombre} onChangeText={(value) => handleChange("nombre", value)} />
-                        <Input placeholder="Tipo de Documento" value={form.tipo} onChangeText={(value) => handleChange("tipo", value)} />
-                        <Input placeholder="Ubicación" value={form.ubicacion} onChangeText={(value) => handleChange("ubicacion", value)} />
+            <Box flex={1} p={5}>
+                <Header title={t('documents.addDocument.title')} iconName="pencil-outline"/>
+                <VStack space={4} mt={5}>
+                    <Input placeholder={t('documents.addDocument.documentName')} value={form.nombre}
+                           onChangeText={(value) => handleChange("nombre", value)}/>
+                    <Input placeholder={t('documents.addDocument.documentType')} value={form.tipo}
+                           onChangeText={(value) => handleChange("tipo", value)}/>
+                    <Input placeholder={t('documents.addDocument.location')} value={form.ubicacion}
+                           onChangeText={(value) => handleChange("ubicacion", value)}/>
 
-                        <Dropdown
-                            style={{ borderWidth: 1, borderColor: theme.colors.primary[400], padding: 10, borderRadius: 8 }}
-                            data={estados}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Selecciona el estado"
-                            value={form.estado}
-                            onChange={(item) => handleChange("estado", item.value)}
-                        />
-                        <Dropdown
-                            style={{ borderWidth: 1, borderColor: theme.colors.primary[500], padding: 10, borderRadius: 8 }}
-                            data={etiquetasRFID}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Selecciona una etiqueta RFID"
-                            value={form.etiquetaRFID}
-                            onChange={(item) => handleChange("etiquetaRFID", item.value)}
-                        />
+                    <Dropdown
+                        style={{borderWidth: 1, borderColor: theme.colors.primary[400], padding: 10, borderRadius: 8}}
+                        data={estados}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={t('documents.addDocument.status')}
+                        value={form.estado}
+                        onChange={(item) => handleChange("estado", item.value)}
+                        style={{
+                            backgroundColor: 'white',
+                            padding: 10,
+                            borderRadius: 8,
+                            borderColor: '#ccc',
+                            borderWidth: 1
+                        }}/>
+                    <Dropdown
+                        style={{borderWidth: 1, borderColor: theme.colors.primary[500], padding: 10, borderRadius: 8}}
+                        data={etiquetasRFID}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={t('documents.addDocument.rfidTag')}
+                        value={form.etiquetaRFID}
+                        onChange={(item) => handleChange("etiquetaRFID", item.value)}
+                        style={{
+                            backgroundColor: 'white',
+                            padding: 10,
+                            borderRadius: 8,
+                            borderColor: '#ccc',
+                            borderWidth: 1
+                        }}/>
 
-                        <Box mt={3}>
-                            <Button onPress={pickDocument} mb={2}>
-                                Seleccionar Documento
-                            </Button>
-                            {file && (
-                                <HStack alignItems="center" space={2}>
-                                    <MaterialIcons name="insert-drive-file" size={20} color={theme.colors.primary[500]} />
-                                    <Text>{file.name}</Text>
-                                </HStack>
-                            )}
-                        </Box>
-
-                        <Button isLoading={loading || uploading} onPress={handleSubmit} isDisabled={uploading || !form.nombre || !form.tipo || !form.ubicacion || !form.estado}>
-                            Registrar Documento
+                    <Box mt={3}>
+                        <Button onPress={pickDocument} mb={2}>
+                            {t('documents.addDocument.selectDocument')}
                         </Button>
-                    </VStack>
-                </Box>
+                        {file && (
+                            <HStack alignItems="center" space={2}>
+                                <MaterialIcons name="insert-drive-file" size={20} color={theme.colors.primary[500]}/>
+                                <Text>{file.name}</Text>
+                            </HStack>
+                        )}
+                    </Box>
+
+                    <Button isLoading={loading || uploading} onPress={handleSubmit}
+                            isDisabled={uploading || !form.nombre || !form.tipo || !form.ubicacion || !form.estado}>
+                        {t('documents.addDocument.registerDocument')}
+                    </Button>
+                </VStack>
+            </Box>
         </NativeBaseProvider>
     );
 };

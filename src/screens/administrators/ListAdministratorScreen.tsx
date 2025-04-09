@@ -22,6 +22,7 @@ import {useNavigation, useRoute} from "@react-navigation/native";
 import {ActivityIndicator} from "react-native";
 import {useAuth} from "../../context/AuthProvider";
 import {useTranslation} from "react-i18next";
+import Header from "../../components/Header";
 
 const ListAdministratorScreen = () => {
     const [administrators, setAdministrators] = useState([]);
@@ -121,12 +122,7 @@ const ListAdministratorScreen = () => {
     return (
         <NativeBaseProvider theme={customTheme}>
             <Box safeArea p={5} flex={1}>
-                <HStack alignItems="center" mb={6} bg={headerBg} p={4} borderRadius="md" shadow={3}
-                        justifyContent="center">
-                    <Ionicons name="person-circle-outline" size={28} color="white"/>
-                    <Text fontSize="xl" fontWeight="bold" ml={2} color="white">{t('listAdministrator.header.title')}
-                    </Text>
-                </HStack>
+                <Header title={t('listAdministrator.header.title')} iconName="person-circle-outline" />
 
                 {loading ? (
                     <Spinner size="lg" color="primary.500"/>
@@ -135,7 +131,7 @@ const ListAdministratorScreen = () => {
                         data={administrators}
                         keyExtractor={(item) => item.ID_Admin.toString()}
                         renderItem={({item}) => (
-                            <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2}>
+                            <Box bg={cardBg} p={4} mb={3} borderRadius="lg" shadow={2} marginTop={5}>
                                 <HStack space={3} alignItems="center">
                                     <Avatar bg="primary.400" size="md">
                                         {item.Nombre.charAt(0)}{item.Apellido.charAt(0)}
